@@ -79,6 +79,19 @@ account existence; every other failure still renders the identical Sent
 state. Custom React Email auth templates (from `Starter Emails.dc.html`)
 via a send-email hook are a later task.
 
+## Auth-surface branding
+
+The sign-in screens render the WORKSPACE identity server-first (skin,
+radii, logo, name, favicon) via the `get_auth_branding()` RPC — an
+INTENTIONALLY PUBLIC, hardened SECURITY DEFINER function (STABLE, pinned
+empty search_path) that exposes only branding columns for the
+deployment's earliest workspace. This is a deliberate, accepted advisor
+finding: everything it returns paints the public /login page anyway, and
+the logo files already live in the public branding bucket. The ground
+follows the workspace default appearance ("system" renders light — the
+server cannot know the visitor's OS preference without a flash); a fresh
+deployment with no workspace falls back to the neutral starter identity.
+
 ## New-project setup checklist
 
 Every project cloned from this starter must do this once:

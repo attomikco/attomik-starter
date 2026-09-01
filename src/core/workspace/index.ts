@@ -1,8 +1,17 @@
 import { cache } from "react"
 import { bootstrapWorkspace } from "./bootstrap"
-import { defaultSkin, skinInputToRow, type WorkspaceBrandRow } from "@/core/branding"
+import {
+  DEFAULT_GEOMETRY,
+  defaultSkin,
+  rowToGeometry,
+  rowToSkinInput,
+  skinInputToRow,
+  type ProductGeometry,
+  type SkinInput,
+  type WorkspaceBrandRow,
+} from "@/core/branding"
 import { requireUser, type AuthUser } from "@/core/auth/require-user"
-import { getSupabaseEnv } from "@/core/env"
+import { getSupabaseEnv, hasSupabaseEnv } from "@/core/env"
 import { createClient } from "@/core/supabase/server"
 import { projectConfig } from "@/config/project"
 
@@ -164,6 +173,52 @@ export async function getCurrentWorkspace(): Promise<Workspace> {
 export async function getWorkspaceSettings(): Promise<WorkspaceSettings> {
   return (await requireWorkspace()).settings
 }
+
+/**
+ * Branding for the UNAUTHENTICATED auth surface, via the intentionally
+ * public get_auth_branding() RPC (branding columns only, earliest
+ * workspace — see docs/AUTH.md). Server-first so the sign-in screens paint
+ * the workspace identity with no flash; "system" falls back to light
+ * because the server cannot know the visitor's OS preference without a
+ * flash. Falls back to the neutral starter identity on a fresh deployment
+ * (no workspace yet) or missing Supabase env — auth must always render.
+ */
+export interface AuthBranding {
+  name: string
+  skin: SkinInput
+  geometry: ProductGeometry
+  mode: "light" | "dark"
+  logoUrl: string | null
+  faviconUrl: string | null
+}
+
+export const getAuthBranding = cache(async (): Promise<AuthBranding> => {
+  const fallback: AuthBranding = {
+    name: projectConfig.name, skin: defaultSkin, geometry: DEFAULT_GEOMETRY,
+    mode: "light", logoUrl: null, faviconUrl: null,
+  }
+  if (!hasSupabaseEnv()) return fallback
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase.rpc("get_auth_branding").maybeSingle()
+    if (!data) return fallback
+    const row = data as WorkspaceBrandRow
+    const mode = row.default_appearance === "dark" ? "dark" : "light"
+    const logoPath = mode === "dark"
+      ? row.logo_dark_path ?? row.logo_light_path
+      : row.logo_light_path ?? row.logo_dark_path
+    return {
+      name: row.display_name,
+      skin: rowToSkinInput(row),
+      geometry: rowToGeometry(row),
+      mode,
+      logoUrl: brandingPublicUrl(logoPath),
+      faviconUrl: brandingPublicUrl(row.favicon_path),
+    }
+  } catch {
+    return fallback
+  }
+})
 
 /** Public URL for a branding asset path stored in the public branding bucket. */
 export function brandingPublicUrl(path: string | null): string | null {
