@@ -54,3 +54,7 @@ textarea { resize: none; }
 }
 
 .sh-bulk-action:hover { background: rgba(255,255,255,.12); }
+
+/* Reference skeleton shimmer (Starter Admin loading states). */
+@keyframes sh-shimmer { 0% { opacity: .55; } 50% { opacity: 1; } 100% { opacity: .55; } }
+.sh-shimmer { animation: sh-shimmer 1.1s ease-in-out infinite; }

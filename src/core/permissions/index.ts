@@ -11,8 +11,8 @@ export type Role = "owner" | "admin" | "member" | "viewer"
 export const ROLE_MEANINGS: Record<Role, string> = {
   owner: "Full workspace control, including admins",
   admin: "Invites and manages members and viewers",
-  member: "Normal product user",
-  viewer: "Read-only baseline",
+  member: "Normal product access",
+  viewer: "Read-only access",
 }
 
 export function isAdminLike(role: Role): boolean {

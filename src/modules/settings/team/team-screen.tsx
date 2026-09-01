@@ -49,12 +49,14 @@ export function TeamScreen({
     if (result.ok) router.refresh()
   }
 
-  const stats: [string, string, string, boolean][] = [
-    ["Members", String(members.length), "in this workspace", true],
-    ["Admins", String(members.filter((m) => m.role === "owner" || m.role === "admin").length), "incl. the owner", false],
-    ["Pending invites", String(invitations.length), "expire after 7 days", false],
-    ["Your role", actorRole, ROLE_MEANINGS[actorRole].toLowerCase(), false],
-  ]
+  const adminCount = members.filter((m) => m.role === "owner" || m.role === "admin").length
+  const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`
+  const summary = [
+    plural(members.length, "member"),
+    plural(adminCount, "admin"),
+    plural(invitations.length, "pending invitation"),
+    `your role: ${actorRole}`,
+  ].join(" · ")
 
   const columns = [
     {
@@ -110,7 +112,8 @@ export function TeamScreen({
       <div style={{ display: "flex", alignItems: "flex-end", gap: 16, flexWrap: "wrap", flex: "none" }}>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)" }}>Workspace · people</div>
-          <h1 style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", margin: "6px 0 0" }}>Team & permissions</h1>
+          <h1 style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", margin: "6px 0 6px" }}>Team & permissions</h1>
+          <div style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }}>{summary}</div>
         </div>
         {canManage && (
           <button className="ui-btn" onClick={() => setInviteOpen(true)}
@@ -121,20 +124,11 @@ export function TeamScreen({
         )}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, flex: "none" }}>
-        {stats.map(([label, value, sub, lead]) => (
-          <div key={label} style={{ borderRadius: "var(--r2)", padding: 20, minWidth: 0, ...(lead ? { background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box" as const } : { background: "var(--shell)" }) }}>
-            <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 12 }}>{label}</div>
-            <div style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.035em", lineHeight: 1 }}>{value}</div>
-            <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)", marginTop: 8 }}>{sub}</div>
-          </div>
-        ))}
-      </div>
-
       <DataTable<TeamMember>
         columns={columns}
         rows={members}
         rowKey={(m) => m.userId}
+        layout="auto"
         state="ready"
         empty={{ title: "No members yet", body: "Invite the first person to this workspace." }}
         footerText={`${members.length} member${members.length === 1 ? "" : "s"}`}
@@ -175,18 +169,19 @@ export function TeamScreen({
         </div>
       )}
 
-      <div style={{ background: "var(--shell)", borderRadius: "var(--r2)", padding: 22, flex: "none" }}>
-        <div style={{ fontSize: 16, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.02em", marginBottom: 4 }}>What each role can do</div>
-        <div style={{ fontSize: 13.5, color: "var(--txt-2)", marginBottom: 14 }}>
-          Owner is locked, because a workspace with no full administrator is how people get locked out of their own data.
-        </div>
+      <div style={{ background: "var(--shell)", borderRadius: "var(--r2)", padding: "16px 20px", flex: "none" }}>
+        <div style={{ fontSize: 14.5, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.015em", marginBottom: 2 }}>Roles & permissions</div>
+        <div style={{ fontSize: 12.5, color: "var(--txt-2)", marginBottom: 10 }}>Roles control what people can manage in this workspace.</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           {(Object.keys(ROLE_MEANINGS) as Role[]).map((r, i, arr) => (
-            <div key={r} style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--line)" : undefined }}>
-              <span style={{ width: 90, flex: "none" }}><ToneChip tone={ROLE_TONE[r]} label={r} /></span>
-              <span style={{ fontSize: 13.5, color: "var(--txt-2)" }}>{ROLE_MEANINGS[r]}</span>
+            <div key={r} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--line)" : undefined }}>
+              <span style={{ width: 86, flex: "none" }}><ToneChip tone={ROLE_TONE[r]} label={r} /></span>
+              <span style={{ fontSize: 13, color: "var(--txt-2)" }}>{ROLE_MEANINGS[r]}</span>
             </div>
           ))}
+        </div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", marginTop: 12, borderTop: "1px solid var(--line)", paddingTop: 10 }}>
+          The owner cannot be demoted or removed — a workspace always keeps a full administrator.
         </div>
       </div>
 

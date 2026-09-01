@@ -36,6 +36,12 @@ export interface DataTableProps<T> {
   error?: { title: string; body?: string; onRetry: () => void; traceId?: string }
   footerText?: string
   pagination?: PaginationProps
+  /**
+   * "fill" (default) stretches into the parent's remaining height — right
+   * for data-heavy screens. "auto" hugs the rows — right for settings-style
+   * pages where a near-empty table must not reserve viewport height.
+   */
+  layout?: "fill" | "auto"
 }
 
 export function DataTable<T>(props: DataTableProps<T>) {
@@ -43,6 +49,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
     columns, rows, rowKey, sort, onSort, hiddenColumns = [],
     selected = {}, onToggleRow, onToggleAll, onRowClick,
     state = "ready", loadingRows, empty, error, footerText, pagination,
+    layout = "fill",
   } = props
 
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -81,7 +88,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
   )
 
   return (
-    <div ref={wrapRef} style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden", position: "relative" }}>
+    <div ref={wrapRef} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : { flex: "none" }), display: "flex", flexDirection: "column", border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden", position: "relative" }}>
       {/* Sticky header — hidden in the narrow card representation */}
       <div style={{ display: narrow ? "none" : "flex", alignItems: "center", gap: 14, padding: "11px 18px", background: "var(--shell)", borderBottom: "1px solid var(--line)", flex: "none", position: "sticky", top: 0, zIndex: 5 }}>
         {selectable && checkbox(allOn, "Select all rows", onToggleAll)}
@@ -112,7 +119,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
         <span style={{ width: 34, flex: "none" }} />
       </div>
 
-      <div className="sh-scroll" style={{ flex: 1, minHeight: 0 }}>
+      <div className="sh-scroll" style={layout === "fill" ? { flex: 1, minHeight: 0 } : undefined}>
         {state === "loading" && <TableLoading rowCount={loadingRows} />}
         {state === "error" && error && <TableError {...error} />}
         {(state === "empty" || (state === "ready" && rows.length === 0)) && empty && <TableEmpty {...empty} />}
