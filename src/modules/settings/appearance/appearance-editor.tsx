@@ -69,7 +69,10 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   const systemDark = useSystemPrefersDark()
   const previewMode = appearance === "system" ? (systemDark ? "dark" : "light") : appearance
   const draftTokens = useMemo(() => resolveSkin(skin, previewMode, geometry), [skin, previewMode, geometry])
-  const previewVars = { ...draftTokens } as CSSProperties
+  // Both grounds, always: light and dark are peer palettes, so the preview
+  // shows each from the same engine instead of following one appearance.
+  const lightPreview = useMemo(() => resolveSkin(skin, "light", geometry) as CSSProperties, [skin, geometry])
+  const darkPreview = useMemo(() => resolveSkin(skin, "dark", geometry) as CSSProperties, [skin, geometry])
 
   // ---- Live app-wide application -----------------------------------------
   // The draft is rendered into an override <style> appended to <head>: same
@@ -325,32 +328,10 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
-          {/* Live preview — draft tokens scoped to this panel */}
-          <div style={{ ...previewVars, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
-            <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", marginBottom: 16 }}>Live preview</div>
-            <div style={{ fontSize: 30, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1 }}>$248,310</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 12 }}>
-              <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 999, padding: "4px 9px" }}>↑ 18.4%</span>
-              <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-2)" }}>vs $209,720</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 56, marginTop: 20 }}>
-              {[46, 30, 52, 38, 56, 24].map((h, i) => (
-                <span key={i} style={{ flex: 1, display: "block", borderRadius: "3px 3px 0 0", height: h, background: `var(--s${Math.min(5, i + 1)})` }} />
-              ))}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 20, flexWrap: "wrap" }}>
-              <span style={{ background: "var(--accent)", color: "var(--accent-ink)", borderRadius: 999, padding: "10px 18px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>Primary</span>
-              <span style={{ border: "1px solid var(--line-2)", color: "var(--txt-2)", borderRadius: 999, padding: "9px 17px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>Secondary</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
-              {([["Settled", "ok"], ["Waiting", "warn"], ["Failed", "bad"]] as const).map(([label, tone]) => (
-                <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)", fontSize: 11, color: `var(--${tone})`, background: `var(--${tone}-tint)`, borderRadius: 999, padding: "4px 10px" }}>
-                  <span style={{ width: 5, height: 5, borderRadius: 999, background: `var(--${tone}-fill)`, display: "block" }} />
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
+          {/* Live preview — both grounds, each scoped to its own resolved
+              palette from the canonical engine, with that ground's logo. */}
+          <PreviewPanel label="Light" tokens={lightPreview} logoUrl={initial.logoLightUrl} />
+          <PreviewPanel label="Dark" tokens={darkPreview} logoUrl={initial.logoDarkUrl} />
 
           {/* Presets */}
           <div style={card}>
@@ -416,6 +397,44 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
         </div>
       </div>
 
+    </div>
+  )
+}
+
+/** One live-preview ground: the draft palette resolved for that theme,
+    scoped to this panel, with the ground's own logo where it will appear. */
+function PreviewPanel({ label, tokens, logoUrl }: { label: string; tokens: CSSProperties; logoUrl: string | null }) {
+  return (
+    <div style={{ ...tokens, colorScheme: label === "Dark" ? "dark" : "light", background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>Live preview · {label}</span>
+        {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt={`${label} ground logo`} style={{ height: 20, maxWidth: 120, objectFit: "contain", flex: "none", display: "block" }} />
+        )}
+      </div>
+      <div style={{ fontSize: 30, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1 }}>$248,310</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 12 }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 999, padding: "4px 9px" }}>↑ 18.4%</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-2)" }}>vs $209,720</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 56, marginTop: 20 }}>
+        {[46, 30, 52, 38, 56, 24].map((h, i) => (
+          <span key={i} style={{ flex: 1, display: "block", borderRadius: "3px 3px 0 0", height: h, background: `var(--s${Math.min(5, i + 1)})` }} />
+        ))}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 20, flexWrap: "wrap" }}>
+        <span style={{ background: "var(--accent)", color: "var(--accent-ink)", borderRadius: 999, padding: "10px 18px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>Primary</span>
+        <span style={{ border: "1px solid var(--line-2)", color: "var(--txt-2)", borderRadius: 999, padding: "9px 17px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>Secondary</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
+        {([["Settled", "ok"], ["Waiting", "warn"], ["Failed", "bad"]] as const).map(([chip, tone]) => (
+          <span key={chip} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)", fontSize: 11, color: `var(--${tone})`, background: `var(--${tone}-tint)`, borderRadius: 999, padding: "4px 10px" }}>
+            <span style={{ width: 5, height: 5, borderRadius: 999, background: `var(--${tone}-fill)`, display: "block" }} />
+            {chip}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }
