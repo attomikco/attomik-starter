@@ -16,6 +16,21 @@ delete module code because a project doesn't use it.
 - `/design-reference` is READ-ONLY reference material. Never modify, rename,
   move, or delete anything inside it.
 
+## Data / CRUD rules
+
+- Reuse the canonical DataTable (src/ui/data) before creating
+  module-specific tables; never duplicate table components inside modules.
+- Reuse the canonical four data states (loading/ready/empty/error).
+- Domain modules provide columns, filters, and actions; UI/data components
+  never encode Customer/Order/etc. business logic.
+- Tables must stay compatible with server-side pagination/filtering — the
+  serializable SortState/FilterCondition/PageState shapes travel to APIs.
+- Standard CRUD forms use explicit save (SaveBar) unless the module has a
+  clear reason for autosave; Appearance is the documented exception.
+- Destructive actions use the canonical ConfirmDialog, never confirm().
+- Never invent a new table/form visual language when the reference pattern
+  exists. Details: docs/DATA.md.
+
 ## Workspace rules
 
 - All product data belongs to a workspace unless explicitly global.
