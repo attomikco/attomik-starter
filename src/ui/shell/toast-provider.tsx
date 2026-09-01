@@ -30,7 +30,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {toast && (
         <div
           style={{
-            position: "absolute", right: 40, bottom: 108, zIndex: 96,
+            position: "absolute", right: 40, bottom: 24, zIndex: 96,
             display: "flex", alignItems: "center", gap: 12,
             background: "var(--txt)", borderRadius: "var(--r3)", padding: "14px 18px",
             boxShadow: "0 18px 40px rgba(0,0,0,.24)", animation: "sh-rise .16s ease-out",

@@ -1,0 +1,30 @@
+# Supabase project configuration for attomik-starter.
+# Pushed to the remote project with:  SMTP_PASS=<resend api key> supabase config push
+# The SMTP password is a Resend API key referenced via env() — never committed.
+
+project_id = "mduqytyqfdhymtrrjtbj"
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/**", "http://localhost:4123/**"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+# Magic links / OTPs expire after 15 minutes (matches the auth screen copy).
+otp_expiry = 900
+
+[auth.email.smtp]
+# Resend SMTP (see docs/AUTH.md). Supabase's default shared sender is
+# development-only (2 emails/hour) and must not be relied on.
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(SMTP_PASS)"
+admin_email = "auth@attomik.co"
+sender_name = "Attomik Starter"
+
+[auth.rate_limit]
+# Auth emails per hour across the project (custom SMTP unlocks this knob).
+email_sent = 100

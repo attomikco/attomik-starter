@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState, type CSSProperties, type Rea
 import { projectConfig } from "@/config/project"
 import type { NavigationGroup } from "@/core/navigation"
 import { CommandBar, type ShellPanel } from "./command-bar"
+import type { ShellAccount } from "./app-shell"
 import { CommandPalette } from "./command-palette"
 import { buildGoMap, isNavActive, isTypingTarget, type PaletteGroup } from "./helpers"
 import { MobileBar } from "./mobile-bar"
@@ -26,20 +27,22 @@ const MOBILE_BREAKPOINT = 900 // reference: mobile = vw < 900
 export function AppShellClient({
   navigation,
   chrome = "full",
+  account,
   children,
 }: {
   navigation: NavigationGroup[]
   chrome?: "inset" | "full"
+  account: ShellAccount
   children: ReactNode
 }) {
   return (
     <ThemeProvider>
-      <ShellInner navigation={navigation} chrome={chrome}>{children}</ShellInner>
+      <ShellInner navigation={navigation} chrome={chrome} account={account}>{children}</ShellInner>
     </ThemeProvider>
   )
 }
 
-function ShellInner({ navigation, chrome, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; children: ReactNode }) {
+function ShellInner({ navigation, chrome, account, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; account: ShellAccount; children: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const { setMode } = useTheme()
@@ -180,6 +183,7 @@ function ShellInner({ navigation, chrome, children }: { navigation: NavigationGr
               />
             ) : (
               <CommandBar
+                account={account}
                 panel={panel}
                 setPanel={setPanel}
                 openPalette={() => { setPaletteOpen(true); setPanel(null) }}

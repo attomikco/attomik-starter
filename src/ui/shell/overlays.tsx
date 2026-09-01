@@ -1,6 +1,9 @@
 "use client"
 
 import { useState, type CSSProperties, type ReactNode } from "react"
+import { signOut } from "@/core/auth/actions"
+import { emailInitials } from "@/core/auth/email-validation"
+import type { ShellAccount } from "./app-shell"
 import { THEME_MODES, useTheme } from "./theme"
 import { useToast } from "./toast-provider"
 
@@ -125,20 +128,21 @@ function AccountRow({ icon, label, hint, onPick }: { icon: string; label: string
   )
 }
 
-export function AccountPanel({ openPalette, openKeys }: { openPalette: () => void; openKeys: () => void }) {
+export function AccountPanel({ account, openPalette, openKeys }: { account: ShellAccount; openPalette: () => void; openKeys: () => void }) {
   const { mode, setMode } = useTheme()
   const { say } = useToast()
-  const notWired = () => say("Sign-in arrives with the auth task")
+  const notWired = () => say("Profiles arrive in a later task")
+  const initials = emailInitials(account.email)
+  const localPart = account.email.split("@")[0] || account.email
 
   return (
     <div style={{ ...panelStyle, top: 52, width: 316 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 16, borderBottom: "1px solid var(--line)" }}>
-        <span style={{ width: 42, height: 42, borderRadius: 999, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", color: "var(--accent-text)", display: "grid", placeItems: "center", fontSize: 15, fontWeight: "var(--w-bold)" as never, flex: "none" }}>AH</span>
+        <span style={{ width: 42, height: 42, borderRadius: 999, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", color: "var(--accent-text)", display: "grid", placeItems: "center", fontSize: 15, fontWeight: "var(--w-bold)" as never, flex: "none" }}>{initials}</span>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.015em" }}>Anna Hayes</div>
-          <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)", marginTop: 2 }}>anna@attomik.co</div>
+          <div style={{ fontSize: 15, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.015em" }}>{localPart}</div>
+          <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)", marginTop: 2 }}>{account.email}</div>
         </div>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--accent-text)", background: "var(--accent-tint)", borderRadius: 999, padding: "4px 9px", flex: "none" }}>Owner</span>
       </div>
       <div style={{ padding: 8 }}>
         <AccountRow icon="M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" label="Profile and account" onPick={notWired} />
@@ -157,7 +161,7 @@ export function AccountPanel({ openPalette, openKeys }: { openPalette: () => voi
         </div>
       </div>
       <div style={{ padding: 10, borderTop: "1px solid var(--line)" }}>
-        <span className="sh-signout" onClick={notWired}
+        <span className="sh-signout" onClick={() => void signOut()}
           style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: "var(--r3)", fontSize: 14, fontWeight: "var(--w-semi)" as never, color: "var(--bad)", cursor: "pointer" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d="M15 17l5-5-5-5M20 12H9M12 3H5v18h7" /></svg>
           Sign out

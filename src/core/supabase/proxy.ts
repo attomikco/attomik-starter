@@ -44,9 +44,37 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   // Do not run code between createServerClient and getClaims(): a subtle bug
   // can make sessions randomly log out. getClaims() validates the JWT and
   // refreshes an expired token; never trust getSession() in server code.
-  await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims()
 
-  // When returning a custom response from here later, copy the cookies from
-  // supabaseResponse onto it, or sessions will desync.
+  // Route protection: signed-out page loads go to login with a return path.
+  // Only GET/HEAD — redirecting a Server Action POST hands the client HTML
+  // where it expects a flight response ("An unexpected response was received
+  // from the server"). Non-GET requests pass through; the (app) layout's
+  // requireUser() and the actions themselves still enforce auth.
+  const { pathname, search } = request.nextUrl
+  const isNavigation = request.method === "GET" || request.method === "HEAD"
+  if (isNavigation && !data?.claims && !isPublicPath(pathname)) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/login"
+    url.search = `next=${encodeURIComponent(pathname + search)}`
+    const redirect = NextResponse.redirect(url)
+    // Carry any refreshed auth cookies onto the redirect, or sessions desync.
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => redirect.cookies.set(name, value))
+    return redirect
+  }
+
   return supabaseResponse
+}
+
+/** Routes reachable without a session: the auth surface and diagnostics. */
+function isPublicPath(pathname: string): boolean {
+  return (
+    pathname === "/login" ||
+    pathname === "/verify" ||
+    pathname === "/expired" ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/api/health/") ||
+    pathname === "/dev/theme" ||
+    pathname === "/dev/auth"
+  )
 }

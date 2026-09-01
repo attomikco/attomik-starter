@@ -8,11 +8,23 @@ import { AppShellClient } from "./app-shell-client"
  * chrome="full" per design-reference/IMPLEMENTATION.md §3.2 (edge to edge);
  * "inset" reproduces the framed design-artifact presentation.
  */
-export function AppShell({ children, chrome = "full" }: { children: ReactNode; chrome?: "inset" | "full" }) {
+export interface ShellAccount {
+  email: string
+}
+
+export function AppShell({
+  children,
+  chrome = "full",
+  account,
+}: {
+  children: ReactNode
+  chrome?: "inset" | "full"
+  account: ShellAccount
+}) {
   const navigation = getEnabledNavigation()
 
   return (
-    <AppShellClient navigation={navigation} chrome={chrome}>
+    <AppShellClient navigation={navigation} chrome={chrome} account={account}>
       {children}
     </AppShellClient>
   )

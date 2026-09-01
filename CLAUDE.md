@@ -16,6 +16,28 @@ delete module code because a project doesn't use it.
 - `/design-reference` is READ-ONLY reference material. Never modify, rename,
   move, or delete anything inside it.
 
+## Auth rules
+
+- App routes require verified server-side Supabase identity
+  (`getClaims()`); never trust browser session state or `getSession()` for
+  authorization.
+- Use the canonical helpers in `src/core/auth` and the canonical Supabase
+  clients — no ad hoc Supabase clients.
+- Validate every post-login redirect target with `sanitizeNextPath()`;
+  local paths only.
+- Never reveal whether an email exists (the Sent state is identical either
+  way).
+- Profiles/workspaces are separate from authentication (Task 006+).
+- /design-reference remains the auth visual source of truth.
+- Production auth email uses configured SMTP (Resend via
+  supabase/config.toml), never Supabase's shared default sender.
+- Never commit SMTP credentials; the key is passed as env(SMTP_PASS) at
+  `supabase config push` time only.
+- Rate-limit errors may be shown generically (they disclose nothing);
+  account existence must remain undisclosed in every other case.
+- Custom React Email auth templates are a later concern.
+- Details: docs/AUTH.md.
+
 ## Shell rules
 
 - AppShell (`src/ui/shell`) is canonical.

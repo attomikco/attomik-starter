@@ -1,5 +1,7 @@
 "use client"
 
+import { emailInitials } from "@/core/auth/email-validation"
+import type { ShellAccount } from "./app-shell"
 import { AccountPanel, IconButton, MessagesPanel, NotificationsPanel, useUnreadAlerts, useUnreadMail } from "./overlays"
 
 export type ShellPanel = "mail" | "bell" | "account" | null
@@ -10,11 +12,13 @@ export type ShellPanel = "mail" | "bell" | "account" | null
  * buttons with unread dots, divider, account trigger.
  */
 export function CommandBar({
+  account,
   panel,
   setPanel,
   openPalette,
   openKeys,
 }: {
+  account: ShellAccount
   panel: ShellPanel
   setPanel: (p: ShellPanel) => void
   openPalette: () => void
@@ -22,6 +26,8 @@ export function CommandBar({
 }) {
   const mail = useUnreadMail()
   const alerts = useUnreadAlerts()
+  const initials = emailInitials(account.email)
+  const localPart = account.email.split("@")[0] || account.email
   const toggle = (p: Exclude<ShellPanel, null>) => setPanel(panel === p ? null : p)
 
   return (
@@ -54,14 +60,14 @@ export function CommandBar({
       <div style={{ position: "relative" }}>
         <div onClick={() => toggle("account")}
           style={{ display: "flex", alignItems: "center", gap: 11, padding: "4px 10px 4px 4px", borderRadius: 999, cursor: "pointer", background: panel === "account" ? "var(--shell)" : "transparent" }}>
-          <span style={{ width: 38, height: 38, borderRadius: 999, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", color: "var(--accent-text)", display: "grid", placeItems: "center", fontSize: 13.5, fontWeight: "var(--w-bold)" as never, flex: "none" }}>AH</span>
+          <span style={{ width: 38, height: 38, borderRadius: 999, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", color: "var(--accent-text)", display: "grid", placeItems: "center", fontSize: 13.5, fontWeight: "var(--w-bold)" as never, flex: "none" }}>{initials}</span>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em" }}>Anna Hayes</div>
-            <div style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }}>anna@attomik.co</div>
+            <div style={{ fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em" }}>{localPart}</div>
+            <div style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }}>{account.email}</div>
           </div>
           <span style={{ color: "var(--txt-4)", fontSize: 11, fontFamily: "var(--mono)", transform: panel === "account" ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .12s" }}>▾</span>
         </div>
-        {panel === "account" && <AccountPanel openPalette={openPalette} openKeys={openKeys} />}
+        {panel === "account" && <AccountPanel account={account} openPalette={openPalette} openKeys={openKeys} />}
       </div>
     </div>
   )
