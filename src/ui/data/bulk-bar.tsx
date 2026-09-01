@@ -1,5 +1,7 @@
 "use client"
 
+import { copy } from "@/core/i18n"
+
 /**
  * Floating bulk action bar, ported from the reference: inverted pill
  * centered near the bottom. The table doesn't know what actions mean —
@@ -13,7 +15,7 @@ export interface BulkAction {
 
 export function BulkBar({
   count,
-  noun = "record",
+  noun = copy.data.recordNoun,
   actions,
   onClear,
 }: {
@@ -24,10 +26,10 @@ export function BulkBar({
 }) {
   if (count === 0) return null
   return (
-    <div role="toolbar" aria-label="Bulk actions"
+    <div role="toolbar" aria-label={copy.data.bulkActions}
       style={{ position: "absolute", left: "50%", bottom: 44, transform: "translateX(-50%)", zIndex: 60, display: "flex", alignItems: "center", gap: 6, background: "var(--txt)", borderRadius: 999, padding: "12px 14px 12px 22px", boxShadow: "0 20px 44px rgba(0,0,0,.24)", animation: "sh-rise .16s ease-out" }}>
       <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--card)", marginRight: 8 }}>
-        {count} {noun}{count === 1 ? "" : "s"} selected
+        {copy.data.selected(count, noun)}
       </span>
       <span aria-hidden style={{ width: 1, height: 20, background: "rgba(255,255,255,.18)", display: "block", marginRight: 8 }} />
       {actions.map((a) => (
@@ -36,7 +38,7 @@ export function BulkBar({
           {a.label}
         </button>
       ))}
-      <button className="ui-btn sh-bulk-action" aria-label="Clear selection" onClick={onClear}
+      <button className="ui-btn sh-bulk-action" aria-label={copy.data.clearSelection} onClick={onClear}
         style={{ width: 30, height: 30, borderRadius: 999, display: "grid", placeItems: "center", color: "var(--card)", flex: "none" }}>
         ✕
       </button>

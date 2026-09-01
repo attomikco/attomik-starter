@@ -42,6 +42,9 @@ Follow in order; each step ends with a check.
 1. **Rename the app**: `src/config/project.ts` → `name`. This is the
    workspace name and browser title until Appearance is configured.
    ✓ Grep for "Attomik Starter" outside docs if the project must not show it.
+   Set `locale` in the same file (`en` or `es-MX`) — it drives `<html lang>`
+   and every fixed shell string (docs/SHELL.md §Locale). ✓ The rail group
+   headings and the search placeholder render in that language.
 
 2. **Create the Supabase project** (dashboard or MCP). Note the project
    ref (the subdomain of the project URL).

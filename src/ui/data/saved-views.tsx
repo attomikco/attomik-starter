@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { copy } from "@/core/i18n"
 import { deserializeView, serializeView } from "@/core/data/query"
 import type { SavedView } from "@/core/data/types"
 
@@ -56,8 +57,8 @@ export function SavedViewsBar({
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-      <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginRight: 4 }}>Saved views</span>
-      <button className="ui-btn" style={chip(activeId === null)} onClick={() => onPick(null)}>All records</button>
+      <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginRight: 4 }}>{copy.data.savedViews}</span>
+      <button className="ui-btn" style={chip(activeId === null)} onClick={() => onPick(null)}>{copy.data.allRecords}</button>
       {views.map((v, i) => (
         <span key={v.id} style={{ display: "inline-flex", alignItems: "center" }}>
           <button className="ui-btn" style={chip(activeId === v.id)} onClick={() => onPick(v)}>

@@ -1,5 +1,7 @@
 "use client"
 
+import { copy } from "@/core/i18n"
+
 /**
  * ⌘/ shortcuts sheet, ported from the reference host. Only shell-level
  * groups are listed while product modules are unported; the reference's
@@ -13,8 +15,8 @@ export function ShortcutsDialog({
   onClose: () => void
 }) {
   const groups: [string, [string, string][]][] = [
-    ["Anywhere", [["Command palette", "⌘ K"], ["Shortcuts", "⌘ /"], ["Collapse the sidebar", "⌘ B"], ["Close anything", "Esc"]]],
-    ...(goRows.length > 0 ? [["Move", goRows] as [string, [string, string][]]] : []),
+    [copy.shortcuts.anywhere, [[copy.shortcuts.commandPalette, "⌘ K"], [copy.shortcuts.shortcuts, "⌘ /"], [copy.shortcuts.collapseSidebar, "⌘ B"], [copy.shortcuts.closeAnything, "Esc"]]],
+    ...(goRows.length > 0 ? [[copy.shortcuts.move, goRows] as [string, [string, string][]]] : []),
   ]
 
   return (
@@ -24,7 +26,7 @@ export function ShortcutsDialog({
         style={{ width: 660, maxWidth: "calc(100% - 32px)", maxHeight: "82%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r)", boxShadow: "0 30px 70px rgba(0,0,0,.3)", display: "flex", flexDirection: "column", overflow: "hidden", animation: "sh-rise .14s ease-out" }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid var(--line)", flex: "none" }}>
-          <span style={{ fontSize: 18, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em", flex: 1 }}>Keyboard shortcuts</span>
+          <span style={{ fontSize: 18, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em", flex: 1 }}>{copy.shortcuts.title}</span>
           <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", border: "1px solid var(--line)", borderRadius: 6, padding: "4px 8px" }}>ESC</span>
         </div>
         <div className="sh-scroll" style={{ flex: 1, minHeight: 0, padding: "18px 24px", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 24 }}>
@@ -43,7 +45,7 @@ export function ShortcutsDialog({
           ))}
         </div>
         <div style={{ padding: "14px 24px", borderTop: "1px solid var(--line)", fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", flex: "none" }}>
-          Shortcuts are off while a text field has focus, except Escape.
+          {copy.shortcuts.footer}
         </div>
       </div>
     </div>

@@ -25,13 +25,6 @@ export interface NavigationGroup {
 /** Display order of the rail groups, mirroring the design-reference shell. */
 export const GROUP_ORDER: readonly NavGroup[] = ["operate", "configure", "settings"]
 
-/** Rail group headings as the reference renders them. */
-export const GROUP_LABELS: Record<NavGroup, string> = {
-  operate: "Operate",
-  configure: "Configure",
-  settings: "Settings",
-}
-
 export function buildNavigation(modules: ModuleDefinition[]): NavigationGroup[] {
   const items: NavigationItem[] = modules
     .flatMap((mod) => (mod.navigation ? [{ moduleId: mod.id, ...mod.navigation }] : []))

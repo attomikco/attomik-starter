@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { copy } from "@/core/i18n"
 import { filterPaletteGroups, type PaletteGroup } from "./helpers"
 
 /**
@@ -38,7 +39,7 @@ export function CommandPalette({
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="2" strokeLinecap="round" style={{ flex: "none" }}><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
           <input
             ref={inputRef}
-            placeholder="Search screens and actions"
+            placeholder={copy.search.placeholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             style={{ flex: 1, minWidth: 0, fontSize: 15.5 }}

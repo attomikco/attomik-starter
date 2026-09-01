@@ -30,8 +30,10 @@ enforces `^[a-z0-9_]+(\.[a-z0-9_]+)+$` for custom events;
    Actor is `auth.uid()` at mutation time (null for service/system paths).
 2. **`recordActivity()`** (`src/core/audit`) for future module events that
    are not table-shaped. It wraps the `record_activity` RPC: actor is
-   FORCED to the verified caller (never a parameter), workspace membership
-   is enforced, the action name is validated. Best-effort by default
+   FORCED to the verified caller (never a parameter), **member rank or
+   above is enforced** (viewers are read-only and never author events —
+   `canRecordActivity()` in `src/core/permissions` mirrors the rule for
+   UI), the action name is validated. Best-effort by default
    (failure logged, mutation proceeds); pass `required: true` when a module
    decides its mutation must not proceed unaudited. This is the documented
    failure-semantics rule.
@@ -58,10 +60,15 @@ The trigger functions and RPC follow the hardened SECURITY DEFINER pattern
 ## Rendering
 
 The database stores structured machine events; prose is rendered centrally
-by `summarizeEvent()` — "pablo changed ana's role from viewer to member",
-never `workspace.member.role_changed` in the UI. Verb chips and tones come
-from `eventVerb`/`eventTone` (red = destructive only). Actor identity uses
-the co-member profile visibility model; null actors render as System.
+by `summarizeEvent(event, actor, copy.audit)` — "pablo changed ana's role
+from viewer to member", never `workspace.member.role_changed` in the UI.
+The words come from the project locale (`src/core/i18n`, docs/SHELL.md
+§Locale); the summarizer itself stays pure. Unknown module actions use the
+locale's `fallback`: English reads the identifier as words
+("media file uploaded"), es-MX shows the identifier as-is, since English
+identifier words are not Spanish prose. Verb chips and tones come from
+`eventVerb`/`eventTone` (red = destructive only). Actor identity uses the
+co-member profile visibility model; null actors render as System.
 
 ## Activity page
 

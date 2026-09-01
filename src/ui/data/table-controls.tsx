@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react"
 import type { ColumnDef } from "@/core/data/types"
+import { copy } from "@/core/i18n"
 
 /** Status tabs on the shell pill, from the reference table toolbar. */
 export function StatusTabs({
@@ -74,13 +75,13 @@ export function ColumnPicker<T>({
     <div style={{ position: "relative" }}>
       <ControlButton
         icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M15 4v16" /></svg>}
-        label="Columns"
+        label={copy.data.columns}
         on={open}
         onClick={() => setOpen((o) => !o)}
       />
       {open && (
         <div style={{ position: "absolute", top: 46, right: 0, zIndex: 40, width: 236, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.14)", padding: 12, animation: "sh-rise .14s ease-out" }}>
-          <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", padding: "2px 8px 10px" }}>Shown columns</div>
+          <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", padding: "2px 8px 10px" }}>{copy.data.shownColumns}</div>
           {columns.map((c) => {
             const shown = c.pinned || !hidden.includes(c.key)
             return (
@@ -93,13 +94,13 @@ export function ColumnPicker<T>({
                   {shown ? "✓" : ""}
                 </span>
                 {c.label}
-                {c.pinned && <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", marginLeft: "auto" }}>pinned</span>}
+                {c.pinned && <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", marginLeft: "auto" }}>{copy.data.pinned}</span>}
               </button>
             )
           })}
           <button className="ui-btn" onClick={onReset}
             style={{ width: "100%", marginTop: 8, borderTop: "1px solid var(--line)", paddingTop: 10, fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent-text)", textAlign: "left", paddingLeft: 10 }}>
-            Reset to default
+            {copy.data.resetColumns}
           </button>
         </div>
       )}

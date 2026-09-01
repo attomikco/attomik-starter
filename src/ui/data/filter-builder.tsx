@@ -1,7 +1,7 @@
 "use client"
 
 import type { CSSProperties } from "react"
-import { OPERATOR_LABELS } from "@/core/data/query"
+import { copy } from "@/core/i18n"
 import type { FilterCondition, FilterFieldDef, FilterOperator } from "@/core/data/types"
 
 /**
@@ -45,9 +45,9 @@ export function FilterBuilder({
   return (
     <div style={{ background: "var(--shell)", borderRadius: "var(--r2)", padding: 18, flex: "none", animation: "sh-rise .16s ease-out" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)" }}>Match all conditions</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)" }}>{copy.data.matchAll}</span>
         <span style={{ height: 1, background: "var(--line)", flex: 1, display: "block" }} />
-        <button className="ui-btn" onClick={onClear} style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent-text)" }}>Clear all</button>
+        <button className="ui-btn" onClick={onClear} style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent-text)" }}>{copy.data.clearAll}</button>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -56,9 +56,9 @@ export function FilterBuilder({
           const noValue = c.op === "is_empty" || c.op === "is_not_empty"
           return (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", width: 34, flex: "none" }}>{i === 0 ? "Where" : "And"}</span>
+              <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", width: 34, flex: "none" }}>{i === 0 ? copy.data.where : copy.data.and}</span>
 
-              <select aria-label="Filter field" style={selectStyle} value={c.field}
+              <select aria-label={copy.data.filterField} style={selectStyle} value={c.field}
                 onChange={(e) => {
                   const next = fieldFor(e.target.value)
                   update(i, { field: next.key, op: next.kind === "number" ? "gte" : "equals", value: next.options?.[0] ?? "" })
@@ -66,23 +66,23 @@ export function FilterBuilder({
                 {fields.map((f) => <option key={f.key} value={f.key}>{f.label}</option>)}
               </select>
 
-              <select aria-label="Filter operator" style={{ ...selectStyle, minWidth: 108, fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }} value={c.op}
+              <select aria-label={copy.data.filterOperator} style={{ ...selectStyle, minWidth: 108, fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }} value={c.op}
                 onChange={(e) => update(i, { op: e.target.value as FilterOperator })}>
-                {operatorsFor(field).map((o) => <option key={o} value={o}>{OPERATOR_LABELS[o]}</option>)}
+                {operatorsFor(field).map((o) => <option key={o} value={o}>{copy.data.operators[o]}</option>)}
               </select>
 
               {!noValue && (field.options ? (
-                <select aria-label="Filter value" style={{ ...selectStyle, minWidth: 148 }} value={c.value}
+                <select aria-label={copy.data.filterValue} style={{ ...selectStyle, minWidth: 148 }} value={c.value}
                   onChange={(e) => update(i, { value: e.target.value })}>
                   {field.options.map((o) => <option key={o} value={o}>{o}</option>)}
                 </select>
               ) : (
-                <input aria-label="Filter value" value={c.value} onChange={(e) => update(i, { value: e.target.value })}
+                <input aria-label={copy.data.filterValue} value={c.value} onChange={(e) => update(i, { value: e.target.value })}
                   inputMode={field.kind === "number" ? "decimal" : undefined}
                   style={{ ...selectStyle, minWidth: 148, cursor: "text" }} />
               ))}
 
-              <button className="ui-btn" aria-label="Remove condition" onClick={() => onChange(conditions.filter((_, j) => j !== i))}
+              <button className="ui-btn" aria-label={copy.data.removeCondition} onClick={() => onChange(conditions.filter((_, j) => j !== i))}
                 style={{ width: 30, height: 30, borderRadius: 8, display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
                 ✕
               </button>
@@ -97,7 +97,7 @@ export function FilterBuilder({
       }}
         style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 14, fontSize: 13.5, fontWeight: "var(--w-semi)" as never, color: "var(--accent-text)", background: "var(--accent-tint)", borderRadius: 999, padding: "9px 16px" }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-        Add condition
+        {copy.data.addCondition}
       </button>
     </div>
   )

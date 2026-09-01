@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 import { projectConfig } from "@/config/project"
+import { copy } from "@/core/i18n"
 import { defaultSkin, skinStylesheet } from "@/core/branding"
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   // cannot know the browser's prefers-color-scheme or localStorage. This is
   // the one sanctioned attribute mismatch; children are still verified.
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={copy.lang} suppressHydrationWarning>
       <body
         style={{
           margin: 0,

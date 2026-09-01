@@ -5,7 +5,11 @@ Real findings from the first project bootstrapped off the starter
 task with a spec. Do not patch around them in project clones without
 first deciding the canonical seam here.
 
-## 1. Shell localization seam
+## 1. Shell localization seam — implemented
+
+Shipped as `src/core/i18n` + `projectConfig.locale` (`en`, `es-MX`); see
+docs/SHELL.md §Locale. Remaining gap: the module registry's navigation
+labels are still module definitions edited per project. Original finding:
 
 **Problem.** The shell owns hardcoded English strings: navigation group
 labels (`GROUP_LABELS` in `src/core/navigation/build.ts`), the command-bar

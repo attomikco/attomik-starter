@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import type { NavigationGroup } from "@/core/navigation"
+import { copy } from "@/core/i18n"
 import { CommandBar, type ShellPanel } from "./command-bar"
 import type { ShellAccount, ShellWorkspace } from "./app-shell"
 import { CommandPalette } from "./command-palette"
@@ -129,23 +130,23 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
 
   const paletteGroups: PaletteGroup[] = useMemo(() => [
     {
-      label: "Go to",
+      label: copy.palette.goTo,
       items: destinations.map((d) => ({ label: d.label, run: () => goto(d.href) })),
     },
     {
-      label: "Actions",
+      label: copy.palette.actions,
       items: [
-        { label: "Collapse the sidebar", run: () => { toggleCollapse(); setPaletteOpen(false) } },
-        { label: "Keyboard shortcuts", run: () => { setKeysOpen(true); setPaletteOpen(false) } },
-        { label: "Switch to dark", run: () => { setMode("dark"); setPaletteOpen(false) } },
-        { label: "Switch to light", run: () => { setMode("light"); setPaletteOpen(false) } },
-        { label: "Follow the system theme", run: () => { setMode("system"); setPaletteOpen(false) } },
+        { label: copy.palette.collapseSidebar, run: () => { toggleCollapse(); setPaletteOpen(false) } },
+        { label: copy.palette.keyboardShortcuts, run: () => { setKeysOpen(true); setPaletteOpen(false) } },
+        { label: copy.palette.switchToDark, run: () => { setMode("dark"); setPaletteOpen(false) } },
+        { label: copy.palette.switchToLight, run: () => { setMode("light"); setPaletteOpen(false) } },
+        { label: copy.palette.followSystem, run: () => { setMode("system"); setPaletteOpen(false) } },
       ],
     },
   ], [destinations, goto, toggleCollapse, setMode])
 
   const goHint = Object.entries(goMap).map(([letter, d]) => `${letter.toUpperCase()} ${d.label.toLowerCase()}`).join(" · ")
-  const goRows: [string, string][] = Object.entries(goMap).map(([letter, d]) => [d.label, `G then ${letter.toUpperCase()}`])
+  const goRows: [string, string][] = Object.entries(goMap).map(([letter, d]) => [d.label, copy.shortcuts.goThen(letter.toUpperCase())])
 
   const pageStyle: CSSProperties = {
     width: "100%", ...(full ? {} : { maxWidth: 1440 }), margin: "0 auto", height: "100vh",
@@ -207,7 +208,7 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
         {goArmed && goHint && (
           <div style={{ position: "absolute", left: "50%", bottom: 32, transform: "translateX(-50%)", zIndex: 97, display: "flex", alignItems: "center", gap: 10, background: "var(--txt)", borderRadius: 999, padding: "10px 18px", boxShadow: "0 18px 40px rgba(0,0,0,.24)" }}>
             <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--card)" }}>G</span>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--line-2)" }}>then</span>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--line-2)" }}>{copy.shortcuts.then}</span>
             <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--card)" }}>{goHint}</span>
           </div>
         )}

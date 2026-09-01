@@ -86,16 +86,6 @@ export function applyFilters<T>(
   return rows.filter((r) => conditions.every((c) => matchesCondition(valueOf(r, c.field), c)))
 }
 
-export const OPERATOR_LABELS: Record<FilterCondition["op"], string> = {
-  equals: "is",
-  not_equals: "is not",
-  contains: "contains",
-  is_empty: "is empty",
-  is_not_empty: "is not empty",
-  gte: "at least",
-  lte: "at most",
-}
-
 // ---------------------------------------------------------------- paging
 
 export function pageCount(state: Pick<PageState, "total" | "pageSize">): number {

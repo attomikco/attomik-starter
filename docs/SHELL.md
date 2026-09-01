@@ -22,6 +22,26 @@ Active state derives from the route (`isNavActive` in `helpers.ts`), not
 from any selected-screen state. The palette's "Go to" group and the G-jump
 map are built from the same enabled items.
 
+## Locale
+
+Every fixed, user-facing string the chrome renders comes from ONE
+dictionary: `src/core/i18n` → `copy`, keyed by `projectConfig.locale`
+(`src/config/project.ts`). That covers `<html lang>`, the search
+placeholder, rail group headings, the palette groups and actions, the
+shortcuts sheet, the account menu, theme labels, the canonical data
+primitives (loading/empty/error states, pagination, column picker, filter
+builder, bulk bar), SaveBar/ConfirmDialog defaults, the app-level error
+and 404 states, and the Activity summaries (`copy.audit`).
+
+Shipped locales: `en` (the reference copy) and `es-MX`. Adding one is a
+dictionary file next to `en.ts` that satisfies `ShellCopy`, registered in
+`src/core/i18n/index.ts` and `locales.ts`; the i18n test enforces key
+parity so a locale can never silently fall back to English.
+
+What the dictionary does NOT cover: module copy (each module owns its
+own strings) and the module registry's navigation labels, which are module
+definitions — a non-English project edits those labels in its own registry.
+
 ## Toasts
 
 ```ts

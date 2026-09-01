@@ -1,5 +1,7 @@
 "use client"
 
+import { copy } from "@/core/i18n"
+
 /** Reference pagination: ‹ numbered pages ›, 32px squares, mono digits. */
 export interface PaginationProps {
   page: number
@@ -32,10 +34,10 @@ export function Pagination({ page, pageCount, onPage }: PaginationProps) {
   )
 
   return (
-    <nav aria-label="Pagination" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      {cell("‹", page > 1 ? page - 1 : null, false, "Previous page")}
+    <nav aria-label={copy.data.pagination} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      {cell("‹", page > 1 ? page - 1 : null, false, copy.data.previousPage)}
       {numbers.map((p) => cell(String(p), p, p === page))}
-      {cell("›", page < pageCount ? page + 1 : null, false, "Next page")}
+      {cell("›", page < pageCount ? page + 1 : null, false, copy.data.nextPage)}
     </nav>
   )
 }

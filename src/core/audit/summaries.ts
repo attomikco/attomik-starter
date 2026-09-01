@@ -1,8 +1,11 @@
+import type { AuditCopy } from "@/core/i18n/copy"
+
 /**
  * Human-readable rendering for activity events. The database stores
  * machine-oriented structured events (dot-separated actions + jsonb
- * diffs); prose is rendered here, centrally — never persisted. Pure and
- * node-testable.
+ * diffs); prose is rendered here, centrally — never persisted. The words
+ * come from the locale dictionary (`copy.audit` in src/core/i18n), passed
+ * in explicitly so this module stays pure and node-testable.
  */
 
 export interface EventShape {
@@ -14,38 +17,32 @@ export interface EventShape {
 
 const str = (v: unknown) => (v === null || v === undefined ? "—" : String(v))
 
-export function summarizeEvent(e: EventShape, actor: string): string {
+export function summarizeEvent(e: EventShape, actor: string, t: AuditCopy): string {
   const label = e.resourceLabel ?? "—"
   switch (e.action) {
     case "workspace.created":
-      return `${actor} created the workspace “${label}”`
-    case "workspace.settings.updated": {
-      const fields = Object.keys(e.after ?? e.before ?? {})
-      return `${actor} updated workspace settings (${fields.length} field${fields.length === 1 ? "" : "s"})`
-    }
+      return t.workspaceCreated(actor, label)
+    case "workspace.settings.updated":
+      return t.settingsUpdated(actor, Object.keys(e.after ?? e.before ?? {}).length)
     case "workspace.branding.updated":
-      return `${actor} updated the workspace branding`
+      return t.brandingUpdated(actor)
     case "workspace.member.added":
-      return actor === label
-        ? `${label} joined as ${str(e.after?.role)}`
-        : `${actor} added ${label} as ${str(e.after?.role)}`
+      return actor === label ? t.memberJoined(label, str(e.after?.role)) : t.memberAdded(actor, label, str(e.after?.role))
     case "workspace.member.role_changed":
-      return `${actor} changed ${label}’s role from ${str(e.before?.role)} to ${str(e.after?.role)}`
+      return t.roleChanged(actor, label, str(e.before?.role), str(e.after?.role))
     case "workspace.member.removed":
-      return `${actor} removed ${label} from the workspace`
+      return t.memberRemoved(actor, label)
     case "workspace.invitation.created":
-      return `${actor} invited ${label} as ${str(e.after?.role)}`
+      return t.invited(actor, label, str(e.after?.role))
     case "workspace.invitation.resent":
-      return `${actor} resent the invitation for ${label}`
+      return t.invitationResent(actor, label)
     case "workspace.invitation.revoked":
-      return `${actor} revoked the invitation for ${label}`
+      return t.invitationRevoked(actor, label)
     case "workspace.invitation.accepted":
-      return `${label} accepted their invitation`
-    default: {
-      // future module events: "media.file.uploaded" → "actor media file uploaded — label"
-      const words = e.action.split(".").join(" ").split("_").join(" ")
-      return `${actor} — ${words}${e.resourceLabel ? ` — ${e.resourceLabel}` : ""}`
-    }
+      return t.invitationAccepted(label)
+    default:
+      // future module events: the locale decides how a raw action reads
+      return t.fallback(actor, e.action, e.resourceLabel)
   }
 }
 

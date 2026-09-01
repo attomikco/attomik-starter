@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import type { ActivityEvent } from "@/core/audit"
 import { eventTone, eventVerb, summarizeEvent } from "@/core/audit/summaries"
+import { copy } from "@/core/i18n"
 import { pageCount, pageSummary } from "@/core/data/query"
 import { DataTable, ToneChip } from "@/ui/data/data-table"
 import { SearchInput } from "@/ui/data/table-controls"
@@ -73,7 +74,7 @@ export function ActivityScreen({
   }, [q])
 
   const actorLabel = (e: ActivityEvent) =>
-    e.actorUserId ? (actorEmails[e.actorUserId] ?? "former member") : "System"
+    e.actorUserId ? (actorEmails[e.actorUserId] ?? copy.audit.formerMember) : copy.audit.system
 
   const when = (iso: string) => `${iso.slice(0, 10)} ${iso.slice(11, 16)}`
 
@@ -87,7 +88,7 @@ export function ActivityScreen({
       key: "summary", label: "What happened", flex: true,
       render: (e: ActivityEvent) => (
         <span style={{ fontSize: 13.5, color: "var(--txt)", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>
-          {summarizeEvent({ action: e.action, resourceLabel: e.resourceLabel, before: e.before, after: e.after }, actorLabel(e))}
+          {summarizeEvent({ action: e.action, resourceLabel: e.resourceLabel, before: e.before, after: e.after }, actorLabel(e), copy.audit)}
         </span>
       ),
     },
@@ -176,7 +177,7 @@ function EventDrawer({ event, actor, onClose }: { event: ActivityEvent; actor: s
                 {event.createdAt.slice(0, 10)} · {event.createdAt.slice(11, 19)}
               </div>
               <div style={{ fontSize: 20, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", lineHeight: 1.15 }}>
-                {summarizeEvent({ action: event.action, resourceLabel: event.resourceLabel, before: event.before, after: event.after }, actor)}
+                {summarizeEvent({ action: event.action, resourceLabel: event.resourceLabel, before: event.before, after: event.after }, actor, copy.audit)}
               </div>
             </div>
             <button className="ui-btn" aria-label="Close" onClick={onClose}

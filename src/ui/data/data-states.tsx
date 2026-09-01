@@ -1,6 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
+import { copy } from "@/core/i18n"
 
 /**
  * The four canonical data states, ported from part-data.dc.html. Every
@@ -9,7 +10,7 @@ import type { ReactNode } from "react"
 
 export function TableLoading({ rowCount = 7 }: { rowCount?: number }) {
   return (
-    <div aria-busy="true" aria-label="Loading">
+    <div aria-busy="true" aria-label={copy.data.loading}>
       {Array.from({ length: rowCount }, (_, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "15px 18px", borderBottom: "1px solid var(--line)" }}>
           <span style={{ width: 18, height: 18, borderRadius: 5, background: "var(--shell)", display: "block", flex: "none" }} />
@@ -56,7 +57,7 @@ export function TableError({
   title,
   body,
   onRetry,
-  retryLabel = "Retry",
+  retryLabel = copy.data.retry,
   secondary,
   traceId,
 }: {
@@ -81,7 +82,7 @@ export function TableError({
         </button>
         {secondary}
       </div>
-      {traceId && <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)", marginTop: 10 }}>trace {traceId}</span>}
+      {traceId && <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)", marginTop: 10 }}>{copy.data.trace(traceId)}</span>}
     </div>
   )
 }

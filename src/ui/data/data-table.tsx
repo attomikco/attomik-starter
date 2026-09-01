@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, type ReactNode } from "react"
+import { copy } from "@/core/i18n"
 import type { ColumnDef, DataState, SortState } from "@/core/data/types"
 import { TableEmpty, TableError, TableLoading } from "./data-states"
 import { Pagination, type PaginationProps } from "./pagination"
@@ -91,7 +92,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
     <div ref={wrapRef} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : { flex: "none" }), display: "flex", flexDirection: "column", border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden", position: "relative" }}>
       {/* Sticky header — hidden in the narrow card representation */}
       <div style={{ display: narrow ? "none" : "flex", alignItems: "center", gap: 14, padding: "11px 18px", background: "var(--shell)", borderBottom: "1px solid var(--line)", flex: "none", position: "sticky", top: 0, zIndex: 5 }}>
-        {selectable && checkbox(allOn, "Select all rows", onToggleAll)}
+        {selectable && checkbox(allOn, copy.data.selectAllRows, onToggleAll)}
         {visible.map((c) => {
           const sorted = sort?.key === c.key
           const header = (
@@ -141,7 +142,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
                 }}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                {selectable && checkbox(isSel, "Select row", () => onToggleRow(key))}
+                {selectable && checkbox(isSel, copy.data.selectRow, () => onToggleRow(key))}
                 {visible.map((c) => (
                   <span key={c.key} style={{
                     ...colStyle(c),

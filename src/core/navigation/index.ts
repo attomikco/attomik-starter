@@ -7,7 +7,7 @@ import { buildNavigation, type NavigationGroup, type NavigationItem } from "./bu
  */
 
 export type { NavigationGroup, NavigationItem }
-export { GROUP_LABELS, GROUP_ORDER } from "./build"
+export { GROUP_ORDER } from "./build"
 
 export function getEnabledNavigation(): NavigationGroup[] {
   return buildNavigation(getEnabledModules())

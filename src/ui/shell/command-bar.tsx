@@ -1,6 +1,7 @@
 "use client"
 
 import { emailInitials } from "@/core/auth/email-validation"
+import { copy } from "@/core/i18n"
 import type { ShellAccount } from "./app-shell"
 import { AccountPanel } from "./overlays"
 
@@ -33,7 +34,7 @@ export function CommandBar({
       <div onClick={openPalette}
         style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 11, background: "var(--shell)", borderRadius: 13, padding: "11px 14px", cursor: "pointer" }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="2" strokeLinecap="round" style={{ flex: "none" }}><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
-        <span style={{ fontSize: 14.5, color: "var(--txt-3)", flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Search screens and actions</span>
+        <span style={{ fontSize: 14.5, color: "var(--txt-3)", flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{copy.search.placeholder}</span>
         <span style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-4)", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 6, padding: "3px 7px" }}>⌘K</span>
       </div>
 

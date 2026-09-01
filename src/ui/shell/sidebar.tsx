@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import type { CSSProperties } from "react"
 import type { NavigationGroup } from "@/core/navigation"
 import type { ShellWorkspace } from "./app-shell"
-import { GROUP_LABELS } from "@/core/navigation/build"
+import { copy } from "@/core/i18n"
 import { NavItem } from "./nav-item"
 import { THEME_MODES, useTheme } from "./theme"
 
@@ -50,8 +50,8 @@ export function Sidebar({
           <button
             className="ui-btn"
             onClick={onToggleCollapse}
-            aria-label={tight ? "Expand the sidebar" : "Collapse the sidebar"}
-            title={tight ? "Expand the sidebar" : "Collapse the sidebar"}
+            aria-label={tight ? copy.nav.expandSidebar : copy.nav.collapseSidebar}
+            title={tight ? copy.nav.expandSidebar : copy.nav.collapseSidebar}
             style={{ width: 30, height: 30, borderRadius: 9, display: "grid", placeItems: "center", flex: "none", color: "var(--txt-3)", background: tight ? "var(--card)" : "transparent" }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg>
@@ -64,7 +64,7 @@ export function Sidebar({
           <div key={group} style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 16 }}>
             {!tight ? (
               <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--txt-4)", padding: "0 12px 8px" }}>
-                {GROUP_LABELS[group]}
+                {copy.nav.groups[group]}
               </div>
             ) : (
               <div style={{ height: 1, background: "var(--line)", margin: "0 8px 8px", display: "block" }} />
@@ -82,9 +82,10 @@ export function Sidebar({
         ))}
       </div>
 
-      <div role="radiogroup" aria-label="Theme" style={{ flex: "none", display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, margin: "8px 0", boxSizing: "border-box", flexDirection: tight ? "column" : "row" }}>
-        {THEME_MODES.map(([choice, label, short, icon]) => {
+      <div role="radiogroup" aria-label={copy.nav.theme} style={{ flex: "none", display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, margin: "8px 0", boxSizing: "border-box", flexDirection: tight ? "column" : "row" }}>
+        {THEME_MODES.map(([choice, icon]) => {
           const active = mode === choice
+          const { title, short } = copy.nav.themeModes[choice]
           return (
             <button
               key={choice}
@@ -92,7 +93,7 @@ export function Sidebar({
               role="radio"
               aria-checked={active}
               onClick={() => setMode(choice)}
-              title={label}
+              title={title}
               style={{
                 flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
                 borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase",
@@ -113,7 +114,7 @@ export function Sidebar({
         className="sh-credit"
         style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--txt-4)", textDecoration: "none", padding: "4px 12px 2px", flex: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
       >
-        {!tight && "Built by"}
+        {!tight && copy.nav.builtBy}
         <svg width="10" height="10" viewBox="0 0 77 77" fill="none" aria-hidden="true" style={{ flex: "none", opacity: 0.85 }}>
           <g transform="translate(-11.56 -7)" stroke="currentColor" strokeWidth="7" strokeLinecap="round">
             <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81" />
@@ -137,7 +138,7 @@ function WorkspaceMark({ workspace }: { workspace: ShellWorkspace }) {
   const { logoLightUrl, logoDarkUrl, name } = workspace
   const img = (src: string, cls?: string) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img key={cls ?? src} src={src} alt={`${name} logo`} className={cls} style={{ height: 30, width: "auto", maxWidth: 176, objectFit: "contain" }} />
+    <img key={cls ?? src} src={src} alt={copy.nav.logoAlt(name)} className={cls} style={{ height: 30, width: "auto", maxWidth: 176, objectFit: "contain" }} />
   )
 
   if (logoLightUrl && logoDarkUrl) {
@@ -159,7 +160,7 @@ function WorkspaceMark({ workspace }: { workspace: ShellWorkspace }) {
   return (
     <span style={{ height: 34, width: "100%", maxWidth: 176, border: "1px dashed var(--line-2)", borderRadius: "var(--r3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxSizing: "border-box" }}>
       <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--line-2)", display: "block", flex: "none" }} />
-      <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".13em", textTransform: "uppercase", color: "var(--txt-4)" }}>Logo</span>
+      <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".13em", textTransform: "uppercase", color: "var(--txt-4)" }}>{copy.nav.logoPlaceholder}</span>
     </span>
   )
 }

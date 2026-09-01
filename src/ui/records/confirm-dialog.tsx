@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { copy } from "@/core/i18n"
 
 /**
  * Canonical confirmation dialog, ported from part-data.dc.html `ask()`.
@@ -64,8 +65,8 @@ export function ConfirmDialog({ options, onClose }: { options: ConfirmOptions | 
 
         {options.typedWord && (
           <label className="ui-field" style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--shell)", borderRadius: "var(--r3)", padding: "12px 16px", fontFamily: "var(--mono)", fontSize: 12, color: "var(--txt-2)", marginBottom: 22 }}>
-            Type <span style={{ color: "var(--txt)" }}>{options.typedWord}</span> to confirm
-            <input value={typed} onChange={(e) => setTyped(e.target.value)} aria-label={`Type ${options.typedWord} to confirm`}
+            {copy.forms.typeToConfirm(options.typedWord)}
+            <input value={typed} onChange={(e) => setTyped(e.target.value)} aria-label={copy.forms.typeToConfirm(options.typedWord)}
               style={{ flex: 1, minWidth: 60, fontFamily: "var(--mono)", fontSize: 12, textTransform: "uppercase" }} />
           </label>
         )}
@@ -73,7 +74,7 @@ export function ConfirmDialog({ options, onClose }: { options: ConfirmOptions | 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button className="ui-btn sh-pick" onClick={onClose}
             style={{ flex: 1, textAlign: "center", fontSize: 14.5, fontWeight: "var(--w-semi)" as never, color: "var(--txt-2)", border: "1px solid var(--line-2)", borderRadius: 999, padding: "12px 0" }}>
-            {options.cancelLabel ?? "Cancel"}
+            {options.cancelLabel ?? copy.forms.cancel}
           </button>
           <button className="ui-btn" disabled={blocked} onClick={() => { onClose(); options.onConfirm() }}
             style={{ flex: 1, textAlign: "center", fontSize: 14.5, fontWeight: "var(--w-semi)" as never, borderRadius: 999, padding: "13px 0",

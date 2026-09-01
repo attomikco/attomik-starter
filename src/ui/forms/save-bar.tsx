@@ -1,5 +1,7 @@
 "use client"
 
+import { copy } from "@/core/i18n"
+
 /**
  * Explicit-save footer + unsaved-changes pill, ported from part-records.
  * Standard CRUD forms use explicit Save; Appearance's autosave is the
@@ -12,7 +14,7 @@ export function UnsavedChangesPill() {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--warn)", background: "var(--warn-tint)", borderRadius: 999, padding: "6px 12px" }}>
       <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--warn-fill)", display: "block" }} />
-      Unsaved changes
+      {copy.forms.unsavedChanges}
     </span>
   )
 }
@@ -23,8 +25,8 @@ export function SaveBar({
   errorMessage,
   onSave,
   onDiscard,
-  saveLabel = "Save changes",
-  discardLabel = "Discard",
+  saveLabel = copy.forms.saveChanges,
+  discardLabel = copy.forms.discard,
 }: {
   state: SaveState
   hint?: string
@@ -36,11 +38,11 @@ export function SaveBar({
 }) {
   const disabled = state === "clean" || state === "saving" || state === "saved"
   const hintText =
-    state === "error" ? (errorMessage ?? "Could not save") :
-    state === "saving" ? "Saving…" :
-    state === "dirty" ? "Unsaved edits on this record" :
-    state === "saved" ? "All changes saved" :
-    hint ?? "No changes yet"
+    state === "error" ? (errorMessage ?? copy.forms.couldNotSave) :
+    state === "saving" ? copy.forms.saving :
+    state === "dirty" ? copy.forms.unsavedEdits :
+    state === "saved" ? copy.forms.allSaved :
+    hint ?? copy.forms.noChanges
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none", borderTop: "1px solid var(--line)", paddingTop: 16 }}>
@@ -60,7 +62,7 @@ export function SaveBar({
           ...(disabled
             ? { background: "var(--shell)", color: "var(--txt-4)", cursor: "default" }
             : { background: "var(--accent)", color: "var(--accent-ink)" }) }}>
-        {state === "saving" ? "Saving…" : saveLabel}
+        {state === "saving" ? copy.forms.saving : saveLabel}
       </button>
     </div>
   )

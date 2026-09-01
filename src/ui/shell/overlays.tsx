@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react"
 import { signOut } from "@/core/auth/actions"
+import { copy } from "@/core/i18n"
 import { emailInitials } from "@/core/auth/email-validation"
 import type { ShellAccount } from "./app-shell"
 import { THEME_MODES, useTheme } from "./theme"
@@ -33,7 +34,7 @@ function AccountRow({ icon, label, hint, onPick }: { icon: string; label: string
 export function AccountPanel({ account, openPalette, openKeys }: { account: ShellAccount; openPalette: () => void; openKeys: () => void }) {
   const { mode, setMode } = useTheme()
   const { say } = useToast()
-  const notWired = () => say("Profile settings are not available yet")
+  const notWired = () => say(copy.account.profileUnavailable)
   const initials = emailInitials(account.email)
   const localPart = account.email.split("@")[0] || account.email
 
@@ -47,17 +48,17 @@ export function AccountPanel({ account, openPalette, openKeys }: { account: Shel
         </div>
       </div>
       <div style={{ padding: 8 }}>
-        <AccountRow icon="M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" label="Profile and account" onPick={notWired} />
-        <AccountRow icon="M9 3h6v6H9zM3 9h6v6H3zM15 9h6v6h-6zM9 15h6v6H9z" label="Command palette" hint="⌘K" onPick={openPalette} />
-        <AccountRow icon="M3 6h18v12H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10" label="Keyboard shortcuts" hint="⌘/" onPick={openKeys} />
+        <AccountRow icon="M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" label={copy.account.profile} onPick={notWired} />
+        <AccountRow icon="M9 3h6v6H9zM3 9h6v6H3zM15 9h6v6h-6zM9 15h6v6H9z" label={copy.account.commandPalette} hint="⌘K" onPick={openPalette} />
+        <AccountRow icon="M3 6h18v12H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10" label={copy.account.keyboardShortcuts} hint="⌘/" onPick={openKeys} />
       </div>
       <div style={{ padding: "10px 16px 14px", borderTop: "1px solid var(--line)" }}>
-        <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 8 }}>Appearance</div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 8 }}>{copy.account.appearance}</div>
         <div style={{ display: "flex", gap: 3, background: "var(--shell)", borderRadius: "var(--r3)", padding: 3 }}>
-          {THEME_MODES.map(([choice, , short]) => (
+          {THEME_MODES.map(([choice]) => (
             <span key={choice} onClick={() => setMode(choice)}
               style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: "pointer", ...(mode === choice ? { background: "var(--card)", color: "var(--txt)" } : { color: "var(--txt-4)" }) }}>
-              {short}
+              {copy.nav.themeModes[choice].short}
             </span>
           ))}
         </div>
@@ -66,7 +67,7 @@ export function AccountPanel({ account, openPalette, openKeys }: { account: Shel
         <span className="sh-signout" onClick={() => void signOut()}
           style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: "var(--r3)", fontSize: 14, fontWeight: "var(--w-semi)" as never, color: "var(--bad)", cursor: "pointer" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d="M15 17l5-5-5-5M20 12H9M12 3H5v18h7" /></svg>
-          Sign out
+          {copy.account.signOut}
         </span>
       </div>
     </div>

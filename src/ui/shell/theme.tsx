@@ -81,9 +81,9 @@ export function useSystemPrefersDark(): boolean {
   return dark
 }
 
-/** Reference theme-mode metadata: [choice, title, short label, icon path]. */
-export const THEME_MODES: [ThemeChoice, string, string, string][] = [
-  ["light", "Light", "Light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
-  ["system", "System", "Auto", "M3 5h18v11H3zM8 20h8M12 16v4"],
-  ["dark", "Dark", "Dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"],
+/** Reference theme-mode order + icon paths; labels come from the locale (copy.nav.themeModes). */
+export const THEME_MODES: [ThemeChoice, string][] = [
+  ["light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
+  ["system", "M3 5h18v11H3zM8 20h8M12 16v4"],
+  ["dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"],
 ]

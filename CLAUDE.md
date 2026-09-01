@@ -53,6 +53,8 @@ delete module code because a project doesn't use it.
   forge rows (no insert policy; RPC forces the verified actor).
 - Store structured events + changed-field diffs; render human summaries
   in the UI via summarizeEvent — never persist prose.
+- record_activity() requires member rank or above: viewers are read-only
+  and never author events (canRecordActivity() mirrors the database rule).
 - No module-specific audit tables. Details: docs/AUDIT.md.
 
 ## Team / permission rules
@@ -121,6 +123,11 @@ delete module code because a project doesn't use it.
 - Do not create module-specific toast systems; use `useToast()`.
 - Shell colors consume canonical theme tokens only.
 - Route state determines active navigation — no selected-screen state.
+- Shell chrome copy (html lang, search placeholder, group headings,
+  shortcuts sheet, data/empty/error states, form defaults, audit
+  summaries) comes from `src/core/i18n` keyed by `projectConfig.locale`;
+  never hardcode a user-facing string in shell or canonical UI primitives,
+  and never add a second i18n mechanism. Module copy is the module's own.
 - /design-reference is the visual/behavioral source of truth.
 - Details: docs/SHELL.md.
 
