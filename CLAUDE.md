@@ -31,6 +31,18 @@ delete module code because a project doesn't use it.
 - Never invent a new table/form visual language when the reference pattern
   exists. Details: docs/DATA.md.
 
+## Audit rules
+
+- Meaningful state-changing mutations emit canonical activity events —
+  critical starter paths via database triggers (atomic, unforgeable),
+  future module events via recordActivity() (src/core/audit).
+- Never log secrets, tokens, credentials, or sensitive payloads.
+- Audit rows are workspace-scoped and append-only; the browser cannot
+  forge rows (no insert policy; RPC forces the verified actor).
+- Store structured events + changed-field diffs; render human summaries
+  in the UI via summarizeEvent — never persist prose.
+- No module-specific audit tables. Details: docs/AUDIT.md.
+
 ## Team / permission rules
 
 - Authorization comes from workspace_members via src/core/permissions;

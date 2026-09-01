@@ -272,7 +272,17 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
               <Slider label="Neutral chroma" value={skin.nc} display={skin.nc.toFixed(3)} min={0} max={0.02} step={0.001} onChange={(v) => patch({ nc: v })} disabled={!canEdit}
                 swatches={[0, 0.006, 0.012, 0.018].map((c) => ({ color: `oklch(.86 ${c} ${skin.nh})`, dark: true, on: Math.abs(skin.nc - c) < 0.002, title: `Neutral chroma ${c}`, pick: () => patch({ nc: c }) }))} />
               <Slider label="Semantic chroma" value={skin.sc} display={skin.sc.toFixed(3)} min={0.06} max={0.24} step={0.005} onChange={(v) => patch({ sc: v })} disabled={!canEdit}
-                swatches={[0.1, 0.15, 0.2].map((c) => ({ color: `oklch(.60 ${c} 147)`, on: Math.abs(skin.sc - c) < 0.02, title: `Semantic chroma ${c}`, pick: () => patch({ sc: c }) }))} />
+                hint="Controls the intensity of success, warning, and error colours. Their hues stay fixed."
+                preview={
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }} aria-hidden>
+                    {([["Success", "--ok-fill"], ["Warning", "--warn-fill"], ["Error", "--bad-fill"]] as const).map(([name, token]) => (
+                      <span key={name} style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+                        <span style={{ width: 22, height: 22, borderRadius: 7, display: "block", border: "1px solid var(--line)", background: draftTokens[token] }} />
+                        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--txt-3)" }}>{name}</span>
+                      </span>
+                    ))}
+                  </div>
+                } />
             </div>
           </div>
 
@@ -407,10 +417,12 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   )
 }
 
-function Slider({ label, value, display, min, max, step, onChange, swatches, disabled }: {
+function Slider({ label, value, display, min, max, step, onChange, swatches, preview, hint, disabled }: {
   label: string; value: number; display: string; min: number; max: number; step: number
   onChange: (v: number) => void
-  swatches: { color: string; on: boolean; title: string; pick: () => void; dark?: boolean }[]
+  swatches?: { color: string; on: boolean; title: string; pick: () => void; dark?: boolean }[]
+  preview?: React.ReactNode
+  hint?: string
   disabled: boolean
 }) {
   return (
@@ -422,14 +434,18 @@ function Slider({ label, value, display, min, max, step, onChange, swatches, dis
       <input type="range" min={min} max={max} step={step} value={value} disabled={disabled}
         onChange={(e) => onChange(parseFloat(e.target.value))}
         style={{ width: "100%", accentColor: "var(--accent)", cursor: disabled ? "default" : "pointer" }} />
-      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10 }}>
-        {swatches.map((w) => (
-          <span key={w.title} title={w.title} onClick={() => !disabled && w.pick()}
-            style={{ width: 24, height: 24, borderRadius: 7, cursor: disabled ? "default" : "pointer", display: "grid", placeItems: "center", fontSize: 11, boxSizing: "border-box", color: w.dark ? "var(--txt)" : "#fff", background: w.color, ...(w.on ? { outline: "2px solid var(--txt)", outlineOffset: 2, border: "1px solid rgba(255,255,255,.55)" } : { border: "1px solid var(--line)", opacity: 0.78 }) }}>
-            {w.on ? "✓" : ""}
-          </span>
-        ))}
-      </div>
+      {swatches && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10 }}>
+          {swatches.map((w) => (
+            <span key={w.title} title={w.title} onClick={() => !disabled && w.pick()}
+              style={{ width: 24, height: 24, borderRadius: 7, cursor: disabled ? "default" : "pointer", display: "grid", placeItems: "center", fontSize: 11, boxSizing: "border-box", color: w.dark ? "var(--txt)" : "#fff", background: w.color, ...(w.on ? { outline: "2px solid var(--txt)", outlineOffset: 2, border: "1px solid rgba(255,255,255,.55)" } : { border: "1px solid var(--line)", opacity: 0.78 }) }}>
+              {w.on ? "✓" : ""}
+            </span>
+          ))}
+        </div>
+      )}
+      {preview && <div style={{ marginTop: 10 }}>{preview}</div>}
+      {hint && <div style={{ fontSize: 12, color: "var(--txt-3)", marginTop: 8, lineHeight: 1.5 }}>{hint}</div>}
     </div>
   )
 }

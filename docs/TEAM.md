@@ -62,6 +62,11 @@ comes from the `email.attomik.co` domain. Template:
 `src/core/team/invitation-email.ts` (reference email rules: literal hex,
 single column, URL fallback, why-received footer).
 
+## Audit trail
+
+Every membership and invitation mutation is recorded automatically by the
+audit triggers (docs/AUDIT.md) and appears in Settings → Activity.
+
 ## Multi-workspace note
 
 The schema supports many memberships per user; `requireWorkspace` resolves

@@ -103,6 +103,7 @@ export const moduleRegistry = {
       children: [
         { label: "Appearance & brand", href: "/settings/appearance" },
         { label: "Team & permissions", href: "/settings/team" },
+        { label: "Activity", href: "/settings/activity" },
       ],
     },
     permissions: ["settings.view", "settings.manage"],

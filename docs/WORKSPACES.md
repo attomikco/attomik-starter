@@ -24,7 +24,7 @@ only what the shell needs; modules use the same layer — never their own
 queries against these tables. Multi-workspace switching is deliberately
 deferred; the EARLIEST membership is the current workspace (`/invite/*`
 lives outside the app group so invitees never trigger the bootstrap).
-Team, roles, and invitations: docs/TEAM.md.
+Team, roles, and invitations: docs/TEAM.md. Activity/audit: docs/AUDIT.md.
 
 ## RLS model
 
