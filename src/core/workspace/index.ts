@@ -93,6 +93,7 @@ export const requireWorkspace = cache(async (): Promise<WorkspaceContext> => {
   let { data: row } = await supabase
     .from("workspace_members")
     .select("role, workspaces(id, name, slug)")
+    .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle()
 
@@ -101,6 +102,7 @@ export const requireWorkspace = cache(async (): Promise<WorkspaceContext> => {
     const retry = await supabase
       .from("workspace_members")
       .select("role, workspaces(id, name, slug)")
+      .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle()
     row = retry.data as typeof row

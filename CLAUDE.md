@@ -31,6 +31,21 @@ delete module code because a project doesn't use it.
 - Never invent a new table/form visual language when the reference pattern
   exists. Details: docs/DATA.md.
 
+## Team / permission rules
+
+- Authorization comes from workspace_members via src/core/permissions;
+  UI visibility is never the authorization boundary — sensitive actions
+  re-check server-side and RLS enforces the same matrix.
+- Never use user_metadata for roles.
+- Preserve at least one workspace owner; admins cannot modify or create
+  owners (owner rows are API-untouchable).
+- Invitations are single-use, expiring, and email-bound; resend rotates
+  the token.
+- Removing a member never deletes their auth account.
+- All app/auth email sends from the email.attomik.co domain via Resend.
+- Team UI uses the canonical Task 007 data/form/confirmation primitives.
+- Details: docs/TEAM.md.
+
 ## Workspace rules
 
 - All product data belongs to a workspace unless explicitly global.

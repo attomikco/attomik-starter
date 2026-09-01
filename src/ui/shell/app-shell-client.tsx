@@ -62,7 +62,12 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
 
   const navItems = useMemo(() => navigation.flatMap((g) => g.items), [navigation])
   const goMap = useMemo(() => buildGoMap(navItems), [navItems])
-  const screenLabel = navItems.find((i) => isNavActive(pathname, i.href))?.label ?? workspace.name
+  // Flat destinations: items without children as themselves, children inline.
+  const destinations = useMemo(
+    () => navItems.flatMap((i) => (i.children?.length ? i.children.map((c) => ({ label: c.label, href: c.href })) : [{ label: i.label, href: i.href }])),
+    [navItems],
+  )
+  const screenLabel = destinations.find((d) => isNavActive(pathname, d.href))?.label ?? workspace.name
 
   useEffect(() => {
     try {
@@ -125,7 +130,7 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
   const paletteGroups: PaletteGroup[] = useMemo(() => [
     {
       label: "Go to",
-      items: navItems.map((i) => ({ label: i.label, run: () => goto(i.href) })),
+      items: destinations.map((d) => ({ label: d.label, run: () => goto(d.href) })),
     },
     {
       label: "Actions",
@@ -137,7 +142,7 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
         { label: "Follow the system theme", run: () => { setMode("system"); setPaletteOpen(false) } },
       ],
     },
-  ], [navItems, goto, toggleCollapse, setMode])
+  ], [destinations, goto, toggleCollapse, setMode])
 
   const goHint = Object.entries(goMap).map(([letter, d]) => `${letter.toUpperCase()} ${d.label.toLowerCase()}`).join(" · ")
   const goRows: [string, string][] = Object.entries(goMap).map(([letter, d]) => [d.label, `G then ${letter.toUpperCase()}`])

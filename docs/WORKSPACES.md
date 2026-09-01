@@ -22,7 +22,9 @@ bootstrapping on first sign-in: profile → workspace → owner membership →
 default settings from the base skin. The `(app)` layout calls it and passes
 only what the shell needs; modules use the same layer — never their own
 queries against these tables. Multi-workspace switching is deliberately
-deferred; a user's single workspace is current.
+deferred; the EARLIEST membership is the current workspace (`/invite/*`
+lives outside the app group so invitees never trigger the bootstrap).
+Team, roles, and invitations: docs/TEAM.md.
 
 ## RLS model
 

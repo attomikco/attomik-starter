@@ -46,3 +46,9 @@ export function getSupabaseEnv(): { url: string; publishableKey: string } {
     publishableKey: parsed.data.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   }
 }
+
+/** Server-only Resend API key for app-sent email (invitations). Optional. */
+export function getResendKey(): string | null {
+  const key = process.env.RESEND_API_KEY
+  return key && key.trim() ? key.trim() : null
+}

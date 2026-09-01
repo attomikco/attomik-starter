@@ -14,6 +14,7 @@ export interface NavigationItem {
   href: string
   order: number
   icon: string
+  children?: readonly { label: string; href: string }[]
 }
 
 export interface NavigationGroup {

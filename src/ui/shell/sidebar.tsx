@@ -5,7 +5,6 @@ import type { CSSProperties } from "react"
 import type { NavigationGroup } from "@/core/navigation"
 import type { ShellWorkspace } from "./app-shell"
 import { GROUP_LABELS } from "@/core/navigation/build"
-import { isNavActive } from "./helpers"
 import { NavItem } from "./nav-item"
 import { THEME_MODES, useTheme } from "./theme"
 
@@ -72,7 +71,7 @@ export function Sidebar({
               <NavItem
                 key={item.moduleId}
                 item={item}
-                active={isNavActive(pathname, item.href)}
+                pathname={pathname}
                 tight={tight}
                 onNavigate={onNavigate}
               />

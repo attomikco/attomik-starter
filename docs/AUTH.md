@@ -60,7 +60,7 @@ authorization arrive in Task 006 and are separate from authentication.
 ## Email delivery
 
 Supabase Auth sends its emails through **Resend SMTP** (sender
-`auth@attomik.co`, name "Attomik Starter"). Supabase's default shared
+`auth@email.attomik.co`, name "Attomik Starter"). Supabase's default shared
 sender (`noreply@mail.app.supabase.io`) is development-only — hard-capped
 at 2 auth emails/hour with weak deliverability — and must not be relied on.
 

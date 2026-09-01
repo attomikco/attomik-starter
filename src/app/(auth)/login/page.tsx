@@ -114,7 +114,7 @@ function LoginCard() {
                 </div>
               )}
               <ul style={{ margin: "14px 0 0", paddingLeft: 18, fontSize: 13.5, color: "var(--txt-2)", lineHeight: 1.75 }}>
-                <li>Check spam — the sender is <span style={{ fontFamily: "var(--mono)", fontSize: 12.5 }}>auth@attomik.co</span></li>
+                <li>Check spam — the sender is <span style={{ fontFamily: "var(--mono)", fontSize: 12.5 }}>auth@email.attomik.co</span></li>
                 <li>Corporate filters can hold it for a minute or two</li>
                 <li>Open the link on this device, or it will not carry the session</li>
               </ul>

@@ -19,6 +19,8 @@ export interface ModuleNavigation {
   order: number
   /** Icon key, mapped to the reference SVG path in src/ui/shell/icons.tsx */
   icon: string
+  /** Submenu items (the reference rail's child rows). Plain data only. */
+  children?: readonly { label: string; href: string }[]
 }
 
 export interface ModuleDefinition {
@@ -94,10 +96,14 @@ export const moduleRegistry = {
     description: "Workspace settings: appearance & brand (more tabs later).",
     navigation: {
       group: "settings",
-      label: "Appearance",
+      label: "Settings",
       icon: "settings",
       href: "/settings/appearance",
       order: 0,
+      children: [
+        { label: "Appearance & brand", href: "/settings/appearance" },
+        { label: "Team & permissions", href: "/settings/team" },
+      ],
     },
     permissions: ["settings.view", "settings.manage"],
   },
