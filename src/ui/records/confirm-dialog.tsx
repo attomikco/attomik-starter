@@ -63,7 +63,7 @@ export function ConfirmDialog({ options, onClose }: { options: ConfirmOptions | 
         <p style={{ fontSize: 14.5, color: "var(--txt-2)", lineHeight: 1.6, margin: "0 0 22px" }}>{options.body}</p>
 
         {options.typedWord && (
-          <label style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--shell)", borderRadius: "var(--r3)", padding: "12px 16px", fontFamily: "var(--mono)", fontSize: 12, color: "var(--txt-2)", marginBottom: 22 }}>
+          <label className="ui-field" style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--shell)", borderRadius: "var(--r3)", padding: "12px 16px", fontFamily: "var(--mono)", fontSize: 12, color: "var(--txt-2)", marginBottom: 22 }}>
             Type <span style={{ color: "var(--txt)" }}>{options.typedWord}</span> to confirm
             <input value={typed} onChange={(e) => setTyped(e.target.value)} aria-label={`Type ${options.typedWord} to confirm`}
               style={{ flex: 1, minWidth: 60, fontFamily: "var(--mono)", fontSize: 12, textTransform: "uppercase" }} />

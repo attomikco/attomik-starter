@@ -58,6 +58,9 @@ textarea { resize: none; }
      in browsers, so they get a deliberately SUBTLE token treatment — the
      field is usable immediately without masquerading as selected. Their
      styled frames (validation, open pickers) carry the strong borders.
+   - Framed fields (.ui-field): the FRAME is the field visually, so it also
+     carries the focus treatment via :focus-within; the inner input never
+     draws its own rectangle (no second box inside the frame).
    - Open/selected states come from aria-driven component styling, never
      from focus itself. */
 .ui-btn:focus-visible, a:focus-visible {
@@ -66,6 +69,8 @@ textarea { resize: none; }
 input:focus-visible, textarea:focus-visible, select:focus-visible {
   outline: 2px solid var(--accent-tint); outline-offset: 1px;
 }
+.ui-field:focus-within { outline: 2px solid var(--accent-tint); outline-offset: 1px; }
+.ui-field input:focus-visible, .ui-field textarea:focus-visible { outline: none; }
 
 .sh-bulk-action:hover { background: rgba(255,255,255,.12); }
 

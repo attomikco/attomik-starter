@@ -237,7 +237,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
             <div style={cardSub}>The name shown in the shell and browser tab, and the default appearance new sessions start in.</div>
             <label style={{ display: "block", marginBottom: 16 }}>
               <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>Display name</span>
-              <span style={{ display: "flex", alignItems: "center", background: "var(--card)", border: "1.5px solid var(--line-2)", borderRadius: "var(--r3)", padding: "11px 14px" }}>
+              <span className="ui-field" style={{ display: "flex", alignItems: "center", background: "var(--card)", border: "1.5px solid var(--line-2)", borderRadius: "var(--r3)", padding: "11px 14px" }}>
                 <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} disabled={!canEdit} style={{ fontSize: 14.5, width: "100%" }} />
               </span>
             </label>

@@ -70,7 +70,7 @@ export function TextInput({
   const id = useId()
   return (
     <Field label={label} required={required} error={error} hint={hint} htmlFor={id}>
-      <span style={fieldFrame(error ? "invalid" : valid ? "valid" : "idle")}>
+      <span className="ui-field" style={fieldFrame(error ? "invalid" : valid ? "valid" : "idle")}>
         <input id={id} type={type} value={value} placeholder={placeholder} aria-invalid={!!error}
           onChange={(e) => onChange(e.target.value)} onBlur={onBlur}
           style={{ fontSize: 14.5, flex: 1, minWidth: 0 }} />
@@ -98,7 +98,7 @@ export function TextArea({
   const id = useId()
   const area = (
     <>
-      <span style={{ display: "block", background: "var(--card)", border: `1.5px solid ${error ? "var(--bad)" : "var(--line-2)"}`, borderRadius: "var(--r3)", padding: "14px 16px" }}>
+      <span className="ui-field" style={{ display: "block", background: "var(--card)", border: `1.5px solid ${error ? "var(--bad)" : "var(--line-2)"}`, borderRadius: "var(--r3)", padding: "14px 16px" }}>
         <textarea id={id} rows={rows} value={value} placeholder={placeholder} maxLength={maxLength} aria-invalid={!!error}
           onChange={(e) => onChange(e.target.value)}
           style={{ fontSize: 14, lineHeight: 1.55, width: "100%", display: "block" }} />

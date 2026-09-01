@@ -146,7 +146,7 @@ function LoginCard() {
 
           <label style={{ display: "block", marginBottom: 14 }}>
             <span style={{ display: "block", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 9 }}>Work email</span>
-            <span style={{ display: "flex", alignItems: "center", gap: 11, background: "var(--card)", borderRadius: "var(--r3)", padding: "14px 16px", boxSizing: "border-box", border: `1.5px solid ${error ? "var(--bad)" : "var(--line-2)"}` }}>
+            <span className="ui-field" style={{ display: "flex", alignItems: "center", gap: 11, background: "var(--card)", borderRadius: "var(--r3)", padding: "14px 16px", boxSizing: "border-box", border: `1.5px solid ${error ? "var(--bad)" : "var(--line-2)"}` }}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
               <input
                 ref={emailRef}
