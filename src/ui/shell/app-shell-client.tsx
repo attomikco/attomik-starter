@@ -37,7 +37,7 @@ export function AppShellClient({
   children: ReactNode
 }) {
   return (
-    <ThemeProvider>
+    <ThemeProvider workspaceDefault={workspace.defaultAppearance}>
       <ShellInner navigation={navigation} chrome={chrome} account={account} workspace={workspace}>{children}</ShellInner>
     </ThemeProvider>
   )

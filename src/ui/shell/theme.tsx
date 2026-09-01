@@ -1,16 +1,20 @@
 "use client"
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
+import { resolveTheme, effectivePreference, type ThemePreference } from "./theme-resolve"
 
 /**
- * Theme mode control, matching the reference host: light / system / dark.
- * An explicit choice sets `data-theme` on <html> (the Task 003 stylesheet
- * gives it precedence); "system" removes it so `prefers-color-scheme`
- * decides. Choice persists to localStorage; a tiny inline script in the
- * root layout replays it before first paint so there is no flash.
+ * App-wide theme control. Three-state preference chain (see theme-resolve):
+ * the sidebar toggle is the user's LOCAL preference (light / dark / Auto,
+ * where Auto follows the workspace's default appearance — which may itself
+ * be "system" = the OS). The RESOLVED theme (light|dark) is always applied
+ * to <html data-theme>; while the effective preference is "system", a
+ * matchMedia listener re-resolves live when the OS appearance changes —
+ * without touching the persisted preference. A pre-paint script in the app
+ * layout runs the same chain so first paint is already correct.
  */
 
-export type ThemeChoice = "light" | "system" | "dark"
+export type ThemeChoice = ThemePreference
 
 export const THEME_STORAGE_KEY = "attomik-theme"
 
@@ -19,7 +23,13 @@ const ThemeContext = createContext<{ mode: ThemeChoice; setMode: (m: ThemeChoice
   setMode: () => {},
 })
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({
+  workspaceDefault,
+  children,
+}: {
+  workspaceDefault: ThemePreference
+  children: ReactNode
+}) {
   const [mode, setModeState] = useState<ThemeChoice>("system")
 
   useEffect(() => {
@@ -29,11 +39,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, [])
 
+  // Resolution: apply the resolved theme, and follow the OS live while the
+  // effective preference is "system".
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)")
+    const apply = () => {
+      document.documentElement.dataset.theme = resolveTheme(mode, workspaceDefault, mq.matches)
+    }
+    apply()
+    if (effectivePreference(mode, workspaceDefault) === "system") {
+      mq.addEventListener("change", apply)
+      return () => mq.removeEventListener("change", apply)
+    }
+  }, [mode, workspaceDefault])
+
   const setMode = useCallback((m: ThemeChoice) => {
     setModeState(m)
-    const root = document.documentElement
-    if (m === "system") delete root.dataset.theme
-    else root.dataset.theme = m
     try {
       if (m === "system") localStorage.removeItem(THEME_STORAGE_KEY)
       else localStorage.setItem(THEME_STORAGE_KEY, m)
@@ -45,6 +66,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useTheme() {
   return useContext(ThemeContext)
+}
+
+/** Live OS color-scheme state, for previews that must track "system". */
+export function useSystemPrefersDark(): boolean {
+  const [dark, setDark] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)")
+    setDark(mq.matches)
+    const onChange = () => setDark(mq.matches)
+    mq.addEventListener("change", onChange)
+    return () => mq.removeEventListener("change", onChange)
+  }, [])
+  return dark
 }
 
 /** Reference theme-mode metadata: [choice, title, short label, icon path]. */

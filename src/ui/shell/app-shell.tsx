@@ -16,6 +16,7 @@ export interface ShellWorkspace {
   name: string
   logoLightUrl: string | null
   logoDarkUrl: string | null
+  defaultAppearance: "light" | "dark" | "system"
 }
 
 export function AppShell({

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { useRouter } from "next/navigation"
 import { resolveSkin, clampSkinInput, skinStylesheetWithDefault, themedDeclarations, type DefaultAppearance, type ProductGeometry, type SkinInput } from "@/core/branding"
 import { useToast } from "@/ui/shell/toast-provider"
+import { useSystemPrefersDark } from "@/ui/shell/theme"
 import { removeBrandingAsset, saveAppearance, uploadBrandingAsset, type BrandingAssetKind } from "./actions"
 import { FONT_OPTIONS, MONO_OPTIONS, PRESET_PATCHES, WEIGHT_BOLD_OPTIONS, WEIGHT_SEMI_OPTIONS } from "./options"
 
@@ -64,7 +65,9 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   const patch = (p: Partial<SkinInput>) => setSkin((s) => clampSkinInput({ ...s, ...p }))
 
   // Draft tokens for the scoped live preview + resolved list. One engine.
-  const previewMode = appearance === "dark" ? "dark" : "light"
+  // "system" previews the OS-resolved theme, live.
+  const systemDark = useSystemPrefersDark()
+  const previewMode = appearance === "system" ? (systemDark ? "dark" : "light") : appearance
   const draftTokens = useMemo(() => resolveSkin(skin, previewMode, geometry), [skin, previewMode, geometry])
   const previewVars = { ...draftTokens } as CSSProperties
 

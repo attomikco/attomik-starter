@@ -9,7 +9,7 @@ export const projectConfig = {
   modules: {
     overview: true,
     settings: true,
-    media: true,
+    media: false,
     customers: false,
     analytics: false,
     orders: false,
