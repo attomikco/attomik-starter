@@ -83,6 +83,7 @@ export function NavItem({
           onClick={onNavigate}
           className={rowClass}
           style={rowStyle}
+          aria-current={active ? "page" : undefined}
           title={tight ? item.label : undefined}
         >
           {rowInner}
@@ -94,7 +95,7 @@ export function NavItem({
           {children.map((c) => {
             const on = isNavActive(pathname, c.href)
             return (
-              <Link key={c.href} href={c.href} onClick={onNavigate} className="sh-subnav-item"
+              <Link key={c.href} href={c.href} onClick={onNavigate} className="sh-subnav-item" aria-current={on ? "page" : undefined}
                 style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 12px", borderRadius: 8, fontSize: 13.5, cursor: "pointer", textDecoration: "none", color: on ? "var(--txt)" : "var(--txt-3)", fontWeight: (on ? "var(--w-semi)" : 400) as never }}>
                 <span style={{ width: 4, height: 4, borderRadius: 999, display: "block", flex: "none", background: on ? "var(--accent)" : "var(--line-2)" }} />
                 {c.label}

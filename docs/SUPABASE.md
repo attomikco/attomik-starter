@@ -61,11 +61,14 @@ Migrations live in `supabase/migrations` (created with
 `supabase migration new`). Workspace schema + RLS model: see
 docs/WORKSPACES.md. RLS is mandatory on every exposed table; membership
 predicates use the hardened helpers in the non-exposed `private` schema.
-Accepted advisor warnings: leaked-password protection and MFA options are
-password-auth features — this starter is magic-link only.
+Accepted advisor findings: leaked-password protection and MFA options
+(password-auth features — this starter is magic-link only), the three
+RPC-callable SECURITY DEFINER functions (their documented purpose), and
+INFO-level unindexed actor/creator FK columns (low-value at these sizes —
+add per project if audit queries by actor become hot).
 
 ## Diagnostics
 
-`GET /api/health/supabase` proves env loading and connectivity (no
-application tables, no secrets in the response). Delete it when real
-Supabase features make it redundant.
+`GET /api/health/supabase` is the v1 production health endpoint (used by
+docs/DEPLOYMENT.md post-deploy checks): generic ok/reason JSON, no
+credentials or internals. Intentionally available in production.

@@ -47,10 +47,24 @@ textarea { resize: none; }
 .sh-logo-dark { display: var(--logo-dark-display, none); }
 
 /* Canonical unstyled button base: real <button> elements for keyboard
-   reachability, visual language unchanged. Focus rings use theme tokens. */
+   reachability, visual language unchanged. */
 .ui-btn { font: inherit; color: inherit; background: none; border: none; padding: 0; margin: 0; text-align: inherit; cursor: pointer; }
-.ui-btn:focus-visible, .ui-focus:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px;
+
+/* Interaction-state model:
+   - Buttons/links: STRONG accent ring on :focus-visible only — browsers
+     apply that to keyboard navigation, never to mouse clicks, so nothing
+     looks "active" after a click.
+   - Text fields: any focus (click, autofocus, tab) counts as focus-visible
+     in browsers, so they get a deliberately SUBTLE token treatment — the
+     field is usable immediately without masquerading as selected. Their
+     styled frames (validation, open pickers) carry the strong borders.
+   - Open/selected states come from aria-driven component styling, never
+     from focus itself. */
+.ui-btn:focus-visible, a:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent-tint); outline-offset: 1px;
 }
 
 .sh-bulk-action:hover { background: rgba(255,255,255,.12); }
@@ -58,3 +72,9 @@ textarea { resize: none; }
 /* Reference skeleton shimmer (Starter Admin loading states). */
 @keyframes sh-shimmer { 0% { opacity: .55; } 50% { opacity: 1; } 100% { opacity: .55; } }
 .sh-shimmer { animation: sh-shimmer 1.1s ease-in-out infinite; }
+
+/* Respect reduced-motion: non-essential animation is disabled. */
+@media (prefers-reduced-motion: reduce) {
+  .sh-shimmer { animation: none; opacity: .7; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -10,7 +10,10 @@ const STATES: [label: string, src: string][] = [
   ["Expired", "/expired"],
 ]
 
+import { requireDevelopment } from "@/core/dev"
+
 export default function DevAuthPage() {
+  requireDevelopment()
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg)", padding: 20, boxSizing: "border-box", fontFamily: "var(--font)", color: "var(--txt)" }}>
       <h1 style={{ margin: "0 0 4px", fontSize: 18, fontWeight: "var(--w-bold)" as never }}>Auth states review</h1>

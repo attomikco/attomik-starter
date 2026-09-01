@@ -1,6 +1,7 @@
 "use client"
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react"
+import { useId, type CSSProperties, type ReactNode } from "react"
+import { Listbox } from "./select"
 
 /**
  * Canonical form primitives, ported from part-records.dc.html. All colors
@@ -126,28 +127,16 @@ export function SelectInput({
   error?: string
   hint?: string
 }) {
-  const [open, setOpen] = useState(false)
   return (
     <Field label={label} required={required} error={error} hint={hint}>
-      <span style={{ display: "block", position: "relative" }}>
-        <button type="button" className="ui-btn" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}
-          style={{ ...fieldFrame(error ? "invalid" : "idle"), width: "100%", justifyContent: "space-between", fontSize: 14.5, cursor: "pointer", ...(open ? { borderColor: "var(--accent)" } : {}) }}>
-          {value}
-          <span aria-hidden style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", transform: open ? "rotate(180deg)" : "none", transition: "transform .12s" }}>▾</span>
-        </button>
-        {open && (
-          <span role="listbox" style={{ position: "absolute", top: 52, left: 0, right: 0, zIndex: 40, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.16)", padding: 6, display: "block", animation: "sh-rise .12s ease-out" }}>
-            {options.map((o) => (
-              <button type="button" key={o} className="ui-btn sh-row-hover" role="option" aria-selected={o === value}
-                onClick={() => { setOpen(false); onChange(o) }}
-                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: 8, fontSize: 14, color: o === value ? "var(--txt)" : "var(--txt-2)" }}>
-                {o}
-                {o === value && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none", marginLeft: "auto" }}><path d="m5 13 5 5L20 7" /></svg>}
-              </button>
-            ))}
-          </span>
-        )}
-      </span>
+      <Listbox
+        ariaLabel={label}
+        value={value}
+        options={options.map((o) => ({ value: o, label: o }))}
+        onChange={onChange}
+        fullWidth
+        triggerStyle={{ borderRadius: "var(--r3)", borderWidth: 1.5, borderColor: error ? "var(--bad)" : undefined, padding: "12px 14px", fontSize: 14.5 }}
+      />
     </Field>
   )
 }

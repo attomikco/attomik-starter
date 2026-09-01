@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react"
+import { requireDevelopment } from "@/core/dev"
 import { resolveSkin, skins, type SkinPresetId, type ThemeMode } from "@/core/branding"
 
 /**
@@ -79,6 +80,7 @@ export default async function ThemePreviewPage({
 }: {
   searchParams: Promise<{ skin?: string }>
 }) {
+  requireDevelopment()
   const { skin } = await searchParams
   const presetIds = Object.keys(skins) as SkinPresetId[]
   const active: SkinPresetId = presetIds.includes(skin as SkinPresetId)

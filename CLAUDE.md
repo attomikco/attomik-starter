@@ -16,6 +16,18 @@ delete module code because a project doesn't use it.
 - `/design-reference` is READ-ONLY reference material. Never modify, rename,
   move, or delete anything inside it.
 
+## Production surface rules
+
+- /dev/* review tools are development-only: blocked at the proxy in
+  production (true 404) and gated by requireDevelopment() in each page.
+- No fake people, notifications, or data on production surfaces; shell
+  affordances for disabled modules stay out of the default UI.
+- Disabled module routes are proxy-blocked (true 404) AND page-guarded by
+  requireModule(); nav/palette derive from the registry, so disabled
+  modules appear nowhere.
+- docs/: ARCHITECTURE (map), MODULES (extension contract), NEW_PROJECT
+  (setup checklist), DEPLOYMENT (Vercel/production).
+
 ## Data / CRUD rules
 
 - Reuse the canonical DataTable (src/ui/data) before creating

@@ -1,6 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { projectConfig } from "@/config/project"
+import { moduleRegistry } from "@/core/modules/registry"
 import { getSupabaseEnv, hasSupabaseEnv } from "@/core/env"
+
+// Route prefixes owned by modules that are DISABLED in this project's
+// config. Blocking here yields a true 404 status (streaming layouts commit
+// 200 before a page-level notFound throws); requireModule() in the page
+// remains the authoritative guard.
+const disabledModulePrefixes = Object.values(moduleRegistry)
+  .filter((m) => m.navigation && m.navigation.href !== "/" && !projectConfig.modules[m.id])
+  .map((m) => m.navigation!.href)
 
 let warnedMissingEnv = false
 
@@ -11,6 +21,18 @@ let warnedMissingEnv = false
  * authenticated gating belongs to a later task.
  */
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
+  // Development review tools are not part of the production product: block
+  // them here so they return a true 404 status (page-level guards would
+  // stream a 200 before throwing notFound). Body renders the root 404.
+  if (process.env.NODE_ENV === "production" && request.nextUrl.pathname.startsWith("/dev/")) {
+    return NextResponse.rewrite(new URL("/__dev-tools-disabled", request.url))
+  }
+
+  const path = request.nextUrl.pathname
+  if (disabledModulePrefixes.some((p) => path === p || path.startsWith(p + "/"))) {
+    return NextResponse.rewrite(new URL("/__module-disabled", request.url))
+  }
+
   // Without Supabase configured the starter still runs (Task 001 features
   // don't need it), so pass through instead of failing every request.
   if (!hasSupabaseEnv()) {

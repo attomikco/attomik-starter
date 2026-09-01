@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import type { PendingInvitation, TeamMember } from "@/core/team"
 import { assignableRoles, canManageTarget, canInvite, ROLE_MEANINGS, type Role } from "@/core/permissions"
 import { DataTable, PersonCell, ToneChip } from "@/ui/data/data-table"
 import { validateEmail } from "@/core/auth/email-validation"
 import { TextInput } from "@/ui/forms/fields"
+import { Listbox } from "@/ui/forms/select"
 import { ConfirmDialog, type ConfirmOptions } from "@/ui/records/confirm-dialog"
 import { useToast } from "@/ui/shell/toast-provider"
 import { changeMemberRole, inviteMember, removeMember, resendInvitation, revokeInvitation } from "./actions"
@@ -67,18 +68,15 @@ export function TeamScreen({
       key: "role", label: "Role", width: 168,
       render: (m: TeamMember) =>
         canManageTarget(actorRole, m.role) ? (
-          <select
-            aria-label={`Role for ${m.email}`}
+          <Listbox
+            ariaLabel={`Role for ${m.email}`}
             value={m.role}
             disabled={busy === m.userId}
-            onChange={(e) => run(m.userId, () => changeMemberRole(m.userId, m.role, e.target.value), "Role updated")}
-            style={{ background: "var(--card)", border: "1px solid var(--line-2)", borderRadius: 8, padding: "6px 10px", fontSize: 13, color: "var(--txt)", appearance: "none", cursor: "pointer" }}
-          >
-            <option value={m.role}>{m.role}</option>
-            {assignableRoles(actorRole).filter((r) => r !== m.role).map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
+            options={[m.role, ...assignableRoles(actorRole).filter((r) => r !== m.role)].map((r) => ({ value: r, label: r }))}
+            onChange={(r) => run(m.userId, () => changeMemberRole(m.userId, m.role, r), "Role updated")}
+            minWidth={110}
+            triggerStyle={{ padding: "6px 10px", fontSize: 13 }}
+          />
         ) : (
           <ToneChip tone={ROLE_TONE[m.role]} label={m.role} />
         ),
@@ -216,6 +214,13 @@ function InviteDialog({
   const [role, setRole] = useState<Role>(roles.includes("member") ? "member" : roles[0])
   const [error, setError] = useState("")
   const [sending, setSending] = useState(false)
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { e.stopPropagation(); onClose() } }
+    window.addEventListener("keydown", onKey, true)
+    return () => window.removeEventListener("keydown", onKey, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const submit = async () => {
     if (sending) return

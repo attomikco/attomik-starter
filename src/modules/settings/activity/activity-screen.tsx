@@ -7,6 +7,7 @@ import { eventTone, eventVerb, summarizeEvent } from "@/core/audit/summaries"
 import { pageCount, pageSummary } from "@/core/data/query"
 import { DataTable, ToneChip } from "@/ui/data/data-table"
 import { SearchInput } from "@/ui/data/table-controls"
+import { Listbox } from "@/ui/forms/select"
 
 /**
  * Activity screen, ported from the reference activity/audit patterns:
@@ -29,11 +30,6 @@ const ACTION_OPTIONS: [string, string][] = [
   ["workspace.invitation.accepted", "Invitation accepted"],
   ["workspace.created", "Workspace created"],
 ]
-
-const selectStyle = {
-  background: "var(--card)", border: "1px solid var(--line-2)", borderRadius: 8,
-  padding: "9px 12px", fontSize: 13, color: "var(--txt)", appearance: "none" as const, cursor: "pointer",
-}
 
 export function ActivityScreen({
   events,
@@ -114,13 +110,20 @@ export function ActivityScreen({
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", flex: "none" }}>
         <SearchInput value={q} onChange={setQ} placeholder="Search events" />
-        <select aria-label="Event type" style={selectStyle} value={filters.action} onChange={(e) => navigate({ action: e.target.value })}>
-          {ACTION_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-        </select>
-        <select aria-label="Actor" style={selectStyle} value={filters.actor} onChange={(e) => navigate({ actor: e.target.value })}>
-          <option value="">Everyone</option>
-          {members.map((m) => <option key={m.userId} value={m.userId}>{m.email}</option>)}
-        </select>
+        <Listbox
+          ariaLabel="Event type"
+          value={filters.action}
+          options={ACTION_OPTIONS.map(([value, label]) => ({ value, label }))}
+          onChange={(action) => navigate({ action })}
+          minWidth={168}
+        />
+        <Listbox
+          ariaLabel="Actor"
+          value={filters.actor}
+          options={[{ value: "", label: "Everyone" }, ...members.map((m) => ({ value: m.userId, label: m.email }))]}
+          onChange={(actor) => navigate({ actor })}
+          minWidth={150}
+        />
       </div>
 
       <DataTable<ActivityEvent>

@@ -47,13 +47,15 @@ export function Sidebar({
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "4px 4px 18px", flex: "none" }}>
         {!tight && <WorkspaceMark workspace={workspace} />}
         {!mobile && (
-          <span
+          <button
+            className="ui-btn"
             onClick={onToggleCollapse}
+            aria-label={tight ? "Expand the sidebar" : "Collapse the sidebar"}
             title={tight ? "Expand the sidebar" : "Collapse the sidebar"}
-            style={{ width: 30, height: 30, borderRadius: 9, display: "grid", placeItems: "center", cursor: "pointer", flex: "none", color: "var(--txt-3)", background: tight ? "var(--card)" : "transparent" }}
+            style={{ width: 30, height: 30, borderRadius: 9, display: "grid", placeItems: "center", flex: "none", color: "var(--txt-3)", background: tight ? "var(--card)" : "transparent" }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg>
-          </span>
+          </button>
         )}
       </div>
 
@@ -80,23 +82,26 @@ export function Sidebar({
         ))}
       </div>
 
-      <div style={{ flex: "none", display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, margin: "8px 0", boxSizing: "border-box", flexDirection: tight ? "column" : "row" }}>
+      <div role="radiogroup" aria-label="Theme" style={{ flex: "none", display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, margin: "8px 0", boxSizing: "border-box", flexDirection: tight ? "column" : "row" }}>
         {THEME_MODES.map(([choice, label, short, icon]) => {
           const active = mode === choice
           return (
-            <span
+            <button
               key={choice}
+              className="ui-btn"
+              role="radio"
+              aria-checked={active}
               onClick={() => setMode(choice)}
               title={label}
               style={{
                 flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
-                borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: "pointer",
+                borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase",
                 ...(active ? { background: "var(--shell)", color: "var(--txt)" } : { color: "var(--txt-4)" }),
               }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d={icon} /></svg>
               {!tight && short}
-            </span>
+            </button>
           )
         })}
       </div>
@@ -106,10 +111,10 @@ export function Sidebar({
         target="_blank"
         rel="noopener"
         className="sh-credit"
-        style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--txt-4)", textDecoration: "none", padding: "4px 12px 2px", flex: "none", display: "flex", alignItems: "center", justifyContent: tight ? "center" : "flex-start", gap: 7 }}
+        style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--txt-4)", textDecoration: "none", padding: "4px 12px 2px", flex: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
       >
         {!tight && "Built by"}
-        <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style={{ flex: "none", opacity: 0.85 }}>
+        <svg width="10" height="10" viewBox="0 0 77 77" fill="none" aria-hidden="true" style={{ flex: "none", opacity: 0.85 }}>
           <g transform="translate(-11.56 -7)" stroke="currentColor" strokeWidth="7" strokeLinecap="round">
             <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81" />
             <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83" />
