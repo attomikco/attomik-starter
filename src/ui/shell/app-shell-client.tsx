@@ -2,10 +2,9 @@
 
 import { useRouter, usePathname } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
-import { projectConfig } from "@/config/project"
 import type { NavigationGroup } from "@/core/navigation"
 import { CommandBar, type ShellPanel } from "./command-bar"
-import type { ShellAccount } from "./app-shell"
+import type { ShellAccount, ShellWorkspace } from "./app-shell"
 import { CommandPalette } from "./command-palette"
 import { buildGoMap, isNavActive, isTypingTarget, type PaletteGroup } from "./helpers"
 import { MobileBar } from "./mobile-bar"
@@ -28,21 +27,23 @@ export function AppShellClient({
   navigation,
   chrome = "full",
   account,
+  workspace,
   children,
 }: {
   navigation: NavigationGroup[]
   chrome?: "inset" | "full"
   account: ShellAccount
+  workspace: ShellWorkspace
   children: ReactNode
 }) {
   return (
     <ThemeProvider>
-      <ShellInner navigation={navigation} chrome={chrome} account={account}>{children}</ShellInner>
+      <ShellInner navigation={navigation} chrome={chrome} account={account} workspace={workspace}>{children}</ShellInner>
     </ThemeProvider>
   )
 }
 
-function ShellInner({ navigation, chrome, account, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; account: ShellAccount; children: ReactNode }) {
+function ShellInner({ navigation, chrome, account, workspace, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; account: ShellAccount; workspace: ShellWorkspace; children: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const { setMode } = useTheme()
@@ -61,7 +62,7 @@ function ShellInner({ navigation, chrome, account, children }: { navigation: Nav
 
   const navItems = useMemo(() => navigation.flatMap((g) => g.items), [navigation])
   const goMap = useMemo(() => buildGoMap(navItems), [navItems])
-  const screenLabel = navItems.find((i) => isNavActive(pathname, i.href))?.label ?? projectConfig.name
+  const screenLabel = navItems.find((i) => isNavActive(pathname, i.href))?.label ?? workspace.name
 
   useEffect(() => {
     try {
@@ -159,6 +160,7 @@ function ShellInner({ navigation, chrome, account, children }: { navigation: Nav
         <div style={shellStyle}>
           {(!mobile || railOpen) && (
             <Sidebar
+              workspace={workspace}
               navigation={navigation}
               mobile={mobile}
               tight={tight}

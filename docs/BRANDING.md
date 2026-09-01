@@ -51,6 +51,22 @@ Appearance will persist only `SkinInput`-compatible values (plus logo
 uploads). The UI edits input values; it never writes resolved CSS variables.
 Resolution always goes through `resolveSkin`.
 
+## Persistence (Task 006)
+
+Workspace branding lives in `workspace_settings` as raw SkinInput values —
+column mapping in `src/core/branding/persistence.ts` (`rowToSkinInput` /
+`skinInputToRow`). The `(app)` layout resolves settings server-side and
+injects `skinStylesheetWithDefault(skin, default_appearance)` after the
+base stylesheet, so workspace branding is correct in the initial HTML (no
+flash). `default_appearance` (light default for new workspaces) is the
+no-explicit-choice baseline; the user's theme toggle (`data-theme`) always
+wins. Auth stays light independently. The Appearance screen edits input
+values through `src/modules/settings/appearance/actions.ts` — it never
+writes resolved CSS variables. Radii (`radius_large/medium/small` →
+`r/r2/r3` → `--r/--r2/--r3`, defaults 22/16/11) persist alongside brand as
+**interface geometry** — editable per workspace in the Shape card, but
+never part of SkinInput or the OKLCH derivation.
+
 ## Verifying
 
 `/dev/theme?skin=base|electric|green` previews every token in both themes.

@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation"
 import type { CSSProperties } from "react"
 import type { NavigationGroup } from "@/core/navigation"
+import type { ShellWorkspace } from "./app-shell"
 import { GROUP_LABELS } from "@/core/navigation/build"
 import { isNavActive } from "./helpers"
 import { NavItem } from "./nav-item"
@@ -14,6 +15,7 @@ import { THEME_MODES, useTheme } from "./theme"
  * grouped nav (labels expanded, hairline collapsed), theme switch, credit.
  */
 export function Sidebar({
+  workspace,
   navigation,
   mobile,
   tight,
@@ -21,6 +23,7 @@ export function Sidebar({
   onToggleCollapse,
   onNavigate,
 }: {
+  workspace: ShellWorkspace
   navigation: NavigationGroup[]
   mobile: boolean
   tight: boolean
@@ -43,12 +46,7 @@ export function Sidebar({
   return (
     <div style={railStyle}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "4px 4px 18px", flex: "none" }}>
-        {!tight && (
-          <span style={{ height: 34, width: "100%", maxWidth: 176, border: "1px dashed var(--line-2)", borderRadius: "var(--r3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxSizing: "border-box" }}>
-            <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--line-2)", display: "block", flex: "none" }} />
-            <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".13em", textTransform: "uppercase", color: "var(--txt-4)" }}>Logo</span>
-          </span>
-        )}
+        {!tight && <WorkspaceMark workspace={workspace} />}
         {!mobile && (
           <span
             onClick={onToggleCollapse}
@@ -127,5 +125,37 @@ export function Sidebar({
         {!tight && "Attomik"}
       </a>
     </div>
+  )
+}
+
+/** Workspace mark: uploaded logo for the active ground, else placeholder. */
+function WorkspaceMark({ workspace }: { workspace: ShellWorkspace }) {
+  const { logoLightUrl, logoDarkUrl, name } = workspace
+  const img = (src: string, cls?: string) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img key={cls ?? src} src={src} alt={`${name} logo`} className={cls} style={{ height: 30, width: "auto", maxWidth: 176, objectFit: "contain" }} />
+  )
+
+  if (logoLightUrl && logoDarkUrl) {
+    return (
+      <span style={{ height: 34, flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {img(logoLightUrl, "sh-logo-light")}
+        {img(logoDarkUrl, "sh-logo-dark")}
+      </span>
+    )
+  }
+  const only = logoLightUrl ?? logoDarkUrl
+  if (only) {
+    return (
+      <span style={{ height: 34, flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {img(only)}
+      </span>
+    )
+  }
+  return (
+    <span style={{ height: 34, width: "100%", maxWidth: 176, border: "1px dashed var(--line-2)", borderRadius: "var(--r3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxSizing: "border-box" }}>
+      <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--line-2)", display: "block", flex: "none" }} />
+      <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".13em", textTransform: "uppercase", color: "var(--txt-4)" }}>Logo</span>
+    </span>
   )
 }

@@ -16,6 +16,25 @@ delete module code because a project doesn't use it.
 - `/design-reference` is READ-ONLY reference material. Never modify, rename,
   move, or delete anything inside it.
 
+## Workspace rules
+
+- All product data belongs to a workspace unless explicitly global.
+- Never trust workspace_id from the browser without server/RLS validation.
+- RLS must enforce workspace membership on every table.
+- Authorization roles come from workspace_members, never user_metadata.
+- Modules use the canonical workspace access layer (src/core/workspace) —
+  never their own queries against workspace tables.
+
+## Brand persistence rules
+
+- Persist SkinInput values, not resolved CSS variables.
+- Appearance edits workspace settings through the canonical server layer
+  (src/modules/settings/appearance/actions.ts).
+- Do not add arbitrary brand controls; radii are interface geometry —
+  persisted per workspace and editable in Appearance's Shape card, but
+  never part of SkinInput or the brand derivation. Exactly three tokens.
+- Workspace branding must render server-first (no default-skin flash).
+
 ## Auth rules
 
 - App routes require verified server-side Supabase identity

@@ -86,6 +86,21 @@ export const moduleRegistry = {
     },
     permissions: ["media.view", "media.upload", "media.delete"],
   },
+  // Settings is core-adjacent but registered as a module so navigation,
+  // palette, and guards stay registry-driven. Projects keep it enabled.
+  settings: {
+    id: "settings",
+    label: "Settings",
+    description: "Workspace settings: appearance & brand (more tabs later).",
+    navigation: {
+      group: "settings",
+      label: "Appearance",
+      icon: "settings",
+      href: "/settings/appearance",
+      order: 0,
+    },
+    permissions: ["settings.view", "settings.manage"],
+  },
 } satisfies Partial<Record<ModuleId, ModuleDefinition>>
 
 /** Modules that have a definition. Config may list more ids than are registered yet. */

@@ -40,3 +40,8 @@ textarea { resize: none; }
 .sh-close-hover:hover { background: var(--shell); }
 
 @keyframes sh-spin { to { transform: rotate(360deg); } }
+
+/* Workspace logo per ground: the app layout emits --logo-*-display on the
+   same selectors as the theme tokens, so the logo always matches. */
+.sh-logo-light { display: var(--logo-light-display, block); }
+.sh-logo-dark { display: var(--logo-dark-display, none); }

@@ -8,6 +8,7 @@ export const projectConfig = {
 
   modules: {
     overview: true,
+    settings: true,
     media: true,
     customers: false,
     analytics: false,

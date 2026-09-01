@@ -55,6 +55,15 @@ proxy, copy the cookies from `supabaseResponse` onto it.
   protecting pages/data, `getUser()` when you need the fresh user record.
   Never trust `getSession()` or browser state for authorization.
 
+## Schema and migrations
+
+Migrations live in `supabase/migrations` (created with
+`supabase migration new`). Workspace schema + RLS model: see
+docs/WORKSPACES.md. RLS is mandatory on every exposed table; membership
+predicates use the hardened helpers in the non-exposed `private` schema.
+Accepted advisor warnings: leaked-password protection and MFA options are
+password-auth features — this starter is magic-link only.
+
 ## Diagnostics
 
 `GET /api/health/supabase` proves env loading and connectivity (no

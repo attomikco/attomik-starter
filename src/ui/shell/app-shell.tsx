@@ -12,19 +12,27 @@ export interface ShellAccount {
   email: string
 }
 
+export interface ShellWorkspace {
+  name: string
+  logoLightUrl: string | null
+  logoDarkUrl: string | null
+}
+
 export function AppShell({
   children,
   chrome = "full",
   account,
+  workspace,
 }: {
   children: ReactNode
   chrome?: "inset" | "full"
   account: ShellAccount
+  workspace: ShellWorkspace
 }) {
   const navigation = getEnabledNavigation()
 
   return (
-    <AppShellClient navigation={navigation} chrome={chrome} account={account}>
+    <AppShellClient navigation={navigation} chrome={chrome} account={account} workspace={workspace}>
       {children}
     </AppShellClient>
   )
