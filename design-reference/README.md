@@ -23,6 +23,10 @@ A brandable admin shell. Two pages, seven mounted components, one skin engine. T
 
 Areas are never opened directly. Their page wrapper, rail and command bar collapse when embedded; the host owns that chrome.
 
+### `uploads/`
+
+This directory is intentionally empty in Attomik Starter. Add the current project's visual references there after cloning — client brand boards, annotated screenshots, product mocks. The canonical starter must never carry assets belonging to a specific client or project.
+
 ---
 
 ## 2. The skin engine

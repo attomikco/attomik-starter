@@ -45,10 +45,27 @@ fresh project provisions only what it enables:
 
 - Core migrations (workspace/team/audit) always apply.
 - Optional module migrations live in `supabase/modules/<id>/` and are
-  copied into `supabase/migrations/` (then applied) only when the project
-  enables the module. Keep each module's schema self-contained,
-  RLS-enabled, and workspace-scoped. No installer CLI yet — this manual
-  convention is v1.
+  installed into `supabase/migrations/` (then applied) only when the
+  project enables the module. Keep each module's schema self-contained,
+  RLS-enabled, and workspace-scoped.
+
+To install a module's migrations:
+
+```sh
+pnpm enable-module <module-id>     # or scripts/enable-module.sh <module-id>
+```
+
+The script verifies the module exists, copies its `.sql` files into
+`supabase/migrations/` with fresh unique timestamps (preserving the
+module's own file order), and renames them
+`<timestamp>_<module>_<name>.sql`. It is safe to run twice: files already
+installed with identical content are skipped and reported; a name
+collision with different content aborts before anything is copied.
+
+It only stages files locally — it never applies anything to a database.
+Review the staged files, then apply them exactly like core migrations
+(`supabase db push`, or the Supabase MCP `apply_migration` per file, in
+filename order).
 
 ## Minimal template
 

@@ -2,11 +2,17 @@
 # Pushed to the remote project with:  SMTP_PASS=<resend api key> supabase config push
 # The SMTP password is a Resend API key referenced via env() — never committed.
 
+# Per-project: replace with YOUR Supabase project ref after cloning
+# (this value is the canonical starter's own development project).
 project_id = "mduqytyqfdhymtrrjtbj"
 
 [auth]
+# Local development default — a fresh clone completes its first magic-link
+# login on http://localhost:3000 without editing this file. Production and
+# custom-domain URLs are added per project at deployment time (see
+# docs/DEPLOYMENT.md); never hardcode a production domain here.
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["http://localhost:3000/**", "http://localhost:4123/**"]
+additional_redirect_urls = ["http://localhost:3000/**"]
 
 [auth.email]
 enable_signup = true
@@ -22,6 +28,7 @@ host = "smtp.resend.com"
 port = 465
 user = "resend"
 pass = "env(SMTP_PASS)"
+# Per-project: replace with the project's verified sending identity.
 admin_email = "auth@email.attomik.co"
 sender_name = "Attomik Starter"
 

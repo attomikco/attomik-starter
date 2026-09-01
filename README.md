@@ -58,6 +58,7 @@ Full project setup (Supabase project, auth SMTP via Resend, deployment):
 | docs/MODULES.md | module extension contract |
 | docs/SUPABASE.md · AUTH · WORKSPACES · TEAM · AUDIT | backend systems |
 | docs/BRANDING.md · DATA.md · SHELL.md | UI systems |
+| docs/ROADMAP.md | recorded architectural follow-ups (not yet built) |
 
 `/design-reference` is the visual blueprint inventory for future modules —
 read-only, never production runtime. Dev review tools live under `/dev/*`
