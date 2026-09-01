@@ -4,3 +4,6 @@ next-env.d.ts
 *.tsbuildinfo
 .env*.local
 .DS_Store
+.env
+.env.local
+!.env.example
