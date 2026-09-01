@@ -1,4 +1,5 @@
 import { cache } from "react"
+import { bootstrapWorkspace } from "./bootstrap"
 import { defaultSkin, skinInputToRow, type WorkspaceBrandRow } from "@/core/branding"
 import { requireUser, type AuthUser } from "@/core/auth/require-user"
 import { getSupabaseEnv } from "@/core/env"
@@ -34,51 +35,83 @@ export interface WorkspaceContext {
 
 /**
  * Bootstrap: first sign-in creates profile → workspace → owner membership →
- * default settings (canonical base skin, light default appearance). Each
- * step is idempotent; RLS permits exactly this self-service path.
+ * default settings (canonical base skin, light default appearance).
+ *
+ * The algorithm lives in bootstrap.ts and is idempotent and race-safe:
+ * every step tolerates "already done", a slug conflict adopts the
+ * concurrent winner's workspace instead of giving up, and membership /
+ * settings land with ON CONFLICT DO NOTHING so concurrent racers converge
+ * on the same rows. RLS permits exactly this self-service path (creator
+ * visibility on workspaces, creator claiming the owner seat, owner
+ * writing settings).
  */
 async function ensureWorkspaceForUser(user: AuthUser): Promise<void> {
   const supabase = await createClient()
-
-  await supabase.from("profiles").upsert(
-    { id: user.id, email: user.email },
-    { onConflict: "id", ignoreDuplicates: true },
-  )
-
-  const { data: membership } = await supabase
-    .from("workspace_members")
-    .select("workspace_id")
-    .limit(1)
-    .maybeSingle()
-  if (membership) return
-
   const name = projectConfig.name
-  const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${user.id.slice(0, 8)}`
-  // The id is generated here, not RETURNING'd: the SELECT policy requires
-  // membership, which doesn't exist until the owner row lands one step later.
-  const workspaceId = crypto.randomUUID()
-  const { error: wsError } = await supabase
-    .from("workspaces")
-    .insert({ id: workspaceId, name, slug, created_by: user.id })
-  if (wsError) {
-    // 23505 = unique_violation on the slug: a concurrent first request won
-    // the bootstrap race. Let the caller's membership retry pick it up.
-    if (wsError.code === "23505") return
-    throw new Error(`Workspace bootstrap failed: ${wsError.message}`)
-  }
 
-  const { error: memberError } = await supabase
-    .from("workspace_members")
-    .insert({ workspace_id: workspaceId, user_id: user.id, role: "owner" })
-  if (memberError) throw new Error(`Workspace bootstrap failed: ${memberError.message}`)
-
-  const { error: settingsError } = await supabase.from("workspace_settings").insert({
-    workspace_id: workspaceId,
-    display_name: name,
-    default_appearance: "light",
-    ...skinInputToRow(defaultSkin),
-  })
-  if (settingsError) throw new Error(`Workspace bootstrap failed: ${settingsError.message}`)
+  await bootstrapWorkspace(
+    {
+      async ensureProfile() {
+        await supabase.from("profiles").upsert(
+          { id: user.id, email: user.email },
+          { onConflict: "id", ignoreDuplicates: true },
+        )
+      },
+      async hasMembership() {
+        const { data } = await supabase
+          .from("workspace_members")
+          .select("workspace_id")
+          .limit(1)
+          .maybeSingle()
+        return !!data
+      },
+      async findOwnWorkspace() {
+        const { data } = await supabase
+          .from("workspaces")
+          .select("id")
+          .eq("created_by", user.id)
+          .order("created_at", { ascending: true })
+          .limit(1)
+          .maybeSingle()
+        return (data?.id as string | undefined) ?? null
+      },
+      async insertWorkspace(ws) {
+        const { error } = await supabase
+          .from("workspaces")
+          .insert({ id: ws.id, name: ws.name, slug: ws.slug, created_by: user.id })
+        if (!error) return "ok"
+        // 23505 = unique_violation on the slug: only a concurrent request
+        // for this same user can produce it (the slug embeds the user id).
+        if (error.code === "23505") return "conflict"
+        throw new Error(`Workspace bootstrap failed: ${error.message}`)
+      },
+      // Insert-and-tolerate-23505, NOT upsert/ON CONFLICT DO NOTHING: the
+      // conflict arbiter evaluates the row against the member-only SELECT
+      // policies before this user's membership exists, so DO NOTHING fails
+      // RLS for a first-time user (verified live). A duplicate key means
+      // the concurrent racer already wrote the row — same outcome.
+      async claimOwnerSeat(workspaceId) {
+        const { error } = await supabase
+          .from("workspace_members")
+          .insert({ workspace_id: workspaceId, user_id: user.id, role: "owner" })
+        if (error && error.code !== "23505") {
+          throw new Error(`Workspace bootstrap failed: ${error.message}`)
+        }
+      },
+      async ensureSettings(workspaceId) {
+        const { error } = await supabase.from("workspace_settings").insert({
+          workspace_id: workspaceId,
+          display_name: name,
+          default_appearance: "light",
+          ...skinInputToRow(defaultSkin),
+        })
+        if (error && error.code !== "23505") {
+          throw new Error(`Workspace bootstrap failed: ${error.message}`)
+        }
+      },
+    },
+    { name, userId: user.id },
+  )
 }
 
 /**

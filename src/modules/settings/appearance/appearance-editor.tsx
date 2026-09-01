@@ -255,9 +255,9 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
           {/* Brand mark */}
           <div style={card}>
             <div style={cardTitle}>Brand mark</div>
-            <div style={cardSub}>Drops into the rail at 30px. Supply artwork for both grounds — light and dark are peer palettes.</div>
-            <AssetRow label="Logo · light ground" hint="Shown on the light theme rail." url={initial.logoLightUrl} kind="logo-light" tall canEdit={canEdit} onUpload={upload} onRemove={remove} />
-            <AssetRow label="Logo · dark ground" hint="Shown on the dark theme rail." url={initial.logoDarkUrl} kind="logo-dark" tall dark canEdit={canEdit} onUpload={upload} onRemove={remove} />
+            <div style={cardSub}>Drops into the rail at exactly 30px tall, up to 176px wide. Supply a horizontal lockup as SVG (or PNG at 2×, ≥ 352×60) with a transparent background and no built-in padding — a stacked or square-only mark renders tiny at this height. Supply artwork for both grounds — light and dark are peer palettes, so provide a version legible on each, not one recolored file.</div>
+            <AssetRow label="Logo · light ground" hint="Shown on the light theme rail. Dark or full-color artwork that holds up on near-white." url={initial.logoLightUrl} kind="logo-light" tall canEdit={canEdit} onUpload={upload} onRemove={remove} />
+            <AssetRow label="Logo · dark ground" hint="Shown on the dark theme rail. Light artwork that holds up on near-black." url={initial.logoDarkUrl} kind="logo-dark" tall dark canEdit={canEdit} onUpload={upload} onRemove={remove} />
             <AssetRow label="Favicon" hint="Square mark only. It renders at 16px, so a wordmark turns to mush." url={initial.faviconUrl} kind="favicon" canEdit={canEdit} onUpload={upload} onRemove={remove} />
           </div>
 

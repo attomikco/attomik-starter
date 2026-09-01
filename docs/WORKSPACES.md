@@ -19,7 +19,17 @@ All product data belongs to a workspace unless explicitly global.
 One canonical access layer: `src/core/workspace`.
 `requireWorkspace()` (request-cached) resolves user → workspace → settings,
 bootstrapping on first sign-in: profile → workspace → owner membership →
-default settings from the base skin. The `(app)` layout calls it and passes
+default settings from the base skin. The bootstrap
+(`src/core/workspace/bootstrap.ts`) is idempotent and race-safe: the first
+page load after the magic-link callback can resolve the workspace from
+several concurrent requests, so every step tolerates "already done" — an
+existing creator-owned workspace is reused, a slug conflict adopts the
+concurrent winner's workspace, and membership/settings land as plain
+inserts that treat a duplicate key (23505) as already done. (ON CONFLICT
+DO NOTHING cannot be used there: the arbiter check runs against the
+member-only SELECT policies before the racer's membership exists and
+fails RLS.) Both racers converge on one workspace, one owner row, one
+settings row. The `(app)` layout calls it and passes
 only what the shell needs; modules use the same layer — never their own
 queries against these tables. Multi-workspace switching is deliberately
 deferred; the EARLIEST membership is the current workspace (`/invite/*`

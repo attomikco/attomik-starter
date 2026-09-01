@@ -136,6 +136,18 @@ project may intentionally change its `dev` script:
 (Keep `site_url`/redirects and the health-check URL in sync with the port
 you choose.)
 
+### "Something went wrong" on the very first page load after login
+
+First sign-in bootstraps the workspace, and that first load may resolve it
+from several concurrent requests. The bootstrap is race-safe in the
+current starter (concurrent racers converge on one workspace, one owner
+membership, one settings row — see docs/WORKSPACES.md), so this should
+not happen. If a project cloned from an older starter shows a fatal
+"could not start this page" screen once after the magic-link callback and
+works on reload, it is missing the race-safe bootstrap — port
+`src/core/workspace/bootstrap.ts` and `src/app/error.tsx` from the
+current starter.
+
 ## 5. The first Claude Code prompt
 
 Paste this as the first prompt when starting product work on the clone:

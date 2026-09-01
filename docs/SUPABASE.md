@@ -35,6 +35,13 @@ const supabase = await createClient()
 Server Components, Server Actions, Route Handlers. Created per request —
 never module-level, never cached across requests.
 
+The factory opts every PostgREST call out of Next/React render-pass fetch
+memoization (`cache: "no-store"` + a per-call abort signal): identical
+GETs in one render otherwise share the first response, so a
+read-after-write — like the workspace bootstrap's membership retry —
+would see stale pre-write data. Deduplicate at our layer (React `cache`
+on `requireWorkspace`), never by relying on fetch memoization.
+
 ## Session refresh
 
 `src/proxy.ts` (Next.js 16 proxy) → `updateSession()` in
