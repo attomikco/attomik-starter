@@ -16,6 +16,19 @@ delete module code because a project doesn't use it.
 - `/design-reference` is READ-ONLY reference material. Never modify, rename,
   move, or delete anything inside it.
 
+## Shell rules
+
+- AppShell (`src/ui/shell`) is canonical.
+- Modules never create their own application rail or top bar.
+- Navigation always comes from the module registry — never hardcode it.
+- Do not duplicate command palette destinations; they derive from the same
+  enabled navigation.
+- Do not create module-specific toast systems; use `useToast()`.
+- Shell colors consume canonical theme tokens only.
+- Route state determines active navigation — no selected-screen state.
+- /design-reference is the visual/behavioral source of truth.
+- Details: docs/SHELL.md.
+
 ## Branding / theme rules
 
 - The skin derivation engine (`src/core/branding`) is canonical.

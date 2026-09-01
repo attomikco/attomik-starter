@@ -17,6 +17,8 @@ export interface ModuleNavigation {
   label: string
   href: string
   order: number
+  /** Icon key, mapped to the reference SVG path in src/ui/shell/icons.tsx */
+  icon: string
 }
 
 export interface ModuleDefinition {
@@ -36,6 +38,7 @@ export const moduleRegistry = {
     navigation: {
       group: "operate",
       label: "Overview",
+      icon: "overview",
       href: "/",
       order: 0,
     },
@@ -49,6 +52,7 @@ export const moduleRegistry = {
     navigation: {
       group: "operate",
       label: "Analytics",
+      icon: "analytics",
       href: "/analytics",
       order: 10,
     },
@@ -62,6 +66,7 @@ export const moduleRegistry = {
     navigation: {
       group: "operate",
       label: "Customers",
+      icon: "customers",
       href: "/customers",
       order: 20,
     },
@@ -75,6 +80,7 @@ export const moduleRegistry = {
     navigation: {
       group: "configure",
       label: "Media",
+      icon: "media",
       href: "/media",
       order: 10,
     },

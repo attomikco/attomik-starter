@@ -20,6 +20,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         {/* Server-resolved skin: correct palette on first paint, both themes. */}
         <style dangerouslySetInnerHTML={{ __html: skinStylesheet(defaultSkin) }} />
+        {/* Replays an explicit stored theme choice before paint (no flash). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var t=localStorage.getItem("attomik-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}',
+          }}
+        />
         {children}
       </body>
     </html>

@@ -1,0 +1,27 @@
+/* Shell chrome — hover states, motion, and base rules ported from the
+   design-reference host <style> block. All colors are theme tokens. */
+
+a { color: var(--accent-text); }
+a:hover { color: var(--txt); }
+::selection { background: var(--accent); color: var(--accent-ink); }
+input, textarea { font: inherit; color: inherit; background: none; border: none; outline: none; }
+input::placeholder, textarea::placeholder { color: var(--txt-4); }
+textarea { resize: none; }
+
+@keyframes sh-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes sh-rise-center { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+.sh-scroll { overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
+
+/* Nav item idle hover: background card, text lifts (reference style-hover) */
+.sh-nav-item { font-weight: 500; color: var(--txt-2); }
+.sh-nav-item:hover { background: var(--card); color: var(--txt); }
+.sh-nav-item-active { font-weight: var(--w-semi); color: var(--txt); background: var(--card); }
+
+.sh-subnav-item:hover { color: var(--txt); }
+
+.sh-row-hover:hover { background: var(--shell); }
+.sh-pick:hover { background: var(--shell); color: var(--txt); }
+.sh-signout:hover { background: var(--bad-tint); }
+.sh-credit:hover { color: var(--txt-3); }
+.sh-close-hover:hover { background: var(--shell); }
