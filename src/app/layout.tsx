@@ -8,8 +8,12 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  // suppressHydrationWarning is scoped to <html> only: the pre-paint theme
+  // resolver necessarily sets data-theme before hydration, and the server
+  // cannot know the browser's prefers-color-scheme or localStorage. This is
+  // the one sanctioned attribute mismatch; children are still verified.
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         style={{
           margin: 0,
