@@ -1,7 +1,9 @@
 import { createHash, randomBytes } from "node:crypto"
+import { emailBrand, rowToSkinInput } from "@/core/branding"
 import { getResendKey } from "@/core/env"
 import type { Role } from "@/core/permissions"
 import { createClient } from "@/core/supabase/server"
+import { brandingPublicUrl, getWorkspaceSettings } from "@/core/workspace"
 import { invitationEmail } from "./invitation-email"
 
 /**
@@ -100,12 +102,28 @@ export async function sendInvitationEmail(input: {
   const key = getResendKey()
   if (!key) throw new Error("Email is not configured (RESEND_API_KEY missing)")
   const from = process.env.APP_EMAIL_FROM?.trim() || "Attomik Starter <auth@email.attomik.co>"
+
+  // Workspace brand for the email: accent as literal hex, light-ground
+  // logo. requireWorkspace is request-cached, so this reuses the invite
+  // action's own lookup; branding failures never block the invitation.
+  let brand: { accent?: string; accentInk?: string; logoUrl?: string | null } = {}
+  try {
+    const settings = await getWorkspaceSettings()
+    brand = {
+      ...emailBrand(rowToSkinInput(settings)),
+      logoUrl: brandingPublicUrl(settings.logo_light_path),
+    }
+  } catch {
+    // Neutral defaults in the template.
+  }
+
   const { subject, html, text } = invitationEmail({
     workspaceName: input.workspaceName,
     inviterEmail: input.inviterEmail,
     role: input.role,
     acceptUrl: input.acceptUrl,
     expiresInDays: INVITATION_TTL_DAYS,
+    ...brand,
   })
 
   const res = await fetch("https://api.resend.com/emails", {
