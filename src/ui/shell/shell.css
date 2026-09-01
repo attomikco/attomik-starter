@@ -72,6 +72,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 .ui-field:focus-within { outline: 2px solid var(--accent-tint); outline-offset: 1px; }
 .ui-field input:focus-visible, .ui-field textarea:focus-visible { outline: none; }
 
+/* Command palette search: the row is the frame, but it sits flush against
+   the panel edges (overflow hidden would clip an outline), so focus-within
+   accents the row's own hairline instead — same container-owned principle
+   as .ui-field, palette-shaped. */
+.sh-palette-search { border-bottom: 1px solid var(--line); }
+.sh-palette-search:focus-within { border-bottom-color: var(--accent); }
+.sh-palette-search input:focus-visible { outline: none; }
+
 .sh-bulk-action:hover { background: rgba(255,255,255,.12); }
 
 /* Reference skeleton shimmer (Starter Admin loading states). */

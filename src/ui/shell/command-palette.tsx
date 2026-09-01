@@ -34,7 +34,7 @@ export function CommandPalette({
           boxShadow: "0 30px 70px rgba(0,0,0,.3)", overflow: "hidden", animation: "sh-rise-center .14s ease-out",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 18px", borderBottom: "1px solid var(--line)" }}>
+        <div className="sh-palette-search" style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 18px" }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="2" strokeLinecap="round" style={{ flex: "none" }}><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
           <input
             ref={inputRef}
