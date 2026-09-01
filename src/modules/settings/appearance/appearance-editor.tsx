@@ -1,20 +1,21 @@
 "use client"
 
-import { useMemo, useRef, useState, type CSSProperties } from "react"
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { useRouter } from "next/navigation"
-import { resolveSkin, clampSkinInput, type DefaultAppearance, type ProductGeometry, type SkinInput } from "@/core/branding"
+import { resolveSkin, clampSkinInput, skinStylesheetWithDefault, themedDeclarations, type DefaultAppearance, type ProductGeometry, type SkinInput } from "@/core/branding"
 import { useToast } from "@/ui/shell/toast-provider"
 import { removeBrandingAsset, saveAppearance, uploadBrandingAsset, type BrandingAssetKind } from "./actions"
 import { FONT_OPTIONS, MONO_OPTIONS, PRESET_PATCHES, WEIGHT_BOLD_OPTIONS, WEIGHT_SEMI_OPTIONS } from "./options"
 
 /**
  * Appearance & brand editor, ported from design-reference/part-settings.dc.html
- * (appearance tab). Edits build a draft SkinInput; the live preview column
- * resolves the draft through the canonical engine, scoped to the preview
- * panels. Save persists through the server action; the whole app then
- * repaints server-first from workspace_settings. The Shape card edits the
- * three canonical radii — persisted as interface geometry, never part of
- * the brand SkinInput.
+ * (appearance tab). Edits apply LIVE to the whole authenticated app: the
+ * draft resolves through the canonical engine into an override <style>
+ * appended to <head> (beating the server-rendered sheet), then a 700ms
+ * debounced, serialized autosave persists through the server action —
+ * workspace_settings stays the canonical state and first render stays
+ * server-first. The Shape card edits the three canonical radii —
+ * interface geometry, never part of the brand SkinInput.
  */
 
 const card: CSSProperties = { background: "var(--shell)", borderRadius: "var(--r2)", padding: 22 }
@@ -58,10 +59,6 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   const [appearance, setAppearance] = useState<DefaultAppearance>(initial.defaultAppearance)
   const [skin, setSkin] = useState<SkinInput>(initial.skin)
   const [geometry, setGeometry] = useState<ProductGeometry>(initial.geometry)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState("")
-  const baseline = useRef(JSON.stringify({ d: initial.displayName, a: initial.defaultAppearance, s: initial.skin, g: initial.geometry }))
-  const dirty = JSON.stringify({ d: displayName, a: appearance, s: skin, g: geometry }) !== baseline.current
   const canEdit = initial.canEdit
 
   const patch = (p: Partial<SkinInput>) => setSkin((s) => clampSkinInput({ ...s, ...p }))
@@ -71,17 +68,87 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   const draftTokens = useMemo(() => resolveSkin(skin, previewMode, geometry), [skin, previewMode, geometry])
   const previewVars = { ...draftTokens } as CSSProperties
 
-  const save = async () => {
-    if (busy || !canEdit) return
-    setBusy(true)
-    setError("")
-    const result = await saveAppearance({ displayName, defaultAppearance: appearance, skin, geometry })
-    setBusy(false)
-    if (!result.ok) return setError(result.message ?? "Could not save.")
-    baseline.current = JSON.stringify({ d: displayName, a: appearance, s: skin, g: geometry })
-    say("Appearance saved")
-    router.refresh()
+  // ---- Live app-wide application -----------------------------------------
+  // The draft is rendered into an override <style> appended to <head>: same
+  // canonical stylesheet the (app) layout emits, so the whole shell repaints
+  // instantly. Removed on unmount; the server-rendered sheet (refreshed
+  // after each successful save) remains the canonical first-paint source.
+  useEffect(() => {
+    if (!canEdit) return
+    let el = document.getElementById("appearance-draft-override") as HTMLStyleElement | null
+    if (!el) {
+      el = document.createElement("style")
+      el.id = "appearance-draft-override"
+      document.head.appendChild(el)
+    }
+    el.textContent =
+      skinStylesheetWithDefault(skin, appearance, geometry) +
+      "\n" +
+      themedDeclarations(
+        appearance,
+        "--logo-light-display: block; --logo-dark-display: none;",
+        "--logo-light-display: none; --logo-dark-display: block;",
+      )
+  }, [skin, appearance, geometry, canEdit])
+  useEffect(() => () => document.getElementById("appearance-draft-override")?.remove(), [])
+
+  // ---- Debounced, serialized autosave ------------------------------------
+  // 700ms after the last edit. Saves never overlap: an in-flight save sets
+  // `pending` instead, and re-runs with the LATEST draft when it finishes —
+  // so the final persisted state is always the newest edit, and older
+  // responses can never clobber newer ones. Failures keep the draft applied
+  // and retry on the next edit.
+  type SaveStatus = "idle" | "saving" | "saved" | "error"
+  const [status, setStatus] = useState<SaveStatus>("idle")
+  const [statusMsg, setStatusMsg] = useState("")
+  const draftRef = useRef({ displayName, appearance, skin, geometry })
+  draftRef.current = { displayName, appearance, skin, geometry }
+  const savedRef = useRef(JSON.stringify(draftRef.current))
+  const inFlight = useRef(false)
+  const pending = useRef(false)
+
+  const runSave = async () => {
+    if (inFlight.current) {
+      pending.current = true
+      return
+    }
+    inFlight.current = true
+    let failed = false
+    do {
+      pending.current = false
+      const snapshot = draftRef.current
+      const key = JSON.stringify(snapshot)
+      if (key === savedRef.current) break
+      setStatus("saving")
+      const result = await saveAppearance({
+        displayName: snapshot.displayName,
+        defaultAppearance: snapshot.appearance,
+        skin: snapshot.skin,
+        geometry: snapshot.geometry,
+      })
+      if (!result.ok) {
+        failed = true
+        setStatus("error")
+        setStatusMsg(result.message ?? "Couldn't save")
+        break
+      }
+      savedRef.current = key
+    } while (pending.current)
+    inFlight.current = false
+    if (!failed) {
+      setStatus("saved")
+      setStatusMsg("")
+      router.refresh()
+    }
   }
+
+  useEffect(() => {
+    if (!canEdit) return
+    if (JSON.stringify(draftRef.current) === savedRef.current) return
+    const t = setTimeout(runSave, 700)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayName, appearance, skin, geometry, canEdit])
 
   const upload = async (kind: BrandingAssetKind, file: File | null) => {
     if (!file || !canEdit) return
@@ -104,7 +171,17 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
     <div className="sh-scroll" style={{ position: "absolute", inset: 0, padding: 26, boxSizing: "border-box" }}>
       <div style={{ marginBottom: 18 }}>
         <div style={eyebrow}>Workspace · brand variables</div>
-        <h1 style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", margin: "6px 0 6px" }}>Appearance & brand</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <h1 style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", margin: "6px 0 6px" }}>Appearance & brand</h1>
+          {canEdit && status !== "idle" && (
+            <span style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".04em", borderRadius: 999, padding: "4px 10px", flex: "none",
+              ...(status === "saving" ? { color: "var(--txt-3)", background: "var(--shell)" }
+                : status === "saved" ? { color: "var(--ok)", background: "var(--ok-tint)" }
+                : { color: "var(--bad)", background: "var(--bad-tint)" }) }}>
+              {status === "saving" ? "Saving…" : status === "saved" ? "Saved" : statusMsg || "Couldn't save"}
+            </span>
+          )}
+        </div>
         <p style={{ fontSize: 14, color: "var(--txt-2)", margin: 0, maxWidth: 720 }}>
           The nine values a brand supplies. Everything else in the product is computed from them, in both themes.
         </p>
@@ -309,31 +386,23 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
               ))}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, borderTop: "1px solid var(--line)", paddingTop: 14 }}>
-              <span className="sh-pick" onClick={() => { if (canEdit) { setSkin(initial.skin); setGeometry(initial.geometry) } }}
+              <span className="sh-pick" title="Restores the last successfully saved values (not the starter defaults)"
+                onClick={() => {
+                  if (!canEdit) return
+                  const saved = JSON.parse(savedRef.current) as typeof draftRef.current
+                  setDisplayName(saved.displayName)
+                  setAppearance(saved.appearance)
+                  setSkin(saved.skin)
+                  setGeometry(saved.geometry)
+                }}
                 style={{ fontSize: 13.5, fontWeight: "var(--w-semi)" as never, color: "var(--txt-2)", border: "1px solid var(--line-2)", borderRadius: 999, padding: "9px 16px", cursor: canEdit ? "pointer" : "default" }}>
-                Reset to saved
+                Reset to last saved
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sticky save bar */}
-      {canEdit && (
-        <div style={{ position: "sticky", bottom: 0, marginTop: 18, display: "flex", alignItems: "center", gap: 14, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", padding: "12px 16px", boxShadow: "0 -8px 30px rgba(0,0,0,.06)" }}>
-          {error ? (
-            <span style={{ fontSize: 13.5, color: "var(--bad)", flex: 1 }}>{error}</span>
-          ) : (
-            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: dirty ? "var(--warn)" : "var(--txt-4)", flex: 1 }}>
-              {dirty ? "Unsaved changes" : "Everything saved"}
-            </span>
-          )}
-          <span onClick={save}
-            style={{ display: "inline-flex", alignItems: "center", gap: 9, fontSize: 14, fontWeight: "var(--w-semi)" as never, color: "var(--accent-ink)", background: "var(--accent)", borderRadius: 999, padding: "11px 20px", cursor: "pointer", opacity: busy || !dirty ? 0.55 : 1 }}>
-            {busy ? "Saving…" : "Save changes"}
-          </span>
-        </div>
-      )}
     </div>
   )
 }
