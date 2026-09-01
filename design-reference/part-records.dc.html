@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --s1: oklch(.34 .13 250); --s2: oklch(.46 .16 250); --s3: oklch(.58 .14 250);
+    --s4: oklch(.70 .10 250); --s5: oklch(.82 .06 250);
+    --ok: oklch(.575 .195 147); --ok-fill: oklch(.66 .203 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-fill: oklch(.83 .203 92); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-fill: oklch(.64 .233 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --r: 22px; --r2: 16px; --r3: 11px; --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--accent-text); } a:hover { color: var(--txt); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input, textarea, select { font: inherit; color: inherit; background: none; border: none; outline: none; width: 100%; }
+  input::placeholder, textarea::placeholder { color: var(--txt-4); }
+  textarea { resize: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position: absolute; inset: 0; min-height: 0; display: flex; flex-direction: column">
+ <div style="flex: 1; min-height: 0; display: flex; position: relative">
+
+  <div style="display: none">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px 22px; flex: none">
+      <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+        <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+        <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+      </span>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 40px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; margin-right: -4px; padding-right: 4px">
+      <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 0 12px 10px">Records</div>
+      <div style="display: flex; flex-direction: column; gap: 3px">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="3">
+          <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+            <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+            </sc-if>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+            {{ item.label }}
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 20px 12px 10px">Recent</div>
+      <div style="display: flex; flex-direction: column; gap: 3px">
+        <sc-for list="{{ recents }}" as="r" hint-placeholder-count="4">
+          <div style="{{ r.style }}" style-hover="background: var(--card); color: var(--txt)" onClick="{{ r.onClick }}">
+            <span style="{{ r.dotStyle }}"></span>
+            <span style="min-width: 0; flex: 1">
+              <span style="display: block; font-size: 13.5px; letter-spacing: -0.01em">{{ r.label }}</span>
+              <span style="display: block; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ r.sub }}</span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex: none; display: flex; gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); padding: 3px; margin: 8px 4px 8px 0; box-sizing: border-box">
+      <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+        <span style="{{ m.style }}" onClick="{{ m.onClick }}" title="{{ m.label }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ m.icon }}"></path></svg>
+          {{ m.short }}
+        </span>
+      </sc-for>
+    </div>
+
+    <a href="https://attomik.co" target="_blank" rel="noopener" style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; padding: 4px 12px 2px; flex: none; display: flex; align-items: center; gap: 7px" style-hover="color: var(--txt-3)">
+      Built by
+      <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+        <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+          <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+          <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+        </g>
+        <g transform="translate(-11.56 -7)" fill="currentColor">
+          <circle cx="50" cy="16" r="9"></circle>
+          <circle cx="79.44" cy="67" r="9"></circle>
+          <circle cx="20.56" cy="67" r="9"></circle>
+        </g>
+      </svg>
+      Attomik
+    </a>
+  </div>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+
+    <div style="display: none">
+      <div style="display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-3); min-width: 0">
+        <sc-for list="{{ crumbs }}" as="c" hint-placeholder-count="3">
+          <span style="{{ c.style }}" onClick="{{ c.onClick }}">{{ c.label }}</span>
+        </sc-for>
+      </div>
+      <div style="flex: 1"></div>
+      <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}">
+        <span style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); background: var(--warn-tint); border-radius: 999px; padding: 6px 12px">
+          <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--warn-fill); display: block"></span>
+          Unsaved changes
+        </span>
+      </sc-if>
+      <div style="display: flex; align-items: center; gap: 11px">
+        <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 14px; font-weight: var(--w-bold); flex: none">AH</span>
+        <div style="min-width: 0">
+          <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">Anna Hayes</div>
+          <div style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">anna@attomik.co</div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ isRecord }}" hint-placeholder-val="{{ true }}">
+    <div style="background: var(--card); border-radius: var(--r); padding: 26px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; flex: none">
+        <div style="min-width: 0">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
+            <h1 style="font-size: 32px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.05; margin: 0">Order 40218</h1>
+            <span style="display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); background: var(--warn-tint); border-radius: 999px; padding: 5px 11px"><span style="width: 6px; height: 6px; border-radius: 999px; background: var(--warn-fill); display: block"></span>Refund pending</span>
+          </div>
+          <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.5; margin: 0">Placed Aug 28 by Alicia Duarte through the direct store, paid by card ending 4417.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 9px; flex: none">
+          <div style="height: 42px; padding: 0 18px; border: 1px solid var(--line-2); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); white-space: nowrap; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ openEdit }}">Edit</div>
+          <div style="height: 42px; padding: 0 18px; border: 1px solid var(--bad); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--bad); white-space: nowrap; cursor: pointer" onClick="{{ openDecline }}">Decline</div>
+          <div style="height: 42px; padding: 0 20px; background: var(--accent); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); white-space: nowrap; cursor: pointer" onClick="{{ approve }}">Approve refund</div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; flex: none; align-self: flex-start">
+        <sc-for list="{{ recordTabs }}" as="t" hint-placeholder-count="4">
+          <span style="{{ t.style }}" onClick="{{ t.onClick }}">{{ t.label }}<span style="{{ t.countStyle }}">{{ t.count }}</span></span>
+        </sc-for>
+      </div>
+
+      <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; display: grid; {{ split }}; align-items: start">
+        <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+
+          <sc-if value="{{ tabOverview }}" hint-placeholder-val="{{ true }}">
+            <div style="display: grid; {{ trio }}">
+              <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
+                <div style="{{ s.cardStyle }}">
+                  <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">{{ s.label }}</div>
+                  <div style="font-size: 24px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1">{{ s.value }}</div>
+                  <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 8px">{{ s.sub }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; min-width: 0">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px">
+                <span style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em">Line items</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">3 of 4 in the refund</span>
+              </div>
+              <div style="display: flex; flex-direction: column">
+                <sc-for list="{{ lineItems }}" as="row" hint-placeholder-count="4">
+                  <div style="{{ row.rowStyle }}">
+                    <span style="{{ row.checkStyle }}" onClick="{{ row.onToggle }}">{{ row.check }}</span>
+                    <span style="width: 40px; height: 40px; border-radius: 10px; background: var(--card); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ row.code }}</span>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ row.name }}</div>
+                      <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ row.sku }}</div>
+                    </div>
+                    <span style="font-family: var(--mono); font-size: 12.5px; color: var(--txt-2); width: 44px; text-align: right">{{ row.qty }}</span>
+                    <span style="font-family: var(--mono); font-size: 13px; width: 84px; text-align: right">{{ row.total }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px">
+                <span style="font-size: 13.5px; color: var(--txt-2)">Selected for refund</span>
+                <span style="font-family: var(--mono); font-size: 15px; font-weight: var(--w-semi)">{{ refundTotal }}</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabActivity }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; min-width: 0">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 18px">Activity</div>
+              <div style="display: flex; flex-direction: column">
+                <sc-for list="{{ activity }}" as="ev" hint-placeholder-count="5">
+                  <div style="display: flex; gap: 14px; min-width: 0">
+                    <div style="width: 10px; flex: none; display: flex; flex-direction: column; align-items: center">
+                      <span style="{{ ev.dotStyle }}"></span>
+                      <span style="{{ ev.lineStyle }}"></span>
+                    </div>
+                    <div style="flex: 1; min-width: 0; padding-bottom: 20px">
+                      <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em; margin-top: -3px">{{ ev.title }}</div>
+                      <div style="font-size: 13.5px; color: var(--txt-2); margin-top: 3px; line-height: 1.5">{{ ev.body }}</div>
+                      <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 6px">{{ ev.when }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; min-width: 0">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 14px">Internal notes</div>
+              <div style="background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r3); padding: 14px 16px; margin-bottom: 12px">
+                <textarea rows="3" placeholder="Only the team sees this. Explain the decision for whoever reads it next." value="{{ note }}" onInput="{{ onNote }}" style="font-size: 14px; line-height: 1.55"></textarea>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span style="{{ noteBtnStyle }}" onClick="{{ addNote }}">Add note</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">{{ noteCount }}</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 18px">
+                <sc-for list="{{ notes }}" as="n" hint-placeholder-count="2">
+                  <div style="background: var(--card); border-radius: var(--r3); padding: 14px 16px">
+                    <div style="font-size: 13.5px; color: var(--txt); line-height: 1.55">{{ n.body }}</div>
+                    <div style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-top: 8px">{{ n.meta }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabFiles }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; min-width: 0">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 16px">Attachments</div>
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <sc-for list="{{ files }}" as="f" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 14px; background: var(--card); border-radius: var(--r3); padding: 14px 16px">
+                    <span style="width: 36px; height: 36px; border-radius: 9px; background: var(--shell); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 10px; color: var(--txt-3)">{{ f.ext }}</span>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ f.name }}</div>
+                      <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ f.meta }}</div>
+                    </div>
+                    <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer">Download</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="border: 1px dashed var(--line-2); border-radius: var(--r2); padding: 26px; text-align: center; margin-top: 12px">
+                <div style="font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2)">Drop a file here</div>
+                <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-top: 6px">PDF, PNG, CSV &#183; up to 20 MB</div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+          <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 22px; display: flex; flex-direction: column; gap: 16px">
+            <span style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--accent-text)">Refund requested</span>
+            <div style="font-size: 34px; font-weight: var(--w-bold); letter-spacing: -0.045em; line-height: 1">{{ refundTotal }}</div>
+            <div style="display: flex; flex-direction: column; gap: 9px; border-top: 1px solid var(--lead-line); padding-top: 14px">
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Order total<span style="font-family: var(--mono); color: var(--txt)">$486.00</span></div>
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Already refunded<span style="font-family: var(--mono); color: var(--txt)">$0.00</span></div>
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Approval threshold<span style="font-family: var(--mono); color: var(--txt)">$250.00</span></div>
+            </div>
+            <div style="font-size: 13px; color: var(--txt-2); line-height: 1.55">Above threshold, so a second approver signs off before it settles.</div>
+          </div>
+
+          <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+            <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 16px">Customer</div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px">
+              <span style="width: 40px; height: 40px; border-radius: 999px; background: var(--card); display: grid; place-items: center; flex: none; font-size: 13.5px; font-weight: var(--w-bold); color: var(--txt-2)">AD</span>
+              <div style="min-width: 0">
+                <div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">Alicia Duarte</div>
+                <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">alicia.duarte@hey.com</div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px">
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Lifetime value<span style="font-family: var(--mono); color: var(--txt)">$3,180</span></div>
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Orders<span style="font-family: var(--mono); color: var(--txt)">21</span></div>
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Prior refunds<span style="font-family: var(--mono); color: var(--txt)">1</span></div>
+            </div>
+          </div>
+
+          <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+            <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 12px">Shipping</div>
+            <div style="font-size: 14px; color: var(--txt-2); line-height: 1.6">Calle Serrano 41, 3B<br />28001 Madrid, Spain</div>
+            <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 10px">SEUR &#183; delivered Aug 30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
+    <div style="background: var(--card); border-radius: var(--r); padding: 26px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+      <div style="flex: none">
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">Order 40218</div>
+        <h1 style="font-size: 32px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.05; margin: 0 0 6px">Edit record</h1>
+        <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.5; margin: 0">Changes are written to the audit log with your name against them.</p>
+      </div>
+
+      <sc-if value="{{ showFormError }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bad-tint); border-radius: var(--r2); padding: 16px 18px; flex: none; animation: rise .16s ease-out">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>
+          <div style="min-width: 0">
+            <div style="font-size: 14px; font-weight: var(--w-semi); color: var(--bad)">{{ formErrorTitle }}</div>
+            <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.5; margin-top: 3px">{{ formErrorBody }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; display: flex; flex-direction: column; gap: 14px">
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+          <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Details</div>
+          <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">What the record says about itself.</div>
+          <div style="display: grid; {{ pair }}">
+            <sc-for list="{{ fields }}" as="f" hint-placeholder-count="4">
+              <label style="display: block; min-width: 0">
+                <span style="display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">
+                  {{ f.label }}
+                  <sc-if value="{{ f.required }}" hint-placeholder-val="{{ false }}">
+                    <span style="color: var(--bad)">*</span>
+                  </sc-if>
+                </span>
+                <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: block; position: relative">
+                    <span style="{{ f.fieldStyle }}" onClick="{{ f.onToggle }}">{{ f.value }}<span style="{{ f.caretStyle }}">&#9662;</span></span>
+                    <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+                      <span style="position: absolute; top: 52px; left: 0; right: 0; z-index: 40; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 40px rgba(0,0,0,.16); padding: 6px; display: block; animation: rise .12s ease-out">
+                        <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="4">
+                          <span style="{{ o.style }}" style-hover="background: var(--shell)" onClick="{{ o.onPick }}">
+                            {{ o.label }}
+                            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-left: auto"><path d="m5 13 5 5L20 7"></path></svg>
+                            </sc-if>
+                          </span>
+                        </sc-for>
+                      </span>
+                    </sc-if>
+                  </span>
+                </sc-if>
+                <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}">
+                  <span style="{{ f.fieldStyle }}">
+                    <input value="{{ f.value }}" onInput="{{ f.onInput }}" onBlur="{{ f.onBlur }}" placeholder="{{ f.placeholder }}" aria-invalid="{{ f.ariaInvalid }}" style="font-size: 14.5px; flex: 1; min-width: 0" />
+                    <sc-if value="{{ f.invalid }}" hint-placeholder-val="{{ false }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2.2" stroke-linecap="round" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+                    </sc-if>
+                    <sc-if value="{{ f.valid }}" hint-placeholder-val="{{ false }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="m5 13 5 5L20 7"></path></svg>
+                    </sc-if>
+                  </span>
+                </sc-if>
+                <sc-if value="{{ f.error }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: flex; align-items: flex-start; gap: 7px; font-size: 12.5px; color: var(--bad); margin-top: 7px">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+                    {{ f.error }}
+                  </span>
+                </sc-if>
+                <sc-if value="{{ f.hint }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: block; font-size: 12px; color: var(--txt-3); margin-top: 7px">{{ f.hint }}</span>
+                </sc-if>
+              </label>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+          <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Refund handling</div>
+          <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">How the money goes back and who gets told.</div>
+          <div style="display: grid; {{ trio }}; margin-bottom: 6px">
+            <sc-for list="{{ methods }}" as="m" hint-placeholder-count="3">
+              <div style="{{ m.cardStyle }}" onClick="{{ m.onPick }}">
+                <span style="{{ m.dotStyle }}"><span style="{{ m.innerStyle }}"></span></span>
+                <div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; margin-top: 12px">{{ m.title }}</div>
+                <div style="font-size: 12.5px; color: var(--txt-2); margin-top: 4px; line-height: 1.45">{{ m.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column">
+            <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="3">
+              <div style="{{ t.rowStyle }}">
+                <div style="flex: 1; min-width: 0">
+                  <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ t.title }}</div>
+                  <div style="font-size: 12.5px; color: var(--txt-3); margin-top: 3px">{{ t.sub }}</div>
+                </div>
+                <span style="{{ t.trackStyle }}" onClick="{{ t.onToggle }}"><span style="{{ t.knobStyle }}"></span></span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+          <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Reason</div>
+          <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 16px">Shown to the customer in the refund email.</div>
+          <div style="background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r3); padding: 14px 16px">
+            <textarea rows="3" placeholder="Two sentences is plenty." value="{{ reason }}" onInput="{{ onReason }}" style="font-size: 14px; line-height: 1.55"></textarea>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px">
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">{{ reasonCount }}</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">Plain language, no internal codes</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; flex: none; border-top: 1px solid var(--line); padding-top: 16px">
+        <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">{{ saveHint }}</span>
+        <div style="flex: 1"></div>
+        <span style="font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 11px 20px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ discard }}">Discard</span>
+        <span style="{{ saveStyle }}" onClick="{{ save }}">Save changes</span>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isImport }}" hint-placeholder-val="{{ false }}">
+    <div style="background: var(--card); border-radius: var(--r); padding: 26px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+      <div style="flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap">
+        <div style="min-width: 0">
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">Import &#183; customers</div>
+          <h1 style="font-size: 30px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.05; margin: 0 0 6px">Bring in a CSV</h1>
+          <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.5; margin: 0; max-width: 620px">{{ importSub }}</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; flex: none">
+          <sc-for list="{{ importSteps }}" as="s" hint-placeholder-count="4">
+            <span style="{{ s.style }}">{{ s.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; display: flex; flex-direction: column; gap: 14px">
+
+        <sc-if value="{{ importPick }}" hint-placeholder-val="{{ true }}">
+          <label style="{{ dropStyle }}">
+            <span style="width: 52px; height: 52px; border-radius: 15px; background: var(--accent-tint); display: grid; place-items: center; margin-bottom: 16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg></span>
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.02em">Drop a CSV here, or choose a file</span>
+            <span style="font-size: 13.5px; color: var(--txt-2); line-height: 1.55; margin-top: 8px; max-width: 430px; text-align: center">First row is the header. Up to 50,000 rows. Nothing is written until you confirm the preview.</span>
+            <input type="file" accept=".csv,text/csv" onChange="{{ onCsv }}" style="display: none" />
+          </label>
+          <div style="display: flex; align-items: center; gap: 12px; background: var(--shell); border-radius: var(--r2); padding: 14px 18px; flex: none">
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); flex: 1; min-width: 0">No file yet — or load the sample to walk the whole flow</span>
+            <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 9px 15px; cursor: pointer" onClick="{{ loadSample }}">Load a sample file</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ importMap }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; gap: 12px; background: var(--shell); border-radius: var(--r2); padding: 14px 18px; flex: none">
+            <span style="width: 34px; height: 34px; border-radius: 10px; background: var(--card); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 10px; color: var(--txt-3)">CSV</span>
+            <div style="flex: 1; min-width: 0">
+              <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ fileName }}</div>
+              <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">{{ fileMeta }}</div>
+            </div>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ resetImport }}">Choose another</span>
+          </div>
+          <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; flex: none">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 11px 16px; background: var(--shell); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+              <span style="flex: 1">Column in the file</span><span style="width: 22px; flex: none"></span><span style="flex: 1">Field here</span><span style="width: 150px; flex: none">First value</span><span style="width: 92px; flex: none; text-align: right">Filled</span>
+            </div>
+            <sc-for list="{{ importCols }}" as="m" hint-placeholder-count="6">
+              <div style="{{ m.rowStyle }}">
+                <span style="flex: 1; min-width: 0; font-family: var(--mono); font-size: 12.5px; color: var(--txt-2)">{{ m.from }}</span>
+                <span style="width: 22px; flex: none; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--txt-4)">&#8594;</span>
+                <span style="{{ m.pickStyle }}" onClick="{{ m.cycle }}">{{ m.to }}<span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); margin-left: auto">&#9662;</span></span>
+                <span style="width: 150px; flex: none; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ m.sample }}</span>
+                <span style="{{ m.fillStyle }}">{{ m.fill }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: none">
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">5 of 7 columns mapped &#183; email is the matching key</span>
+            <div style="flex: 1"></div>
+            <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 19px; cursor: pointer" onClick="{{ toPreview }}">Check the rows</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ importPreview }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; {{ trio }}; flex: none">
+            <sc-for list="{{ importStats }}" as="s" hint-placeholder-count="3">
+              <div style="{{ s.cardStyle }}">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">{{ s.label }}</div>
+                <div style="{{ s.valueStyle }}">{{ s.value }}</div>
+                <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 8px">{{ s.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; flex: none">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 11px 16px; background: var(--shell); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+              <span style="width: 44px; flex: none">Row</span><span style="flex: 1">Name</span><span style="flex: 1">Email</span><span style="width: 108px; flex: none">Channel</span><span style="width: 124px; flex: none">Result</span>
+            </div>
+            <sc-for list="{{ previewRows }}" as="p" hint-placeholder-count="6">
+              <div style="{{ p.rowStyle }}">
+                <span style="width: 44px; flex: none; font-family: var(--mono); font-size: 11.5px; color: var(--txt-4)">{{ p.n }}</span>
+                <span style="flex: 1; min-width: 0; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ p.name }}</span>
+                <span style="{{ p.emailStyle }}">{{ p.email }}</span>
+                <span style="width: 108px; flex: none; font-size: 13px; color: var(--txt-2)">{{ p.channel }}</span>
+                <span style="width: 124px; flex: none"><span style="{{ p.chipStyle }}">{{ p.status }}</span></span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: none">
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--warn)">12 rows will be skipped: 9 with no email, 3 malformed</span>
+            <div style="flex: 1"></div>
+            <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 18px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ backToMap }}">Back to mapping</span>
+            <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 19px; cursor: pointer" onClick="{{ runImport }}">Import 1,272 rows</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ importRunning }}" hint-placeholder-val="{{ false }}">
+          <div style="background: var(--shell); border-radius: var(--r2); padding: 26px; flex: none">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px">
+              <span style="width: 16px; height: 16px; border-radius: 999px; border: 2px solid var(--line); border-top-color: var(--accent); display: block; animation: spin .8s linear infinite; flex: none"></span>
+              <span style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em; flex: 1">Importing 1,272 customers</span>
+              <span style="font-family: var(--mono); font-size: 12px; color: var(--txt-2)">{{ importPct }}</span>
+            </div>
+            <div style="height: 8px; border-radius: 4px; background: var(--card); overflow: hidden"><span style="{{ importBarStyle }}"></span></div>
+            <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 12px">Batches of 200. You can leave this page; it keeps running.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ importDone }}" hint-placeholder-val="{{ false }}">
+          <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 26px; flex: none">
+            <span style="width: 44px; height: 44px; border-radius: 13px; background: var(--ok-tint); display: grid; place-items: center; margin-bottom: 16px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+            <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; margin-bottom: 8px">1,272 customers imported</div>
+            <p style="font-size: 14px; color: var(--txt-2); line-height: 1.6; margin: 0 0 18px; max-width: 560px">Twelve rows were skipped and are in the error report with the reason and the original line number. Matching is on email, so fixing and re-importing only those is safe.</p>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+              <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 19px; cursor: pointer" onClick="{{ resetImport }}">Import another file</span>
+              <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--lead-line); border-radius: 999px; padding: 10px 18px; cursor: pointer" onClick="{{ downloadErrors }}">Download the error report</span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isWizard }}" hint-placeholder-val="{{ false }}">
+    <div style="background: var(--card); border-radius: var(--r); padding: 26px; flex: 1; min-height: 0; display: grid; {{ wizardSplit }}; overflow: hidden">
+      <div style="min-width: 0; display: flex; flex-direction: column">
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 20px">New data source</div>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+          <sc-for list="{{ wizardSteps }}" as="w" hint-placeholder-count="4">
+            <div style="{{ w.rowStyle }}" onClick="{{ w.onClick }}">
+              <span style="{{ w.markStyle }}">{{ w.mark }}</span>
+              <div style="min-width: 0; flex: 1">
+                <div style="{{ w.titleStyle }}">{{ w.title }}</div>
+                <div style="font-size: 12.5px; color: var(--txt-3); margin-top: 2px; line-height: 1.4">{{ w.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 16px; margin-top: 20px">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">Progress</div>
+          <div style="height: 6px; border-radius: 3px; background: var(--line); overflow: hidden">
+            <span style="{{ progressStyle }}"></span>
+          </div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 10px">{{ progressLabel }}</div>
+        </div>
+      </div>
+
+      <div style="min-width: 0; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+        <div style="flex: none">
+          <h1 style="font-size: 30px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.08; margin: 0 0 8px">{{ stepTitle }}</h1>
+          <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.55; margin: 0; max-width: 620px">{{ stepBody }}</p>
+        </div>
+
+        <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding-right: 4px">
+          <sc-if value="{{ wizard1 }}" hint-placeholder-val="{{ true }}">
+            <div style="display: grid; {{ pair }}">
+              <sc-for list="{{ sources }}" as="s" hint-placeholder-count="4">
+                <div style="{{ s.cardStyle }}" onClick="{{ s.onPick }}">
+                  <div style="display: flex; align-items: center; gap: 12px">
+                    <span style="{{ s.tileStyle }}">{{ s.code }}</span>
+                    <div style="min-width: 0; flex: 1">
+                      <div style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em">{{ s.name }}</div>
+                      <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">{{ s.kind }}</div>
+                    </div>
+                    <span style="{{ s.dotStyle }}"><span style="{{ s.innerStyle }}"></span></span>
+                  </div>
+                  <p style="font-size: 12.5px; color: var(--txt-2); line-height: 1.5; margin: 12px 0 0">{{ s.blurb }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ wizard2 }}" hint-placeholder-val="{{ false }}">
+            <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+              <div style="display: flex; align-items: center; gap: 14px; padding: 11px 18px; background: var(--shell); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+                <span style="flex: 1">Their field</span><span style="width: 20px; flex: none"></span><span style="flex: 1">Our field</span><span style="width: 92px; flex: none; text-align: right">Sample</span>
+              </div>
+              <sc-for list="{{ mappings }}" as="m" hint-placeholder-count="5">
+                <div style="{{ m.rowStyle }}">
+                  <span style="flex: 1; min-width: 0; font-family: var(--mono); font-size: 12.5px; color: var(--txt-2)">{{ m.from }}</span>
+                  <span style="width: 20px; flex: none; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--txt-4)">&#8594;</span>
+                  <span style="{{ m.pickStyle }}" onClick="{{ m.cycle }}">{{ m.to }}<span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); margin-left: auto">&#9662;</span></span>
+                  <span style="width: 92px; flex: none; text-align: right; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ m.sample }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; font-family: var(--mono); font-size: 11px; color: var(--txt-3)">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--ok-fill); display: block"></span>
+              5 of 5 required fields mapped
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ wizard3 }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <sc-for list="{{ rules }}" as="r" hint-placeholder-count="4">
+                <div style="background: var(--shell); border-radius: var(--r2); padding: 18px 20px; display: flex; align-items: center; gap: 18px">
+                  <div style="flex: 1; min-width: 0">
+                    <div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ r.title }}</div>
+                    <div style="font-size: 13px; color: var(--txt-2); margin-top: 3px; line-height: 1.5">{{ r.sub }}</div>
+                  </div>
+                  <span style="{{ r.trackStyle }}" onClick="{{ r.onToggle }}"><span style="{{ r.knobStyle }}"></span></span>
+                </div>
+              </sc-for>
+              <div style="background: var(--warn-tint); border-radius: var(--r2); padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>
+                <div style="min-width: 0">
+                  <div style="font-size: 14px; font-weight: var(--w-semi); color: var(--warn)">The first sync rewrites history</div>
+                  <div style="font-size: 13px; color: var(--txt-2); line-height: 1.5; margin-top: 3px">Backfilling twelve months will restate reported revenue for closed periods. Finance usually wants a heads-up before this runs.</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ wizard4 }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 22px">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 14px">Ready to connect</div>
+                <div style="display: grid; {{ pair }}">
+                  <sc-for list="{{ review }}" as="r" hint-placeholder-count="6">
+                    <div style="display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--lead-line); padding-bottom: 10px">
+                      <span style="font-size: 13.5px; color: var(--txt-2)">{{ r.label }}</span>
+                      <span style="font-family: var(--mono); font-size: 12.5px; color: var(--txt); text-align: right">{{ r.value }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 20px">
+                <div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; margin-bottom: 10px">What happens when you finish</div>
+                <ul style="margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--txt-2); line-height: 1.8">
+                  <li>The first sync starts immediately and takes about eleven minutes</li>
+                  <li>Reports stay on cached figures until it completes</li>
+                  <li>Everyone with an editor seat is notified once</li>
+                </ul>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; flex: none; border-top: 1px solid var(--line); padding-top: 16px">
+          <span style="{{ backStyle }}" onClick="{{ back }}">Back</span>
+          <div style="flex: 1"></div>
+          <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">{{ stepCounter }}</span>
+          <span style="{{ nextStyle }}" onClick="{{ next }}">{{ nextLabel }}</span>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+ </div>
+
+ <sc-if value="{{ declineOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 80; background: rgba(8,10,14,.38); display: grid; place-items: center" onClick="{{ closeDecline }}">
+     <div style="width: 448px; background: var(--card); border-radius: var(--r); padding: 30px; box-shadow: 0 30px 70px rgba(0,0,0,.3); animation: rise .16s ease-out" onClick="{{ stopClick }}">
+       <span style="width: 44px; height: 44px; border-radius: 13px; background: var(--bad-tint); display: grid; place-items: center; margin-bottom: 20px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></span>
+       <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; margin-bottom: 10px">Decline this refund?</div>
+       <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.6; margin: 0 0 20px">Alicia gets an email with your reason. Declines can be appealed once, and the appeal lands with finance rather than you.</p>
+       <div style="background: var(--shell); border: 1px solid var(--line-2); border-radius: var(--r3); padding: 14px 16px; margin-bottom: 22px">
+         <textarea rows="2" placeholder="Reason shown to the customer" value="{{ declineReason }}" onInput="{{ onDeclineReason }}" style="font-size: 14px; line-height: 1.55"></textarea>
+       </div>
+       <div style="display: flex; align-items: center; gap: 10px">
+         <span style="flex: 1; text-align: center; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 12px 0; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ closeDecline }}">Cancel</span>
+         <span style="{{ declineBtnStyle }}" onClick="{{ confirmDecline }}">Decline refund</span>
+       </div>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; right: 44px; bottom: 44px; z-index: 90; display: flex; align-items: center; gap: 12px; background: var(--txt); border-radius: var(--r3); padding: 14px 18px; box-shadow: 0 18px 40px rgba(0,0,0,.24); animation: rise .16s ease-out">
+     <span style="width: 20px; height: 20px; border-radius: 999px; background: var(--ok-fill); display: grid; place-items: center; flex: none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+     <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--card)">{{ toast }}</span>
+   </div>
+ </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+
+  state = {
+    vw: 1440,
+    screen: "record", tab: "Overview", themeMode: null, toast: "",
+    refundLines: { CB: true, SO: true, EQ: true, MG: false },
+    note: "", notes: [
+      { body: "Customer sent photos of the damaged box. Refund looks legitimate.", meta: "Anna Hayes · Aug 30, 09:20" },
+      { body: "Second approval needed — over the $250 threshold.", meta: "System · Aug 30, 09:14" }
+    ],
+    form: { customer: "Alicia Duarte", email: "alicia.duarte@hey.com", channel: "Direct store", status: "Refund pending" },
+    touched: {}, method: "original", reason: "",
+    formToggles: { email: true, restock: false, audit: true },
+    saved: true, submitted: false,
+    declineOpen: false, declineReason: "", selectOpen: null,
+    importStage: "pick", fileName: "", fileSize: 0, mapping: {}, importPct: 0,
+    step: 1, source: "shopify",
+    mapTargets: { "order_number": "Order ID", "customer_email": "Email", "line_total": "Total", "fulfil_state": "Status", "created_at": "Placed" },
+    rules: { backfill: true, dedupe: true, currency: false, notify: true }
+  };
+
+  static get SKINS() {
+    return {
+      split: "grid-template-columns: " + (this.state.vw < 700 ? "minmax(0, 1fr)" : "1.5fr 1fr") + "; gap: 14px",
+      pair: "grid-template-columns: " + (this.state.vw < 520 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))") + "; gap: 16px",
+      trio: "grid-template-columns: repeat(" + (this.state.vw < 520 ? 1 : this.state.vw < 820 ? 2 : 3) + ", minmax(0, 1fr)); gap: 12px",
+      wizardSplit: this.state.vw < 860 ? "grid-template-columns: minmax(0, 1fr); gap: 18px" : "grid-template-columns: " + (this.state.vw < 1080 ? "212px 1fr; gap: 22px" : "268px 1fr; gap: 32px"),
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  resolvedTheme() {
+    const mode = this.state.themeMode || this.props.theme || "light";
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+
+    const accent = dark
+      ? { "--accent": acc(0.66), "--accent-ink": n(0.14, 1), "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(0.52), "--accent-ink": n(0.99, 0.2), "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+
+    const steps = dark ? [0.40, 0.52, 0.64, 0.76, 0.86] : [0.34, 0.46, 0.58, 0.70, 0.82];
+    const ratio = [0.81, 1, 0.88, 0.63, 0.38];
+    const series = {};
+    steps.forEach((l, i) => { series["--s" + (i + 1)] = acc(l, ratio[i]); });
+
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+
+    return Object.assign({}, surfaces, accent, series, semantics, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  componentDidMount() { this.hostSync(); this.apply(); }
+  componentDidUpdate(prevProps) {
+    this.apply();
+    if (this._onResize) this._onResize();
+  }
+  // Embedded in the Starter Admin shell: follow its navigation, let it own the tokens.
+  // __responsive: one width in state, every breakpoint derived from it
+  watchWidth() {
+    const measure = () => {
+      const el = this.rootRef.current;
+      const w = el ? Math.round(el.getBoundingClientRect().width) : window.innerWidth;
+      if (w && Math.abs(w - this.state.vw) > 8) this.setState({ vw: w });
+    };
+    this._onResize = measure;
+    requestAnimationFrame(measure);
+    window.addEventListener("resize", this._onResize);
+    if (window.ResizeObserver && this.rootRef.current) {
+      this._ro = new ResizeObserver(measure);
+      this._ro.observe(this.rootRef.current);
+    }
+  }
+
+  // Thresholds are the width this part actually has, not the window's.
+  cols(spec) {
+    const w = this.state.vw;
+    if (w < 620) return "grid-template-columns: minmax(0, 1fr); gap: 12px";
+    if (w < 960) return "grid-template-columns: " + (spec.mid || "minmax(0, 1fr)") + "; gap: 13px";
+    return "grid-template-columns: " + spec.wide + "; gap: 14px";
+  }
+
+  hostSync() {
+    this.watchWidth();
+    const mine = ["record","form","wizard","import"];
+    const want = window.__starterScreen;
+    if (want && mine.indexOf(want) >= 0 && want !== this.state.screen) this.setState({ screen: want });
+    this._navHandler = (e) => {
+      const s = e.detail && e.detail.screen;
+      if (s && mine.indexOf(s) >= 0 && s !== this.state.screen) this.setState({ screen: s });
+    };
+    window.addEventListener("starter:nav", this._navHandler);
+  }
+
+  embedded() { return !!window.__starterHost; }
+
+  componentWillUnmount() {
+    if (this._navHandler) window.removeEventListener("starter:nav", this._navHandler);
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._ro) this._ro.disconnect(); if (this._toast) clearTimeout(this._toast); }
+
+  apply() {
+    const root = document.body;
+    if (!root || this.embedded()) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  say(msg) {
+    this.setState({ toast: msg });
+    if (this._toast) clearTimeout(this._toast);
+    this._toast = setTimeout(() => this.setState({ toast: "" }), 2600);
+  }
+
+  money(v) { return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  navItem(label, icon, screen) {
+    const active = this.state.screen === screen;
+    const base = "display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: var(--r3); font-size: 15px; position: relative; cursor: pointer; ";
+    return {
+      label, icon, active,
+      style: base + (active ? "font-weight: var(--w-semi); color: var(--txt); background: var(--card)" : "font-weight: 500; color: var(--txt-2)"),
+      hoverStyle: active ? "" : "background: var(--card); color: var(--txt)",
+      iconStroke: active ? "var(--accent-text)" : "var(--txt-3)",
+      onClick: () => this.setState({ screen })
+    };
+  }
+
+  track(on) {
+    return {
+      trackStyle: "width: 42px; height: 25px; border-radius: 999px; flex: none; display: flex; align-items: center; padding: 3px; box-sizing: border-box; cursor: pointer; justify-content: " +
+        (on ? "flex-end" : "flex-start") + "; background: " + (on ? "var(--accent)" : "var(--line-2)"),
+      knobStyle: "width: 19px; height: 19px; border-radius: 999px; display: block; background: " + (on ? "var(--accent-ink)" : "var(--card)")
+    };
+  }
+
+  // Specific messages: "invalid" tells somebody nothing they can act on.
+  validate() {
+    const f = this.state.form;
+    const errors = {};
+    const name = f.customer.trim();
+    const email = f.email.trim();
+    if (!name) errors.customer = "A record needs a name on it.";
+    else if (name.length < 2) errors.customer = "That is too short to be a name.";
+    if (!email) errors.email = "An email is required — the refund confirmation goes there.";
+    else if (email.indexOf("@") < 0) errors.email = "Missing the @ — an address looks like name@company.com.";
+    else if (/\s/.test(email)) errors.email = "Addresses cannot contain spaces.";
+    else if (email.split("@")[1].indexOf(".") < 0) errors.email = "The domain needs a dot, like company.com.";
+    else if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) errors.email = "That address will bounce.";
+    if (!this.state.reason.trim()) errors.reason = "The customer email needs a reason.";
+    return errors;
+  }
+
+  renderVals() {
+    const st = this.state;
+    const lineData = [
+      ["CB", "Cold Brew 12pk", "SKU CB-12", 2, 168.00],
+      ["SO", "Single Origin, Huila", "SKU SO-HU-1", 1, 19.50],
+      ["EQ", "Pour-over kit", "SKU EQ-PO", 1, 224.50],
+      ["MG", "Ceramic mug", "SKU MG-01", 1, 74.00]
+    ];
+    const refundTotal = lineData.reduce((sum, r) => sum + (st.refundLines[r[0]] ? r[4] : 0), 0);
+    const errors = this.validate();
+    const errorKeys = Object.keys(errors);
+
+    const fieldDefs = [
+      { key: "customer", label: "Customer", required: true, kind: "text", placeholder: "Full name" },
+      { key: "email", label: "Email", required: true, kind: "text", placeholder: "name@company.com" },
+      { key: "channel", label: "Channel", kind: "select", options: ["Direct store", "Amazon", "Wholesale", "Marketplaces"] },
+      { key: "status", label: "Status", kind: "select", options: ["Refund pending", "Fulfilled", "Refunded", "Cancelled"] }
+    ];
+
+    const sourceDefs = [
+      ["shopify", "Shopify", "SH", "Commerce platform", "Orders, customers, refunds, and payouts. The most complete of the four."],
+      ["meta", "Meta Ads", "MA", "Advertising", "Spend and attributed revenue by campaign, refreshed every four hours."],
+      ["klaviyo", "Klaviyo", "KL", "Email and SMS", "Flows, campaigns, and per-message revenue. Needs a private API key."],
+      ["csv", "CSV upload", "CS", "One-off file", "A single file, mapped by hand. Good for a backfill, wrong for daily use."]
+    ];
+
+    const stepDefs = [
+      [1, "Source", "Which system"],
+      [2, "Mapping", "Match their fields to ours"],
+      [3, "Rules", "History and duplicates"],
+      [4, "Review", "Confirm and connect"]
+    ];
+
+    const canAdvance = st.step !== 1 || !!st.source;
+
+    return {
+      rootRef: this.rootRef,
+      split: "grid-template-columns: " + (st.vw < 760 ? "minmax(0, 1fr)" : "1.55fr 1fr") + "; gap: 14px",
+      pair: "grid-template-columns: " + (st.vw < 620 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))") + "; gap: 16px",
+      trio: "grid-template-columns: repeat(" + (st.vw < 620 ? 1 : st.vw < 900 ? 2 : 3) + ", minmax(0, 1fr)); gap: 12px",
+      wizardSplit: st.vw < 820 ? "grid-template-columns: minmax(0, 1fr); gap: 18px" : "grid-template-columns: 268px minmax(0, 1fr); gap: 32px",
+      nav: [
+        this.navItem("Record detail", "M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM9 13h6M9 17h4", "record"),
+        this.navItem("Create / edit", "M4 20h4l10-10-4-4L4 16zM14 6l4 4", "form"),
+        this.navItem("Setup wizard", "M4 6h16M4 12h16M4 18h9", "wizard")
+      ],
+      recents: [
+        ["Order 40218", "refund pending", 1],
+        ["Order 40215", "fulfilled", 2],
+        ["Alicia Duarte", "customer", 3],
+        ["Order 40211", "payment failed", 4]
+      ].map((r) => ({
+        label: r[0], sub: r[1],
+        style: "display: flex; align-items: center; gap: 10px; padding: 8px 13px; border-radius: var(--r3); color: var(--txt-2); cursor: pointer",
+        dotStyle: "width: 4px; height: 22px; border-radius: 2px; flex: none; display: block; background: var(--s" + r[2] + ")",
+        onClick: () => this.setState({ screen: "record", tab: "Overview" })
+      })),
+      themeModes: [
+        ["light", "Light", "Light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
+        ["system", "System", "Auto", "M3 5h18v11H3zM8 20h8M12 16v4"],
+        ["dark", "Dark", "Dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"]
+      ].map((m) => {
+        const active = (st.themeMode || this.props.theme || "light") === m[0];
+        return {
+          label: m[1], short: m[2], icon: m[3],
+          style: "flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 0; border-radius: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; " + (active ? "background: var(--shell); color: var(--txt)" : "color: var(--txt-4)"),
+          onClick: () => this.setState({ themeMode: m[0] })
+        };
+      }),
+
+      crumbs: [
+        { label: "Orders", isLink: true },
+        { label: st.screen === "wizard" ? "Setup" : "40218", isLink: st.screen !== "record" },
+        { label: st.screen === "form" ? "Edit" : st.screen === "wizard" ? "New source" : "Detail", isLink: false }
+      ].map((c, i, arr) => ({
+        label: i < arr.length - 1 ? c.label + "  /" : c.label,
+        style: "cursor: " + (c.isLink ? "pointer" : "default") + "; color: " + (i === arr.length - 1 ? "var(--txt)" : "var(--txt-3)"),
+        onClick: c.isLink ? () => this.setState({ screen: "record", tab: "Overview" }) : undefined
+      })),
+      dirty: !st.saved,
+
+      isRecord: st.screen === "record",
+      isForm: st.screen === "form",
+      isWizard: st.screen === "wizard",
+      isImport: st.screen === "import",
+      importSub: { pick: "Point at a file and we read the header row. Nothing is written until the preview is confirmed.",
+        map: "We guessed the mapping from the first hundred rows. Anything wrong here is wrong in every report afterwards.",
+        preview: "Twelve of 1,284 rows have a problem. Skipped rows come back as a report you can fix and re-import.",
+        running: "Writing in batches. Matching is on email, so re-running the same file changes nothing twice.",
+        done: "Finished. The report lists every skipped row with its original line number." }[st.importStage],
+      importSteps: ["File", "Mapping", "Preview", "Import"].map((s, i) => {
+        const order = { pick: 0, map: 1, preview: 2, running: 3, done: 3 }[st.importStage];
+        return { label: s,
+          style: "padding: 7px 14px; border-radius: 999px; font-family: var(--mono); font-size: 11px; " + (i === order
+            ? "background: var(--card); color: var(--txt)" : i < order ? "color: var(--ok)" : "color: var(--txt-4)") };
+      }),
+      importPick: st.importStage === "pick",
+      importMap: st.importStage === "map",
+      importPreview: st.importStage === "preview",
+      importRunning: st.importStage === "running",
+      importDone: st.importStage === "done",
+      dropStyle: "border: 1.5px dashed var(--line-2); border-radius: var(--r2); padding: 52px 24px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: var(--shell); flex: none",
+      onCsv: (e) => { const f = e.target.files && e.target.files[0]; if (!f) return;
+        this.setState({ importStage: "map", fileName: f.name, fileSize: Math.max(1, Math.round(f.size / 1024)) }); },
+      loadSample: () => this.setState({ importStage: "map", fileName: "customers-august.csv", fileSize: 486 }),
+      resetImport: () => this.setState({ importStage: "pick", importPct: 0 }),
+      backToMap: () => this.setState({ importStage: "map" }),
+      toPreview: () => this.setState({ importStage: "preview" }),
+      fileName: st.fileName,
+      fileMeta: st.fileSize + " KB · 1,284 rows · 7 columns · read in 240ms",
+      importCols: [
+        ["full_name", "Name", "Alicia Duarte", "100%"],
+        ["email_address", "Email", "alicia.duarte@hey.com", "99.8%"],
+        ["acquisition", "Channel", "direct", "94%"],
+        ["first_order_at", "Customer since", "2023-03-14", "100%"],
+        ["lifetime_value", "Lifetime value", "3180.00", "100%"],
+        ["phone", "Ignore", "+34 611 204 887", "62%"],
+        ["notes_internal", "Ignore", "no lift in building", "18%"]
+      ].map((m, i, arr) => {
+        const options = ["Name", "Email", "Channel", "Customer since", "Lifetime value", "Phone", "Ignore"];
+        const current = st.mapping[m[0]] || m[1];
+        return { from: m[0], to: current, sample: m[2], fill: m[3],
+          rowStyle: "display: flex; align-items: center; gap: 12px; padding: 11px 16px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          pickStyle: "flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; background: var(--shell); border: 1px solid " + (current === "Ignore" ? "var(--line)" : "var(--line-2)") + "; border-radius: 8px; padding: 8px 12px; font-size: 13.5px; cursor: pointer; color: " + (current === "Ignore" ? "var(--txt-4)" : "var(--txt)"),
+          fillStyle: "width: 92px; flex: none; text-align: right; font-family: var(--mono); font-size: 11.5px; color: " + (parseFloat(m[3]) < 70 ? "var(--warn)" : "var(--txt-3)"),
+          cycle: () => { const map = Object.assign({}, st.mapping); map[m[0]] = options[(options.indexOf(current) + 1) % options.length]; this.setState({ mapping: map }); } };
+      }),
+      importStats: [["Rows read", "1,284", "7 columns", false], ["Ready to import", "1,272", "99.1% of the file", true], ["Will be skipped", "12", "listed below", false]].map((s) => ({
+        label: s[0], value: s[1], sub: s[2],
+        cardStyle: s[3] ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 18px; min-width: 0" : "background: var(--shell); border-radius: var(--r2); padding: 18px; min-width: 0",
+        valueStyle: "font-size: 24px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1; color: " + (s[0] === "Will be skipped" ? "var(--bad)" : "var(--txt)")
+      })),
+      previewRows: [
+        [1, "Alicia Duarte", "alicia.duarte@hey.com", "Direct store", "ok", "New"],
+        [2, "Diego Ortiz", "diego@ortizcafe.mx", "Wholesale", "ok", "Update"],
+        [3, "Priya Nair", "priya at nairstudio.in", "Direct store", "bad", "Missing @"],
+        [4, "Marcus Bell", "m.bell@northmail.com", "Amazon", "ok", "Update"],
+        [5, "", "hanna@kohler.dk", "Marketplaces", "warn", "No name"],
+        [6, "Naomi Chen", "naomi.chen@zed.io", "Direct store", "ok", "New"]
+      ].map((p, i, arr) => {
+        const tone = p[4] === "bad" ? ["var(--bad)", "var(--bad-tint)"] : p[4] === "warn" ? ["var(--warn)", "var(--warn-tint)"] : ["var(--ok)", "var(--ok-tint)"];
+        return { n: String(p[0]), name: p[1] || "—", email: p[2], channel: p[3], status: p[5],
+          rowStyle: "display: flex; align-items: center; gap: 12px; padding: 11px 16px; background: " + (p[4] === "ok" ? "var(--card)" : tone[1]) + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          emailStyle: "flex: 1; min-width: 0; font-family: var(--mono); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: " + (p[4] === "bad" ? "var(--bad)" : "var(--txt-2)"),
+          chipStyle: "font-family: var(--mono); font-size: 10.5px; border-radius: 999px; padding: 4px 10px; color: " + tone[0] + "; background: var(--card)" };
+      }),
+      runImport: () => {
+        this.setState({ importStage: "running", importPct: 0 });
+        if (this._imp) clearInterval(this._imp);
+        this._imp = setInterval(() => {
+          const next = this.state.importPct + 12;
+          if (next >= 100) { clearInterval(this._imp); this.setState({ importPct: 100, importStage: "done" }); }
+          else this.setState({ importPct: next });
+        }, 240);
+      },
+      importPct: st.importPct + "%",
+      importBarStyle: "display: block; height: 100%; width: " + st.importPct + "%; border-radius: 4px; background: var(--accent); transition: width .2s",
+      downloadErrors: () => this.say("errors-customers-august.csv downloaded"),
+
+      recordTabs: [["Overview", ""], ["Activity", "5"], ["Notes", String(st.notes.length)], ["Files", "3"]].map((t) => {
+        const active = st.tab === t[0];
+        return {
+          label: t[0], count: t[1],
+          style: "display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 999px; font-size: 14px; cursor: pointer; " + (active
+            ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+            : "color: var(--txt-2); font-weight: 500"),
+          countStyle: "font-family: var(--mono); font-size: 11px; color: " + (active ? "var(--accent-text)" : "var(--txt-4)"),
+          onClick: () => this.setState({ tab: t[0] })
+        };
+      }),
+      tabOverview: st.tab === "Overview",
+      tabActivity: st.tab === "Activity",
+      tabNotes: st.tab === "Notes",
+      tabFiles: st.tab === "Files",
+
+      stats: [
+        { label: "Order total", value: "$486.00", sub: "4 items · card 4417", lead: false },
+        { label: "Refund asked", value: this.money(refundTotal), sub: Math.round((refundTotal / 486) * 100) + "% of the order", lead: true },
+        { label: "Days open", value: "2", sub: "SLA is 3 days", lead: false }
+      ].map((s) => ({
+        label: s.label, value: s.value, sub: s.sub,
+        cardStyle: s.lead
+          ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 18px; min-width: 0"
+          : "background: var(--shell); border-radius: var(--r2); padding: 18px; min-width: 0"
+      })),
+      refundTotal: this.money(refundTotal),
+      lineItems: lineData.map((r, i) => {
+        const on = !!st.refundLines[r[0]];
+        return {
+          code: r[0], name: r[1], sku: r[2], qty: "×" + r[3], total: this.money(r[4]),
+          rowStyle: "display: flex; align-items: center; gap: 14px; padding: 12px 0" + (i < lineData.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          check: on ? "✓" : "",
+          checkStyle: "width: 18px; height: 18px; border-radius: 5px; flex: none; display: grid; place-items: center; font-size: 11px; box-sizing: border-box; cursor: pointer; " + (on
+            ? "background: var(--accent); color: var(--accent-ink); border: 1.5px solid var(--accent)"
+            : "border: 1.5px solid var(--line-2); color: transparent"),
+          onToggle: () => {
+            const l = Object.assign({}, st.refundLines);
+            l[r[0]] = !on;
+            this.setState({ refundLines: l });
+          }
+        };
+      }),
+      activity: [
+        ["Refund requested", "Alicia asked for three of four items back, citing a damaged box.", "Aug 30 · 09:14", true],
+        ["Second approval required", "Amount is above the $250 threshold set in Approvals.", "Aug 30 · 09:14", false],
+        ["Delivered", "SEUR marked the parcel delivered in Madrid.", "Aug 30 · 08:02", false],
+        ["Fulfilled", "Picked and packed from the Madrid warehouse.", "Aug 28 · 17:40", false],
+        ["Order placed", "Paid by card ending 4417.", "Aug 28 · 11:26", false]
+      ].map((a, i, arr) => ({
+        title: a[0], body: a[1], when: a[2],
+        dotStyle: "width: 10px; height: 10px; border-radius: 999px; flex: none; display: block; background: " + (a[3] ? "var(--accent)" : "var(--line-2)"),
+        lineStyle: "flex: 1; width: 2px; background: var(--line-2); display: " + (i < arr.length - 1 ? "block" : "none")
+      })),
+      note: st.note,
+      onNote: (e) => this.setState({ note: e.target.value }),
+      noteCount: st.note.length + " / 500",
+      noteBtnStyle: "font-size: 13.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 10px 18px; cursor: pointer; " + (st.note.trim()
+        ? "background: var(--accent); color: var(--accent-ink)"
+        : "background: var(--shell); color: var(--txt-4); cursor: default"),
+      addNote: () => {
+        if (!st.note.trim()) return;
+        this.setState({ notes: [{ body: st.note.trim(), meta: "Anna Hayes · just now" }].concat(st.notes), note: "" });
+        this.say("Note added");
+      },
+      notes: st.notes,
+      files: [
+        { ext: "PDF", name: "invoice-40218.pdf", meta: "48 KB · Aug 28" },
+        { ext: "PNG", name: "damaged-box-1.png", meta: "1.2 MB · Aug 30" },
+        { ext: "PNG", name: "damaged-box-2.png", meta: "1.1 MB · Aug 30" }
+      ],
+      openEdit: () => this.setState({ screen: "form" }),
+      approve: () => this.say("Refund of " + this.money(refundTotal) + " approved"),
+      openDecline: () => this.setState({ declineOpen: true }),
+      closeDecline: () => this.setState({ declineOpen: false }),
+      declineOpen: st.declineOpen,
+      declineReason: st.declineReason,
+      onDeclineReason: (e) => this.setState({ declineReason: e.target.value }),
+      declineBtnStyle: "flex: 1; text-align: center; font-size: 14.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 13px 0; cursor: pointer; " + (st.declineReason.trim()
+        ? "background: var(--bad); color: var(--card)"
+        : "background: var(--bad-tint); color: var(--bad); cursor: default"),
+      confirmDecline: () => {
+        if (!st.declineReason.trim()) return;
+        this.setState({ declineOpen: false, declineReason: "" });
+        this.say("Refund declined — Alicia notified");
+      },
+
+      fields: fieldDefs.map((f) => {
+        const value = st.form[f.key];
+        const err = st.submitted || st.touched[f.key] ? errors[f.key] : "";
+        const filled = String(value || "").trim().length > 0;
+        return {
+          label: f.label, required: !!f.required, value, error: err || "",
+          invalid: !!err, valid: !err && filled && !!st.touched[f.key] && f.kind === "text",
+          ariaInvalid: err ? "true" : "false",
+          hint: !err && f.key === "email" && !filled ? "Used for the refund confirmation." : "",
+          onBlur: () => { const t = Object.assign({}, st.touched); t[f.key] = true; this.setState({ touched: t }); },
+          placeholder: f.placeholder || "",
+          open: st.selectOpen === f.key,
+          caretStyle: "font-family: var(--mono); font-size: 10px; color: var(--txt-4); margin-left: auto; flex: none; transform: rotate(" + (st.selectOpen === f.key ? "180deg" : "0deg") + "); transition: transform .12s",
+          onToggle: () => this.setState({ selectOpen: st.selectOpen === f.key ? null : f.key }),
+          options: (f.options || []).map((o) => ({
+            label: o, on: o === value,
+            style: "display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 8px; font-size: 14px; cursor: pointer; color: " + (o === value ? "var(--txt)" : "var(--txt-2)"),
+            onPick: () => {
+              const form = Object.assign({}, st.form);
+              form[f.key] = o;
+              this.setState({ form, saved: false, selectOpen: null });
+            }
+          })),
+          isText: f.kind === "text", isSelect: f.kind === "select",
+          fieldStyle: "display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--r3); padding: 12px 14px; box-sizing: border-box; font-size: 14.5px; cursor: " +
+            (f.kind === "select" ? "pointer" : "text") + "; border: 1.5px solid " + (err ? "var(--bad)" : "var(--line-2)"),
+          onInput: (e) => {
+            const form = Object.assign({}, st.form);
+            form[f.key] = e.target.value;
+            const touched = Object.assign({}, st.touched); touched[f.key] = true;
+            this.setState({ form, touched, saved: false });
+          },
+          cycle: () => {
+            const form = Object.assign({}, st.form);
+            const i = f.options.indexOf(value);
+            form[f.key] = f.options[(i + 1) % f.options.length];
+            this.setState({ form, saved: false });
+          }
+        };
+      }),
+      methods: [
+        ["original", "Original payment", "Back to the card ending 4417. Two to five days."],
+        ["credit", "Store credit", "Issued instantly, never expires, not withdrawable."],
+        ["manual", "Manual transfer", "Finance handles it outside the platform."]
+      ].map((m) => {
+        const on = st.method === m[0];
+        return {
+          title: m[1], sub: m[2],
+          cardStyle: "border-radius: var(--r3); padding: 16px; min-width: 0; cursor: pointer; box-sizing: border-box; background: var(--card); border: 1.5px solid " + (on ? "var(--accent)" : "var(--line)"),
+          dotStyle: "width: 18px; height: 18px; border-radius: 999px; display: grid; place-items: center; box-sizing: border-box; border: 1.5px solid " + (on ? "var(--accent-text)" : "var(--line-2)"),
+          innerStyle: "width: 9px; height: 9px; border-radius: 999px; display: block; background: " + (on ? "var(--accent-text)" : "transparent"),
+          onPick: () => this.setState({ method: m[0], saved: false })
+        };
+      }),
+      toggles: [
+        ["email", "Email the customer", "Sends the reason below with the refund confirmation."],
+        ["restock", "Restock returned items", "Adds the three items back to Madrid inventory."],
+        ["audit", "Flag for finance review", "Appears in the weekly refund report."]
+      ].map((t, i, arr) => {
+        const on = !!st.formToggles[t[0]];
+        const tr = this.track(on);
+        return {
+          title: t[1], sub: t[2],
+          rowStyle: "display: flex; align-items: center; gap: 20px; padding: 14px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          trackStyle: tr.trackStyle, knobStyle: tr.knobStyle,
+          onToggle: () => {
+            const g = Object.assign({}, st.formToggles);
+            g[t[0]] = !on;
+            this.setState({ formToggles: g, saved: false });
+          }
+        };
+      }),
+      reason: st.reason,
+      onReason: (e) => this.setState({ reason: e.target.value, saved: false }),
+      reasonCount: st.reason.length + " / 280",
+      showFormError: st.submitted && errorKeys.length > 0,
+      formErrorTitle: errorKeys.length + (errorKeys.length === 1 ? " field needs attention" : " fields need attention"),
+      formErrorBody: errorKeys.map((k) => errors[k]).join(" "),
+      saveHint: st.saved ? "Last saved 11 minutes ago" : "Unsaved edits on this record",
+      saveStyle: "font-size: 14.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 12px 22px; cursor: pointer; " + (st.saved
+        ? "background: var(--shell); color: var(--txt-4); cursor: default"
+        : "background: var(--accent); color: var(--accent-ink)"),
+      save: () => {
+        if (st.saved) return;
+        if (errorKeys.length) { this.setState({ submitted: true }); return; }
+        this.setState({ saved: true, submitted: false });
+        this.say("Record saved");
+      },
+      discard: () => this.setState({
+        form: { customer: "Alicia Duarte", email: "alicia.duarte@hey.com", channel: "Direct store", status: "Refund pending" },
+        reason: "", method: "original", formToggles: { email: true, restock: false, audit: true },
+        saved: true, submitted: false, touched: {}
+      }),
+
+      wizardSteps: stepDefs.map((s) => {
+        const done = st.step > s[0];
+        const active = st.step === s[0];
+        return {
+          title: s[1], sub: s[2], mark: done ? "✓" : String(s[0]),
+          rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 13px; border-radius: var(--r3); cursor: pointer; background: " + (active ? "var(--shell)" : "transparent"),
+          markStyle: "width: 24px; height: 24px; border-radius: 999px; flex: none; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; box-sizing: border-box; " + (done
+            ? "background: var(--ok-fill); color: var(--card)"
+            : active ? "background: var(--accent); color: var(--accent-ink)" : "border: 1.5px solid var(--line-2); color: var(--txt-4)"),
+          titleStyle: "font-size: 14.5px; letter-spacing: -0.01em; color: " + (active || done ? "var(--txt)" : "var(--txt-2)") + "; font-weight: " + (active ? "var(--w-semi)" : "500"),
+          onClick: () => this.setState({ step: s[0] })
+        };
+      }),
+      progressStyle: "display: block; height: 100%; border-radius: 3px; background: var(--accent); width: " + (st.step / 4 * 100) + "%",
+      progressLabel: "Step " + st.step + " of 4 · about " + (5 - st.step) + " min left",
+      stepCounter: "Step " + st.step + " of 4",
+      stepTitle: ["Pick a source", "Map the fields", "Set the rules", "Review and connect"][st.step - 1],
+      stepBody: [
+        "One source per connection. A second Shopify store is a second connection, which keeps their figures separable in reports.",
+        "We guessed from the first hundred rows. Anything mapped wrong here is wrong in every report downstream, so it is worth ten seconds.",
+        "These decide what happens to history and to duplicates. The backfill is the one people regret not thinking about.",
+        "Nothing has been written yet. Connecting starts the first sync immediately."
+      ][st.step - 1],
+      wizard1: st.step === 1, wizard2: st.step === 2, wizard3: st.step === 3, wizard4: st.step === 4,
+      sources: sourceDefs.map((s) => {
+        const on = st.source === s[0];
+        return {
+          name: s[1], code: s[2], kind: s[3], blurb: s[4],
+          cardStyle: "border-radius: var(--r2); padding: 18px; min-width: 0; cursor: pointer; box-sizing: border-box; background: var(--card); border: 1.5px solid " + (on ? "var(--accent)" : "var(--line)"),
+          tileStyle: "width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 11.5px; " + (on
+            ? "background: var(--accent-tint); color: var(--accent-text)"
+            : "background: var(--shell); color: var(--txt-3)"),
+          dotStyle: "width: 18px; height: 18px; border-radius: 999px; display: grid; place-items: center; box-sizing: border-box; flex: none; border: 1.5px solid " + (on ? "var(--accent-text)" : "var(--line-2)"),
+          innerStyle: "width: 9px; height: 9px; border-radius: 999px; display: block; background: " + (on ? "var(--accent-text)" : "transparent"),
+          onPick: () => this.setState({ source: s[0] })
+        };
+      }),
+      mappings: [
+        ["order_number", "#40218"], ["customer_email", "alicia@…"], ["line_total", "486.00"], ["fulfil_state", "fulfilled"], ["created_at", "2026-08-28"]
+      ].map((m, i, arr) => {
+        const options = ["Order ID", "Email", "Total", "Status", "Placed", "Ignore"];
+        const current = st.mapTargets[m[0]] || "Ignore";
+        return {
+          from: m[0], to: current, sample: m[1],
+          rowStyle: "display: flex; align-items: center; gap: 12px; padding: 11px 18px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          pickStyle: "flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; background: var(--shell); border: 1px solid var(--line-2); border-radius: 8px; padding: 8px 12px; font-size: 13.5px; cursor: pointer",
+          cycle: () => {
+            const t = Object.assign({}, st.mapTargets);
+            t[m[0]] = options[(options.indexOf(current) + 1) % options.length];
+            this.setState({ mapTargets: t });
+          }
+        };
+      }),
+      rules: [
+        ["backfill", "Backfill twelve months", "Pulls closed periods so year-on-year works from day one."],
+        ["dedupe", "Merge duplicate customers", "Matches on email, keeps the oldest account as the record."],
+        ["currency", "Convert to workspace currency", "Uses the rate on the order date, not today's."],
+        ["notify", "Notify the team when the first sync finishes", "One message, not one per record."]
+      ].map((r) => {
+        const on = !!st.rules[r[0]];
+        const tr = this.track(on);
+        return {
+          title: r[1], sub: r[2], trackStyle: tr.trackStyle, knobStyle: tr.knobStyle,
+          onToggle: () => { const g = Object.assign({}, st.rules); g[r[0]] = !on; this.setState({ rules: g }); }
+        };
+      }),
+      review: [
+        { label: "Source", value: (sourceDefs.find((s) => s[0] === st.source) || sourceDefs[0])[1] },
+        { label: "Fields mapped", value: "5 of 5" },
+        { label: "Backfill", value: st.rules.backfill ? "12 months" : "None" },
+        { label: "Duplicates", value: st.rules.dedupe ? "Merge on email" : "Keep separate" },
+        { label: "Currency", value: st.rules.currency ? "Convert to EUR" : "Keep original" },
+        { label: "First sync", value: "Immediately" }
+      ],
+      backStyle: "font-size: 14.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 11px 20px; cursor: pointer; " + (st.step > 1
+        ? "border: 1px solid var(--line-2); color: var(--txt-2)"
+        : "border: 1px solid var(--line); color: var(--txt-4); cursor: default"),
+      back: () => { if (st.step > 1) this.setState({ step: st.step - 1 }); },
+      nextLabel: st.step === 4 ? "Connect source" : "Continue",
+      nextStyle: "font-size: 14.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 12px 22px; cursor: pointer; " + (canAdvance
+        ? "background: var(--accent); color: var(--accent-ink)"
+        : "background: var(--shell); color: var(--txt-4); cursor: default"),
+      next: () => {
+        if (!canAdvance) return;
+        if (st.step === 4) { this.say("Source connected — first sync started"); this.setState({ step: 1 }); }
+        else this.setState({ step: st.step + 1 });
+      },
+      stopClick: (e) => e.stopPropagation(),
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

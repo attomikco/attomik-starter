@@ -1,0 +1,86 @@
+import type { ModuleId } from "@/config/project"
+
+/**
+ * Canonical module registry. Every module the starter ships is defined here,
+ * whether or not the current project enables it (that lives in
+ * `src/config/project.ts`). Definitions are plain data — no React imports —
+ * so the registry can be read from server code, scripts, and tests alike.
+ *
+ * Navigation groups mirror the design-reference rail: "operate" for daily
+ * work, "configure" for setup and data movement, "settings" for admin.
+ */
+
+export type NavGroup = "operate" | "configure" | "settings"
+
+export interface ModuleNavigation {
+  group: NavGroup
+  label: string
+  href: string
+  order: number
+}
+
+export interface ModuleDefinition {
+  id: ModuleId
+  label: string
+  description: string
+  navigation?: ModuleNavigation
+  permissions?: readonly string[]
+  dependencies?: readonly ModuleId[]
+}
+
+export const moduleRegistry = {
+  overview: {
+    id: "overview",
+    label: "Overview",
+    description: "Landing dashboard: stat cards, decision list, next actions.",
+    navigation: {
+      group: "operate",
+      label: "Overview",
+      href: "/",
+      order: 0,
+    },
+    permissions: ["overview.view"],
+  },
+
+  analytics: {
+    id: "analytics",
+    label: "Analytics",
+    description: "KPI tiles, trend charts, service matrix, cohorts.",
+    navigation: {
+      group: "operate",
+      label: "Analytics",
+      href: "/analytics",
+      order: 10,
+    },
+    permissions: ["analytics.view"],
+  },
+
+  customers: {
+    id: "customers",
+    label: "Customers",
+    description: "Customer table and customer records.",
+    navigation: {
+      group: "operate",
+      label: "Customers",
+      href: "/customers",
+      order: 20,
+    },
+    permissions: ["customers.view", "customers.edit"],
+  },
+
+  media: {
+    id: "media",
+    label: "Media Library",
+    description: "File grid with usage tracking and orphan flagging.",
+    navigation: {
+      group: "configure",
+      label: "Media",
+      href: "/media",
+      order: 10,
+    },
+    permissions: ["media.view", "media.upload", "media.delete"],
+  },
+} satisfies Partial<Record<ModuleId, ModuleDefinition>>
+
+/** Modules that have a definition. Config may list more ids than are registered yet. */
+export type RegisteredModuleId = keyof typeof moduleRegistry

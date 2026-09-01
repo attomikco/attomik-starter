@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --ok: oklch(.575 .195 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --r: 22px; --r2: 16px; --r3: 11px; --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--accent-text); } a:hover { color: var(--txt); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+</style>
+</helmet>
+
+<div style="width: 100%; max-width: 1440px; margin: 0 auto; height: 100vh; padding: 26px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); overflow: hidden">
+ <div style="background: var(--shell); border-radius: 30px; padding: 16px; flex: 1; min-height: 0; box-sizing: border-box; display: flex; gap: 16px; overflow: hidden">
+
+  <div style="{{ railStyle }}">
+    <div style="display: flex; align-items: center; justify-content: center; padding: 4px 12px 20px; flex: none">
+      <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+        <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+        <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+      </span>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 40px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; margin-right: -4px; padding-right: 4px">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+        <div style="margin-bottom: 16px">
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 0 12px 8px">{{ g.label }}</div>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <sc-for list="{{ g.items }}" as="t" hint-placeholder-count="3">
+              <div style="{{ t.style }}" style-hover="{{ t.hoverStyle }}" onClick="{{ t.onClick }}">
+                <span style="{{ t.dotStyle }}"></span>
+                <span style="flex: 1; min-width: 0">{{ t.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <a href="https://attomik.co" target="_blank" rel="noopener" style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; padding: 8px 12px 2px; flex: none; display: flex; align-items: center; gap: 7px" style-hover="color: var(--txt-3)">
+      Built by
+      <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+        <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+          <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+          <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+        </g>
+        <g transform="translate(-11.56 -7)" fill="currentColor">
+          <circle cx="50" cy="16" r="9"></circle>
+          <circle cx="79.44" cy="67" r="9"></circle>
+          <circle cx="20.56" cy="67" r="9"></circle>
+        </g>
+      </svg>
+      Attomik
+    </a>
+  </div>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 14px">
+
+    <div style="background: var(--card); border-radius: var(--r); padding: 16px 22px; flex: none; display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+      <div style="min-width: 0">
+        <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 7px">{{ kind }}</div>
+        <div style="font-size: 21px; font-weight: var(--w-bold); letter-spacing: -0.03em; line-height: 1.1">{{ subject }}</div>
+      </div>
+      <div style="flex: 1"></div>
+      <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; flex: none">
+        <sc-for list="{{ widths }}" as="w" hint-placeholder-count="2">
+          <span style="{{ w.style }}" onClick="{{ w.onClick }}">{{ w.label }}</span>
+        </sc-for>
+      </div>
+      <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; flex: none">
+        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+          <span style="{{ m.style }}" onClick="{{ m.onClick }}">{{ m.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="{{ splitStyle }}">
+
+      <div style="{{ stageStyle }}">
+        <div style="{{ frameStyle }}">
+          <div style="{{ chromeStyle }}">
+            <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: {{ meta }}; flex: none">From</span>
+            <span style="font-size: 12.5px; color: {{ ink2 }}; flex: none">{{ sender }}</span>
+            <span style="width: 1px; height: 14px; background: {{ hair }}; display: block; flex: none"></span>
+            <span style="font-size: 12.5px; color: {{ ink }}; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ subject }}</span>
+          </div>
+
+          <div style="{{ bodyStyle }}">
+            <div style="{{ brandRowStyle }}">
+              <span style="{{ logoSlotStyle }}">
+                <span style="{{ logoDotStyle }}"></span>
+                <span style="{{ logoLabelStyle }}">Logo</span>
+              </span>
+              <span style="{{ preheaderStyle }}">{{ preheader }}</span>
+            </div>
+
+            <div style="{{ cardStyle }}">
+              <sc-if value="{{ hasBadge }}" hint-placeholder-val="{{ false }}">
+                <span style="{{ badgeStyle }}">{{ badge }}</span>
+              </sc-if>
+              <div style="{{ headingStyle }}">{{ heading }}</div>
+              <sc-for list="{{ paragraphs }}" as="p" hint-placeholder-count="2">
+                <div style="{{ p.style }}">{{ p.text }}</div>
+              </sc-for>
+
+              <sc-if value="{{ hasCode }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ codeWrapStyle }}">
+                  <div style="{{ codeLabelStyle }}">{{ codeLabel }}</div>
+                  <div style="{{ codeStyle }}">{{ code }}</div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ hasButton }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 6px 0 4px"><span style="{{ buttonStyle }}">{{ button }}</span></div>
+                <div style="{{ fallbackStyle }}">{{ fallback }}</div>
+              </sc-if>
+
+              <sc-if value="{{ hasMetrics }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ metricGridStyle }}">
+                  <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="4">
+                    <div style="{{ m.cellStyle }}">
+                      <div style="{{ m.labelStyle }}">{{ m.label }}</div>
+                      <div style="{{ m.valueStyle }}">{{ m.value }}</div>
+                      <div style="{{ m.deltaStyle }}">{{ m.delta }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ hasRows }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ tableStyle }}">
+                  <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+                    <div style="{{ r.rowStyle }}">
+                      <span style="{{ r.leftStyle }}">{{ r.left }}</span>
+                      <span style="{{ r.rightStyle }}">{{ r.right }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ hasCallout }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ calloutStyle }}">
+                  <div style="{{ calloutTitleStyle }}">{{ calloutTitle }}</div>
+                  <div style="{{ calloutBodyStyle }}">{{ calloutBody }}</div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ hasSecondary }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ secondaryStyle }}">{{ secondary }}</div>
+              </sc-if>
+            </div>
+
+            <div style="{{ footerStyle }}">
+              <div style="{{ footerWhyStyle }}">{{ footerWhy }}</div>
+              <div style="{{ footerMetaStyle }}">{{ footerAddress }}</div>
+              <div style="{{ footerLinkStyle }}">{{ footerLinks }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="{{ metaColStyle }}">
+        <div style="background: var(--card); border-radius: var(--r2); padding: 20px">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 14px">Send details</div>
+          <div style="display: flex; flex-direction: column">
+            <sc-for list="{{ meta1 }}" as="m" hint-placeholder-count="4">
+              <div style="{{ m.rowStyle }}">
+                <span style="font-size: 13px; color: var(--txt-2); flex: 1; min-width: 0">{{ m.label }}</span>
+                <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt); text-align: right">{{ m.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--card); border-radius: var(--r2); padding: 20px">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">Blocks in this email</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="5">
+              <span style="font-family: var(--mono); font-size: 10.5px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 5px 10px">{{ b }}</span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--card); border-radius: var(--r2); padding: 20px">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">Rules for every send</div>
+          <div style="display: flex; flex-direction: column">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="6">
+              <div style="{{ r.rowStyle }}">
+                <span style="font-family: var(--mono); font-size: 10.5px; color: var(--accent-text); flex: none">{{ r.n }}</span>
+                <span style="font-size: 12.5px; color: var(--txt-2); line-height: 1.5">{{ r.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 20px">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 10px">Email tokens</div>
+          <p style="font-size: 12.5px; color: var(--txt-2); line-height: 1.55; margin: 0 0 12px">Mail clients strip custom properties, so these are resolved to literal values at send time from the same skin the product uses.</p>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="5">
+              <div style="display: flex; align-items: center; gap: 9px">
+                <span style="{{ t.swatch }}"></span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-2); flex: 1; min-width: 0">{{ t.name }}</span>
+                <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3)">{{ t.role }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940}}">
+class Component extends DCLogic {
+  state = { id: "magic", mode: "light", width: "desktop", vw: 1440 };
+
+  static get TEMPLATES() {
+    return {
+      magic: {
+        group: "Authentication", label: "Magic link", kind: "Transactional · authentication",
+        subject: "Your sign-in link", preheader: "Expires in 15 minutes, works once",
+        heading: "Sign in to Attomik",
+        paragraphs: ["Somebody asked for a sign-in link for this address. If it was you, the button below signs you in for thirty days on this device."],
+        button: "Sign in", fallback: "Or paste this into your browser: app.attomik.co/auth/8f2c4471be0a",
+        callout: ["Not you?", "Ignore this email and nothing happens. The link only works from this message, and it expires on its own."],
+        secondary: "This link expires in 15 minutes and can only be used once.",
+        blocks: ["Brand row", "Heading", "Body", "Button", "URL fallback", "Callout", "Footer"],
+        meta: [["Trigger", "sign-in requested"], ["Delay", "immediate"], ["Expiry", "15 min"], ["Retry", "1 per 30s"]]
+      },
+      code: {
+        group: "Authentication", label: "Login code", kind: "Transactional · authentication",
+        subject: "Your code is 418 902", preheader: "Six digits, valid for 10 minutes",
+        heading: "Here is your code",
+        paragraphs: ["Enter this in the window you already have open. We will never ask you for it over the phone or in a chat."],
+        code: "418 902", codeLabel: "Verification code",
+        secondary: "Valid for 10 minutes. If you did not ask for it, someone may have typed your address by mistake.",
+        blocks: ["Brand row", "Heading", "Body", "Code block", "Footer"],
+        meta: [["Trigger", "code requested"], ["Delay", "immediate"], ["Expiry", "10 min"], ["Retry", "3 per hour"]]
+      },
+      invite: {
+        group: "Authentication", label: "Workspace invite", kind: "Transactional · membership",
+        subject: "Anna invited you to Attomik HQ", preheader: "Editor seat · expires in 7 days",
+        heading: "Join Attomik HQ",
+        paragraphs: ["Anna Hayes added you as an editor. That lets you change records and approve refunds, but not billing or member settings."],
+        button: "Accept the invite", fallback: "Invited by anna@attomik.co · expires in 7 days",
+        rows: [["Workspace", "Attomik HQ"], ["Role", "Editor"], ["Invited by", "Anna Hayes"], ["Seats left", "4 of 10"]],
+        blocks: ["Brand row", "Heading", "Body", "Button", "Detail table", "Footer"],
+        meta: [["Trigger", "invite sent"], ["Delay", "immediate"], ["Expiry", "7 days"], ["Reminder", "day 5"]]
+      },
+      refund: {
+        group: "Operations", label: "Refund approved", kind: "Transactional · receipt",
+        subject: "Your refund of $412.00 is on its way", preheader: "Back to the card ending 4417",
+        heading: "Refund approved",
+        paragraphs: ["We have approved the refund on order 40218. It goes back to the card it was paid with, and banks usually take two to five working days."],
+        rows: [["Order", "40218"], ["Refunded", "$412.00"], ["Method", "Card ending 4417"], ["Expected by", "Sep 4"]],
+        badge: ["ok", "Approved"],
+        secondary: "Keep this email — it is the only receipt for the refund.",
+        blocks: ["Brand row", "Status badge", "Heading", "Body", "Detail table", "Footer"],
+        meta: [["Trigger", "refund approved"], ["Delay", "immediate"], ["Expiry", "—"], ["Copy owner", "Support"]]
+      },
+      failed: {
+        group: "Operations", label: "Payment failed", kind: "Transactional · alert",
+        subject: "Payment failed on order 40211", preheader: "Card declined — the order is on hold",
+        heading: "A payment did not go through",
+        paragraphs: ["The card on order 40211 was declined for $1,584.00. Nothing has shipped, and the order stays on hold until the payment clears."],
+        button: "Retry the payment", fallback: "Or reach the customer directly: diego@ortizcafe.mx",
+        badge: ["bad", "Action needed"],
+        rows: [["Order", "40211"], ["Amount", "$1,584.00"], ["Reason", "Card declined"], ["On hold since", "Aug 30"]],
+        blocks: ["Brand row", "Status badge", "Heading", "Body", "Button", "Detail table", "Footer"],
+        meta: [["Trigger", "capture failed"], ["Delay", "immediate"], ["Expiry", "—"], ["Escalates", "after 48h"]]
+      },
+      digest: {
+        group: "Reporting", label: "Weekly digest", kind: "Scheduled · digest",
+        subject: "Last week: $62,140 and four decisions waiting", preheader: "Aug 24 – Aug 30 against the week before",
+        heading: "Your week in numbers",
+        paragraphs: ["Seven days to Aug 30, with the previous seven behind every figure."],
+        metrics: [["Revenue", "$62,140", "↑ 14.2%", "up"], ["Orders", "842", "↑ 8.6%", "up"], ["Avg order", "$73.80", "↑ 5.1%", "up"], ["Refund rate", "2.4%", "↓ 0.3 pts", "up"]],
+        rows: [["Refunds waiting on you", "4"], ["Stock items under cover", "2"], ["Failed payments", "1"], ["New customers", "148"]],
+        button: "Open the dashboard",
+        fallback: "Sent every Monday at 08:00 Europe / Madrid",
+        blocks: ["Brand row", "Heading", "Metric grid", "Detail table", "Button", "Footer"],
+        meta: [["Trigger", "Mondays 08:00"], ["Delay", "batched"], ["Expiry", "—"], ["Unsubscribe", "yes"]]
+      },
+      monthly: {
+        group: "Reporting", label: "Monthly summary", kind: "Scheduled · summary",
+        subject: "August: $248,310, up 18.4%", preheader: "Your month, and what needs a decision in September",
+        heading: "August in review",
+        paragraphs: ["The strongest month this year, carried by the direct store. Two things need a decision before mid-September."],
+        metrics: [["Revenue", "$248,310", "↑ 18.4%", "up"], ["Orders", "3,412", "↑ 11.2%", "up"], ["Gross margin", "61.4%", "↑ 1.8 pts", "up"], ["Return rate", "3.14x", "↓ 0.08", "down"]],
+        rows: [["Direct store", "$142,880"], ["Amazon", "$61,420"], ["Wholesale", "$31,540"], ["Marketplaces", "$12,470"]],
+        callout: ["Needs a decision", "Cold Brew 12pk has nine days of cover left, and the wholesale price change has been pending since Aug 23."],
+        button: "See the full report",
+        fallback: "Sent on the first working day of each month",
+        blocks: ["Brand row", "Heading", "Metric grid", "Channel table", "Callout", "Button", "Footer"],
+        meta: [["Trigger", "1st of month"], ["Delay", "batched"], ["Expiry", "—"], ["Unsubscribe", "yes"]]
+      }
+    };
+  }
+
+  get t() { return Component.TEMPLATES[this.state.id] || Component.TEMPLATES.magic; }
+
+  componentDidMount() {
+    this._onResize = () => {
+      const vw = window.innerWidth;
+      if (Math.abs(vw - this.state.vw) > 8) this.setState({ vw });
+    };
+    this._onResize();
+    window.addEventListener("resize", this._onResize);
+  }
+
+  componentWillUnmount() { if (this._onResize) window.removeEventListener("resize", this._onResize); }
+
+  // Email palettes are literal values: mail clients strip custom properties.
+  palette() {
+    const dark = this.state.mode === "dark";
+    return dark
+      ? { ground: "#14171b", card: "#1c1f24", inset: "#23272d", line: "#2b3037", ink: "#f2f3f5",
+          ink2: "#aab1ba", meta: "#79818b", accent: "#5b7cff", accentInk: "#0d0f12", accentTint: "#1d2440",
+          ok: "#63d69b", okTint: "#16301f", bad: "#f08175", badTint: "#361b19", warn: "#e6b45c", warnTint: "#33270f" }
+      : { ground: "#eef0f3", card: "#ffffff", inset: "#f5f6f8", line: "#e3e6ea", ink: "#0e1013",
+          ink2: "#4c5158", meta: "#7b8188", accent: "#2f4fd0", accentInk: "#ffffff", accentTint: "#eaeefb",
+          ok: "#2f7d52", okTint: "#e8f3ec", bad: "#c0392b", badTint: "#fbecea", warn: "#9a6a17", warnTint: "#fbf1de" };
+  }
+
+  renderVals() {
+    const t = this.t;
+    const p = this.palette();
+    const vw = this.state.vw;
+    const compact = vw < 1180;
+    const tight = vw < 900;
+    const narrow = this.state.width === "mobile" || tight;
+    const chip = "font-family: var(--mono); font-size: 11px; padding: 7px 14px; border-radius: 999px; cursor: pointer; ";
+
+    const groups = [];
+    Object.keys(Component.TEMPLATES).forEach((key) => {
+      const tpl = Component.TEMPLATES[key];
+      let g = groups.filter((x) => x.label === tpl.group)[0];
+      if (!g) { g = { label: tpl.group, items: [] }; groups.push(g); }
+      const on = key === this.state.id;
+      g.items.push({
+        label: tpl.label,
+        style: "display: flex; align-items: center; gap: 10px; padding: 10px 13px; border-radius: var(--r3); font-size: 14px; cursor: pointer; " + (on
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2)"),
+        hoverStyle: on ? "" : "background: var(--card); color: var(--txt)",
+        dotStyle: "width: 4px; height: 16px; border-radius: 2px; flex: none; display: block; background: " + (on ? "var(--accent)" : "var(--line-2)"),
+        onClick: () => this.setState({ id: key })
+      });
+    });
+
+    const badgeTone = t.badge ? t.badge[0] : "";
+    const badgeColor = badgeTone === "ok" ? [p.ok, p.okTint] : badgeTone === "bad" ? [p.bad, p.badTint] : [p.warn, p.warnTint];
+
+    return {
+      groups,
+      railStyle: tight
+        ? "display: none"
+        : "width: " + (compact ? "212px" : "250px") + "; flex: none; align-self: stretch; display: flex; flex-direction: column; padding: 10px 6px 4px 10px; box-sizing: border-box",
+      splitStyle: compact
+        ? "flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin"
+        : "flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 292px; gap: 14px; overflow: hidden",
+      metaColStyle: compact
+        ? "display: grid; grid-template-columns: repeat(" + (tight ? 1 : 2) + ", minmax(0, 1fr)); gap: 14px; min-width: 0; flex: none"
+        : "display: flex; flex-direction: column; gap: 14px; min-width: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin",
+      kind: t.kind,
+      subject: t.subject,
+      preheader: t.preheader,
+      sender: "Attomik <no-reply@attomik.co>",
+      brand: "Attomik",
+
+      ink: p.ink, ink2: p.ink2, meta: p.meta, hair: p.line,
+
+      widths: [["desktop", "Desktop"], ["mobile", "Mobile"]].map((w) => ({
+        label: w[1],
+        style: chip + (this.state.width === w[0] ? "background: var(--card); color: var(--txt)" : "color: var(--txt-3)"),
+        onClick: () => this.setState({ width: w[0] })
+      })),
+      modes: [["light", "Light"], ["dark", "Dark"]].map((m) => ({
+        label: m[1],
+        style: chip + (this.state.mode === m[0] ? "background: var(--card); color: var(--txt)" : "color: var(--txt-3)"),
+        onClick: () => this.setState({ mode: m[0] })
+      })),
+
+      stageStyle: "background: " + p.ground + "; border-radius: var(--r); padding: " + (tight ? "14px" : "26px") + "; " + (compact ? "flex: none; min-height: 520px; overflow: hidden" : "overflow-y: auto; overflow-x: hidden; scrollbar-width: thin") + "; display: flex; justify-content: center; align-items: flex-start; min-width: 0",
+      frameStyle: "width: 100%; max-width: " + (narrow ? "380px" : "620px") + "; display: flex; flex-direction: column; gap: 12px",
+      chromeStyle: "display: flex; align-items: center; gap: 10px; background: " + p.card + "; border: 1px solid " + p.line + "; border-radius: 12px; padding: 10px 14px",
+      bodyStyle: "background: " + p.card + "; border: 1px solid " + p.line + "; border-radius: 14px; padding: " + (narrow ? "24px 20px" : "34px 36px") + "; display: flex; flex-direction: column",
+
+      brandRowStyle: "display: flex; align-items: center; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid " + p.line + "; margin-bottom: 26px; flex-wrap: wrap",
+      // The brand's own artwork goes here at send time; the slot holds its footprint.
+      logoSlotStyle: "height: 32px; min-width: 148px; border: 1px dashed " + p.line + "; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; box-sizing: border-box; flex: none",
+      logoDotStyle: "width: 8px; height: 8px; border-radius: 999px; background: " + p.meta + "; display: block; flex: none",
+      logoLabelStyle: "font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: " + p.meta,
+      preheaderStyle: "margin-left: auto; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: " + p.meta,
+
+      cardStyle: "display: flex; flex-direction: column; gap: 14px",
+      hasBadge: !!t.badge,
+      badge: t.badge ? t.badge[1] : "",
+      badgeStyle: "align-self: flex-start; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 5px 11px; color: " + badgeColor[0] + "; background: " + badgeColor[1],
+      heading: t.heading,
+      headingStyle: "font-size: " + (narrow ? "24px" : "28px") + "; font-weight: 700; letter-spacing: -0.035em; line-height: 1.15; color: " + p.ink,
+      paragraphs: (t.paragraphs || []).map((text) => ({
+        text, style: "font-size: 15px; line-height: 1.6; color: " + p.ink2
+      })),
+
+      hasCode: !!t.code,
+      code: t.code || "",
+      codeLabel: t.codeLabel || "",
+      codeWrapStyle: "background: " + p.inset + "; border: 1px solid " + p.line + "; border-radius: 12px; padding: 20px; text-align: center",
+      codeLabelStyle: "font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: " + p.meta + "; margin-bottom: 12px",
+      codeStyle: "font-family: var(--mono); font-size: 30px; letter-spacing: .18em; color: " + p.ink,
+
+      hasButton: !!t.button,
+      button: t.button || "",
+      buttonStyle: "display: inline-block; background: " + p.accent + "; color: " + p.accentInk + "; border-radius: 999px; padding: 14px 28px; font-size: 15px; font-weight: 600; text-decoration: none",
+      fallback: t.fallback || "",
+      fallbackStyle: "font-family: var(--mono); font-size: 11.5px; line-height: 1.6; color: " + p.meta + "; word-break: break-all",
+
+      hasMetrics: !!t.metrics,
+      metricGridStyle: "display: grid; grid-template-columns: repeat(" + (narrow ? 2 : 4) + ", minmax(0, 1fr)); gap: 8px; margin: 4px 0",
+      metrics: (t.metrics || []).map((m, i) => ({
+        label: m[0], value: m[1], delta: m[2],
+        cellStyle: "background: " + (i === 0 ? p.accentTint : p.inset) + "; border-radius: 10px; padding: 14px; min-width: 0",
+        labelStyle: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: " + p.meta + "; margin-bottom: 8px",
+        valueStyle: "font-size: 19px; font-weight: 700; letter-spacing: -0.03em; color: " + p.ink,
+        deltaStyle: "font-family: var(--mono); font-size: 11px; margin-top: 6px; color: " + (m[3] === "up" ? p.ok : p.bad)
+      })),
+
+      hasRows: !!t.rows,
+      tableStyle: "background: " + p.inset + "; border-radius: 12px; padding: 4px 16px; margin: 4px 0",
+      rows: (t.rows || []).map((r, i, arr) => ({
+        left: r[0], right: r[1],
+        rowStyle: "display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid " + p.line : ""),
+        leftStyle: "font-size: 13.5px; color: " + p.ink2,
+        rightStyle: "font-family: var(--mono); font-size: 13px; color: " + p.ink
+      })),
+
+      hasCallout: !!t.callout,
+      calloutStyle: "background: " + p.warnTint + "; border-radius: 12px; padding: 16px 18px; margin: 4px 0",
+      calloutTitle: t.callout ? t.callout[0] : "",
+      calloutBody: t.callout ? t.callout[1] : "",
+      calloutTitleStyle: "font-size: 14px; font-weight: 600; color: " + p.warn,
+      calloutBodyStyle: "font-size: 13.5px; line-height: 1.55; color: " + p.ink2 + "; margin-top: 4px",
+
+      hasSecondary: !!t.secondary,
+      secondary: t.secondary || "",
+      secondaryStyle: "font-size: 13px; line-height: 1.6; color: " + p.meta + "; border-top: 1px solid " + p.line + "; padding-top: 18px; margin-top: 4px",
+
+      footerStyle: "margin-top: 26px; padding-top: 20px; border-top: 1px solid " + p.line + "; display: flex; flex-direction: column; gap: 6px",
+      footerWhy: t.group === "Reporting"
+        ? "You get this because you are an owner of Attomik HQ. Change what reaches you in Settings."
+        : "This email was sent because somebody used your address to sign in or act on Attomik HQ.",
+      footerWhyStyle: "font-size: 12px; line-height: 1.55; color: " + p.meta,
+      footerAddress: "Attomik · Calle Serrano 41, 28001 Madrid, Spain",
+      footerMetaStyle: "font-family: var(--mono); font-size: 10.5px; color: " + p.meta,
+      footerLinks: t.group === "Reporting" ? "Notification settings · Unsubscribe · Privacy" : "Help · Privacy · Security",
+      footerLinkStyle: "font-family: var(--mono); font-size: 10.5px; color: " + p.accent,
+
+      meta1: (t.meta || []).map((m, i, arr) => ({
+        label: m[0], value: m[1],
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 9px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })),
+      blocks: t.blocks || [],
+      rules: [
+        ["01", "One job per email. If it needs two buttons, it is two emails."],
+        ["02", "The subject carries the fact, not a tease. A person should be able to act from the notification alone."],
+        ["03", "Every link has a plain-text fallback URL — corporate clients strip buttons."],
+        ["04", "Say why they received it, every time, in the footer."],
+        ["05", "No custom properties, no external CSS. Colours are literal hex values resolved from the skin at send time."],
+        ["06", "620px wide, single column, 15px body. Anything narrower than 380px is a phone and stacks."],
+        ["07", "Scheduled mail can be unsubscribed; transactional mail cannot, and must not pretend otherwise."]
+      ].map((r, i, arr) => ({
+        n: r[0], text: r[1],
+        rowStyle: "display: flex; align-items: flex-start; gap: 10px; padding: 8px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })),
+      tokens: [
+        ["ground", p.ground, "outside the card"],
+        ["card", p.card, "the email itself"],
+        ["inset", p.inset, "tables, code"],
+        ["accent", p.accent, "buttons, links"],
+        ["ink", p.ink, "headings"],
+        ["ink-2", p.ink2, "body copy"]
+      ].map((x) => ({
+        name: x[0], role: x[2],
+        swatch: "width: 16px; height: 16px; border-radius: 5px; flex: none; display: block; border: 1px solid var(--line); background: " + x[1]
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

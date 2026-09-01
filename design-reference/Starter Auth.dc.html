@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --ok: oklch(.575 .195 147); --ok-fill: oklch(.66 .203 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-fill: oklch(.83 .203 92); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-fill: oklch(.64 .233 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --r: 22px; --r2: 16px; --r3: 11px; --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--accent-text); } a:hover { color: var(--txt); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input { font: inherit; color: inherit; background: none; border: none; outline: none; width: 100%; }
+  input::placeholder { color: var(--txt-4); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+
+<div style="width: 1440px; height: 100vh; padding: 26px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); overflow: hidden">
+ <div style="background: var(--shell); border-radius: 30px; padding: 26px; flex: 1; min-height: 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+
+  <div style="background: var(--card); border-radius: var(--r); padding: 40px; box-sizing: border-box; width: 100%; max-width: 520px; min-height: 640px; flex: none; margin-top: 8px; display: flex; flex-direction: column; gap: 4px">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; flex: none">
+      <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+        <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+        <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+      </span>
+      <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4)">{{ stepLabel }}</span>
+    </div>
+
+    <div style="flex: none; padding: 26px 0 4px">
+      <div style="min-width: 0">
+
+        <sc-if value="{{ isEntry }}" hint-placeholder-val="{{ true }}">
+          <span style="width: 52px; height: 52px; border-radius: 15px; background: var(--accent-tint); display: grid; place-items: center; margin: 0 auto 22px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></span>
+          <h1 style="font-size: 34px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.08; margin: 0 0 12px; text-align: center">Sign in</h1>
+          <p style="font-size: 15px; color: var(--txt-2); line-height: 1.6; margin: 0 0 28px; text-align: center">No password. Enter your work address and we send a link that signs you in for thirty days on this device.</p>
+
+          <label style="display: block; margin-bottom: 14px">
+            <span style="display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 9px">Work email</span>
+            <span style="{{ fieldStyle }}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg>
+              <input type="email" placeholder="you@company.com" value="{{ email }}" onInput="{{ onEmail }}" onKeyDown="{{ onKey }}" autocomplete="email" style="font-size: 15.5px" />
+            </span>
+          </label>
+
+          <sc-if value="{{ showError }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--bad); margin-bottom: 16px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+              {{ errorText }}
+            </div>
+          </sc-if>
+
+          <div style="{{ submitStyle }}" onClick="{{ submit }}">
+            Email me a link
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 14px; margin: 30px 0 22px">
+            <span style="height: 1px; background: var(--line); flex: 1; display: block"></span>
+            <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4)">or</span>
+            <span style="height: 1px; background: var(--line); flex: 1; display: block"></span>
+          </div>
+          <div style="display: block">
+            <span style="display: flex; width: 100%; box-sizing: border-box; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--line-2); border-radius: 999px; padding: 14px 20px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); cursor: pointer" style-hover="background: var(--shell); color: var(--txt)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+              Continue with SSO
+            </span>
+          </div>
+          <p style="font-size: 12.5px; color: var(--txt-3); line-height: 1.6; margin: 26px 0 0">By continuing you accept the <a href="#" style="text-decoration-thickness: 1px">terms</a> and the <a href="#" style="text-decoration-thickness: 1px">privacy notice</a>.</p>
+        </sc-if>
+
+        <sc-if value="{{ isSent }}" hint-placeholder-val="{{ false }}">
+          <span style="width: 52px; height: 52px; border-radius: 15px; background: var(--accent-tint); display: grid; place-items: center; margin: 0 auto 22px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg></span>
+          <h1 style="font-size: 34px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.08; margin: 0 0 12px; text-align: center">Check your inbox</h1>
+          <p style="font-size: 15px; color: var(--txt-2); line-height: 1.6; margin: 0 0 24px; text-align: center">We sent a link to <span style="color: var(--txt); font-weight: var(--w-semi)">{{ email }}</span>. It works once and expires in fifteen minutes.</p>
+
+          <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; margin-bottom: 24px">
+            <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line)">
+              <span style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); flex: 1">Nothing arrived?</span>
+              <span style="{{ resendStyle }}" onClick="{{ resend }}">{{ resendLabel }}</span>
+            </div>
+            <ul style="margin: 14px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--txt-2); line-height: 1.75">
+              <li>Check spam &#8212; the sender is <span style="font-family: var(--mono); font-size: 12.5px">no-reply@company.com</span></li>
+              <li>Corporate filters can hold it for a minute or two</li>
+              <li>Open the link on this device, or it will not carry the session</li>
+            </ul>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap">
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 11px 20px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ change }}">
+              Use another address
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 12px 20px; cursor: pointer" onClick="{{ simulateOpen }}">Simulate opening the link</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isVerifying }}" hint-placeholder-val="{{ false }}">
+          <span style="width: 52px; height: 52px; border-radius: 15px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; display: grid; place-items: center; margin: 0 auto 22px"><span style="width: 22px; height: 22px; border-radius: 999px; border: 2.5px solid var(--lead-line); border-top-color: var(--accent); display: block; animation: spin .8s linear infinite"></span></span>
+          <h1 style="font-size: 34px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.08; margin: 0 0 12px; text-align: center">Signing you in</h1>
+          <p style="font-size: 15px; color: var(--txt-2); line-height: 1.6; margin: 0 0 26px; text-align: center">Verifying the link and restoring your workspace. This takes a second or two.</p>
+          <div style="display: flex; flex-direction: column; gap: 3px; max-width: 340px; margin: 0 auto">
+            <sc-for list="{{ verifySteps }}" as="v" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 11px 0">
+                <span style="{{ v.dotStyle }}"></span>
+                <span style="{{ v.textStyle }}">{{ v.label }}</span>
+                <sc-if value="{{ v.done }}" hint-placeholder-val="{{ false }}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-left: auto"><path d="m5 13 5 5L20 7"></path></svg>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isExpired }}" hint-placeholder-val="{{ false }}">
+          <span style="width: 52px; height: 52px; border-radius: 15px; background: var(--warn-tint); display: grid; place-items: center; margin: 0 auto 22px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5l3 2"></path></svg></span>
+          <h1 style="font-size: 34px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.08; margin: 0 0 12px; text-align: center">This link has expired</h1>
+          <p style="font-size: 15px; color: var(--txt-2); line-height: 1.6; margin: 0 0 24px; text-align: center">Links last fifteen minutes and work once. Nothing is wrong with your account &#8212; request a fresh one.</p>
+
+          <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--warn-tint); border-radius: var(--r2); padding: 18px 20px; margin-bottom: 26px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>
+            <div style="min-width: 0">
+              <div style="font-size: 14px; font-weight: var(--w-semi); color: var(--warn)">Requested 24 minutes ago</div>
+              <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.55; margin-top: 3px">A second link was already sent to this address. Use the newest email, or start again below.</div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap">
+            <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 12px 22px; cursor: pointer" onClick="{{ resendFromExpired }}">Send a new link</span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 11px 20px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ change }}">Change address</span>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div style="flex: none; display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; padding: 14px 0 4px; font-family: var(--mono); font-size: 11px; color: var(--txt-4)">
+    <span>Single-use link</span><span style="color: var(--line-2)">&#183;</span><span>Expires in 15 min</span><span style="color: var(--line-2)">&#183;</span><span>Session 30 days</span><span style="color: var(--line-2)">&#183;</span><span>Every sign-in logged</span>
+  </div>
+  <div style="flex: none; width: 100%; max-width: 520px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; padding: 10px 0 2px">
+      <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-right: 4px">States</span>
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+        <span style="{{ s.style }}" onClick="{{ s.onClick }}">{{ s.label }}</span>
+      </sc-for>
+      <a href="https://attomik.co" target="_blank" rel="noopener" style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; display: flex; align-items: center; gap: 7px" style-hover="color: var(--txt-3)">
+        Built by
+        <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+          <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+            <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+            <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+            <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+          </g>
+          <g transform="translate(-11.56 -7)" fill="currentColor">
+            <circle cx="50" cy="16" r="9"></circle>
+            <circle cx="79.44" cy="67" r="9"></circle>
+            <circle cx="20.56" cy="67" r="9"></circle>
+          </g>
+        </svg>
+        Attomik
+      </a>
+    </div>
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  state = { step: "entry", email: "", error: "", cooldown: 0, verifyStage: 0, themeMode: null };
+
+  static get SKINS() {
+    return {
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  resolvedTheme() {
+    const mode = this.state.themeMode || this.props.theme || "light";
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  // Same nine-input contract as the admin: two hues, two chroma levels, fonts, weights.
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+
+    const accent = dark
+      ? { "--accent": acc(0.66), "--accent-ink": n(0.14, 1), "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(0.52), "--accent-ink": n(0.99, 0.2), "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+
+    return Object.assign({}, surfaces, accent, semantics, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  componentWillUnmount() { this.clearTimers(); }
+
+  apply() {
+    const root = document.body;
+    if (!root) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  clearTimers() {
+    if (this._cool) clearInterval(this._cool);
+    if (this._verify) clearInterval(this._verify);
+  }
+
+  startCooldown() {
+    if (this._cool) clearInterval(this._cool);
+    this.setState({ cooldown: 30 });
+    this._cool = setInterval(() => {
+      const next = this.state.cooldown - 1;
+      if (next <= 0) { clearInterval(this._cool); this._cool = null; this.setState({ cooldown: 0 }); }
+      else this.setState({ cooldown: next });
+    }, 1000);
+  }
+
+  valid(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()); }
+
+  submit = () => {
+    const email = this.state.email.trim();
+    if (!email) return this.setState({ error: "Enter the address you use at work." });
+    if (!this.valid(email)) return this.setState({ error: "That does not look like a complete email address." });
+    this.setState({ step: "sent", error: "" });
+    this.startCooldown();
+  };
+
+  // Walks the three verification lines, then lands on the expired state so the
+  // failure path is reviewable without a real backend.
+  startVerify() {
+    if (this._verify) clearInterval(this._verify);
+    this.setState({ step: "verifying", verifyStage: 0 });
+    this._verify = setInterval(() => {
+      const stage = this.state.verifyStage + 1;
+      if (stage > 3) { clearInterval(this._verify); this._verify = null; this.setState({ step: "expired" }); }
+      else this.setState({ verifyStage: stage });
+    }, 900);
+  }
+
+  renderVals() {
+    const st = this.state.step;
+    const chip = "font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; cursor: pointer; ";
+    const labels = { entry: "Step 1 of 2", sent: "Step 2 of 2", verifying: "Verifying", expired: "Link expired" };
+
+    const steps = [["entry", "Entry"], ["sent", "Sent"], ["verifying", "Verifying"], ["expired", "Expired"]].map((s) => ({
+      label: s[1],
+      style: chip + (st === s[0] ? "background: var(--accent); color: var(--accent-ink)" : "background: var(--shell); color: var(--txt-3)"),
+      onClick: () => { this.clearTimers(); if (s[0] === "verifying") this.startVerify(); else this.setState({ step: s[0], cooldown: 0 }); }
+    }));
+
+    const verifyLines = ["Link signature checked", "Session issued for this device", "Workspace restored"];
+    const verifySteps = verifyLines.map((label, i) => {
+      const done = this.state.verifyStage > i;
+      const active = this.state.verifyStage === i;
+      return {
+        label, done,
+        dotStyle: "width: 9px; height: 9px; border-radius: 999px; flex: none; display: block; background: " + (done ? "var(--ok-fill)" : active ? "var(--accent)" : "var(--line-2)"),
+        textStyle: "font-size: 14.5px; color: " + (done || active ? "var(--txt)" : "var(--txt-3)") + "; font-weight: " + (active ? "var(--w-semi)" : "400")
+      };
+    });
+
+    const cd = this.state.cooldown;
+    return {
+      email: this.state.email,
+      stepLabel: labels[st] || "",
+      isEntry: st === "entry", isSent: st === "sent", isVerifying: st === "verifying", isExpired: st === "expired",
+      showError: !!this.state.error, errorText: this.state.error,
+      fieldStyle: "display: flex; align-items: center; gap: 11px; background: var(--card); border-radius: var(--r3); padding: 14px 16px; box-sizing: border-box; border: 1.5px solid " + (this.state.error ? "var(--bad)" : "var(--line-2)"),
+      submitStyle: "display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 15px 0; font-size: 15px; font-weight: var(--w-semi); cursor: pointer",
+      onEmail: (e) => this.setState({ email: e.target.value, error: "" }),
+      onKey: (e) => { if (e.key === "Enter") this.submit(); },
+      submit: this.submit,
+      change: () => { this.clearTimers(); this.setState({ step: "entry", cooldown: 0, error: "" }); },
+      simulateOpen: () => this.startVerify(),
+      resend: () => { if (!cd) this.startCooldown(); },
+      resendFromExpired: () => { this.setState({ step: "sent" }); this.startCooldown(); },
+      resendLabel: cd ? "Resend in " + cd + "s" : "Resend link",
+      resendStyle: "font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 6px 12px; flex: none; " + (cd
+        ? "color: var(--txt-4); background: var(--card); cursor: default"
+        : "color: var(--accent-text); background: var(--accent-tint); cursor: pointer"),
+      steps, verifySteps
+    };
+  }
+}
+</script>
+</body>
+</html>

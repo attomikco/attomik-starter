@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --s1: oklch(.34 .13 250); --s2: oklch(.46 .16 250); --s3: oklch(.58 .14 250);
+    --s4: oklch(.70 .10 250); --s5: oklch(.82 .06 250);
+    --ok: oklch(.575 .195 147); --ok-fill: oklch(.66 .203 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-fill: oklch(.83 .203 92); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-fill: oklch(.64 .233 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --hero: oklch(.965 .014 250); --hero-hair: oklch(.90 .04 250);
+    --r: 22px; --r2: 16px; --r3: 11px; --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--accent-text); } a:hover { color: var(--txt); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input { font: inherit; color: inherit; background: none; border: none; outline: none; }
+  input::placeholder { color: var(--txt-4); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position: absolute; inset: 0; min-height: 0; display: flex; flex-direction: column">
+ <div style="flex: 1; min-height: 0; display: flex; position: relative">
+
+  <div style="display: none">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px 22px; flex: none">
+      <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+        <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+        <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+      </span>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 40px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; margin-right: -4px; padding-right: 4px">
+      <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 0 12px 10px">Data</div>
+      <div style="display: flex; flex-direction: column; gap: 3px">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4">
+          <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+            <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+            </sc-if>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+            {{ item.label }}
+            <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ item.badgeStyle }}">{{ item.badge }}</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 20px 12px 10px">Saved views</div>
+      <div style="display: flex; flex-direction: column; gap: 3px">
+        <sc-for list="{{ savedViews }}" as="v" hint-placeholder-count="5">
+          <div style="{{ v.style }}" style-hover="{{ v.hoverStyle }}" onClick="{{ v.onClick }}">
+            <span style="{{ v.dotStyle }}"></span>
+            {{ v.label }}
+            <span style="{{ v.countStyle }}">{{ v.count }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex: none; display: flex; gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); padding: 3px; margin: 8px 4px 8px 0; box-sizing: border-box">
+      <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+        <span style="{{ m.style }}" onClick="{{ m.onClick }}" title="{{ m.label }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ m.icon }}"></path></svg>
+          {{ m.short }}
+        </span>
+      </sc-for>
+    </div>
+
+    <a href="https://attomik.co" target="_blank" rel="noopener" style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; padding: 4px 12px 2px; flex: none; display: flex; align-items: center; gap: 7px" style-hover="color: var(--txt-3)">
+      Built by
+      <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+        <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+          <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+          <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+        </g>
+        <g transform="translate(-11.56 -7)" fill="currentColor">
+          <circle cx="50" cy="16" r="9"></circle>
+          <circle cx="79.44" cy="67" r="9"></circle>
+          <circle cx="20.56" cy="67" r="9"></circle>
+        </g>
+      </svg>
+      Attomik
+    </a>
+  </div>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+
+    <div style="display: none">
+      <div style="flex: 1; min-width: 0; max-width: 460px; display: flex; align-items: center; gap: 11px; background: var(--shell); border-radius: 13px; padding: 11px 14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        <input placeholder="Search orders, customers, SKUs" value="{{ query }}" onInput="{{ onQuery }}" style="flex: 1; min-width: 0; font-size: 14.5px" />
+        <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-4); background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; flex: none">&#8984;K</span>
+      </div>
+      <div style="flex: 1"></div>
+      <div style="display: flex; align-items: center; gap: 9px">
+        <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; cursor: pointer" style-hover="background: var(--accent-tint)" onClick="{{ goInbox }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg></span>
+        <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; position: relative; cursor: pointer" style-hover="background: var(--accent-tint)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg><span style="position: absolute; top: 9px; right: 10px; width: 7px; height: 7px; border-radius: 999px; background: var(--bad-fill); border: 2px solid var(--shell)"></span></span>
+      </div>
+      <div style="width: 1px; height: 30px; background: var(--line)"></div>
+      <div style="display: flex; align-items: center; gap: 11px">
+        <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 14px; font-weight: var(--w-bold); flex: none">AH</span>
+        <div style="min-width: 0">
+          <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">Anna Hayes</div>
+          <div style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">anna@attomik.co</div>
+        </div>
+        <span style="color: var(--txt-4); font-size: 11px; font-family: var(--mono)">&#9662;</span>
+      </div>
+    </div>
+
+    <div style="background: var(--card); border-radius: var(--r); padding: 26px 26px 0; display: flex; flex-direction: column; gap: 18px; flex: 1; min-height: 0; overflow: hidden">
+
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; flex: none">
+        <div style="min-width: 0">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--accent); display: block"></span>{{ metaLive }}</span>
+            <span style="color: var(--txt-4)">&#183;</span><span>{{ metaCount }}</span>
+            <span style="color: var(--txt-4)">&#183;</span><span>{{ metaSync }}</span>
+          </div>
+          <h1 style="font-size: 32px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.05; margin: 0 0 6px">{{ title }}</h1>
+          <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.5; margin: 0">{{ subtitle }}</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 9px; flex: none">
+          <div style="position: relative">
+            <div style="{{ dateBtnStyle }}" onClick="{{ toggleDate }}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              {{ dateLabel }}
+              <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">&#9662;</span>
+            </div>
+            <sc-if value="{{ dateOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; top: 48px; right: 0; z-index: 40; width: 268px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 40px rgba(0,0,0,.14); padding: 14px; animation: rise .14s ease-out">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); padding: 2px 8px 10px">Range</div>
+                <sc-for list="{{ datePresets }}" as="d" hint-placeholder-count="5">
+                  <div style="{{ d.style }}" onClick="{{ d.onClick }}">{{ d.label }}<span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-left: auto">{{ d.hint }}</span></div>
+                </sc-for>
+                <div style="display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--line); margin-top: 10px; padding-top: 12px">
+                  <span style="{{ fromStyle }}">{{ fromLabel }}</span>
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">&#8594;</span>
+                  <span style="{{ toStyle }}">{{ toLabel }}</span>
+                </div>
+                <div style="margin-top: 12px">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px">
+                    <span style="width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; color: var(--txt-2); font-family: var(--mono); font-size: 12px" style-hover="background: var(--shell)" onClick="{{ prevMonth }}">&#8249;</span>
+                    <span style="flex: 1; text-align: center; font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ monthLabel }}</span>
+                    <span style="width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; color: var(--txt-2); font-family: var(--mono); font-size: 12px" style-hover="background: var(--shell)" onClick="{{ nextMonth }}">&#8250;</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; margin-bottom: 4px">
+                    <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                      <span style="text-align: center; font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--txt-4); padding: 4px 0">{{ w }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px">
+                    <sc-for list="{{ days }}" as="day" hint-placeholder-count="35">
+                      <span style="{{ day.style }}" onClick="{{ day.onPick }}">{{ day.label }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px">
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); flex: 1">{{ rangeSummary }}</span>
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--accent-text); cursor: pointer" onClick="{{ applyRange }}">Apply</span>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="height: 42px; padding: 0 18px; border: 1px solid var(--line-2); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); white-space: nowrap; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ exportToast }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M4 21h16"></path></svg>
+            Export
+          </div>
+          <div style="height: 42px; padding: 0 20px; background: var(--accent); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); white-space: nowrap; cursor: pointer" onClick="{{ createToast }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            {{ createLabel }}
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ hasBanners }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 8px; flex: none">
+          <sc-for list="{{ banners }}" as="b" hint-placeholder-count="2">
+            <div style="{{ b.style }}">
+              <span style="{{ b.iconStyle }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ b.icon }}"></path></svg></span>
+              <div style="flex: 1; min-width: 0">
+                <span style="{{ b.titleStyle }}">{{ b.title }}</span>
+                <span style="font-size: 13.5px; color: var(--txt-2); line-height: 1.5"> {{ b.body }}</span>
+              </div>
+              <sc-if value="{{ b.action }}" hint-placeholder-val="{{ false }}">
+                <span style="{{ b.actionStyle }}" onClick="{{ b.onAction }}">{{ b.action }}</span>
+              </sc-if>
+              <span style="width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; color: var(--txt-4); cursor: pointer; flex: none; font-size: 12px" style-hover="background: var(--card); color: var(--txt-2)" onClick="{{ b.onDismiss }}">&#10005;</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTable }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: none">
+        <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px">
+          <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="4">
+            <span style="{{ tab.style }}" onClick="{{ tab.onClick }}">{{ tab.label }}<span style="{{ tab.countStyle }}">{{ tab.count }}</span></span>
+          </sc-for>
+        </div>
+        <div style="flex: 1"></div>
+
+        <div style="{{ filterBtnStyle }}" onClick="{{ toggleFilter }}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M3 5h18M6 12h12M10 19h4"></path></svg>
+          Filters
+          <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family: var(--mono); font-size: 10.5px; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 7px">{{ filterCount }}</span>
+          </sc-if>
+        </div>
+
+        <div style="{{ groupBtnStyle }}" onClick="{{ toggleGroup }}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M4 6h16M4 12h10M4 18h7"></path></svg>
+          Group
+        </div>
+
+        <div style="position: relative">
+          <div style="{{ colBtnStyle }}" onClick="{{ toggleCols }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 4v16M15 4v16"></path></svg>
+            Columns
+          </div>
+          <sc-if value="{{ colsOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; top: 46px; right: 0; z-index: 40; width: 236px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 40px rgba(0,0,0,.14); padding: 12px; animation: rise .14s ease-out">
+              <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); padding: 2px 8px 10px">Shown columns</div>
+              <sc-for list="{{ colOptions }}" as="c" hint-placeholder-count="5">
+                <div style="{{ c.rowStyle }}" onClick="{{ c.onClick }}">
+                  <span style="{{ c.boxStyle }}">{{ c.check }}</span>
+                  {{ c.label }}
+                  <sc-if value="{{ c.locked }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); margin-left: auto">pinned</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ filterOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 18px; flex: none; animation: rise .16s ease-out">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px">
+            <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">Match all conditions</span>
+            <span style="height: 1px; background: var(--line); flex: 1; display: block"></span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ clearFilters }}">Clear all</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <sc-for list="{{ conditions }}" as="c" hint-placeholder-count="2">
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); width: 34px; flex: none">{{ c.prefix }}</span>
+                <span style="background: var(--card); border: 1px solid var(--line-2); border-radius: 8px; padding: 9px 12px; font-size: 13.5px; min-width: 132px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer" onClick="{{ c.cycleField }}">{{ c.field }}<span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">&#9662;</span></span>
+                <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3); padding: 0 2px">{{ c.op }}</span>
+                <span style="background: var(--card); border: 1px solid var(--line-2); border-radius: 8px; padding: 9px 12px; font-size: 13.5px; min-width: 148px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer" onClick="{{ c.cycleValue }}">{{ c.value }}<span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">&#9662;</span></span>
+                <span style="width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--txt-4); cursor: pointer; flex: none" style-hover="background: var(--card); color: var(--bad)" onClick="{{ c.remove }}">&#10005;</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 9px 16px; cursor: pointer" onClick="{{ addCondition }}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add condition
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; position: relative">
+        <div style="{{ headerRowStyle }}">
+          <span style="{{ selectAllStyle }}" onClick="{{ toggleAll }}">{{ selectAllMark }}</span>
+          <sc-for list="{{ headers }}" as="h" hint-placeholder-count="6">
+            <span style="{{ h.style }}" onClick="{{ h.onClick }}">
+              {{ h.label }}
+              <sc-if value="{{ h.sorted }}" hint-placeholder-val="{{ false }}">
+                <span style="font-family: var(--mono); font-size: 10px; color: var(--accent-text)">{{ h.arrow }}</span>
+              </sc-if>
+            </span>
+          </sc-for>
+          <span style="width: 34px; flex: none"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+          <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ rows }}" as="row" hint-placeholder-count="9">
+              <sc-if value="{{ row.isGroup }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: var(--shell); border-bottom: 1px solid var(--line); cursor: pointer" onClick="{{ row.onToggle }}">
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); width: 12px; flex: none">{{ row.caret }}</span>
+                  <span style="{{ row.barStyle }}"></span>
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ row.label }}</span>
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ row.count }}</span>
+                  <div style="flex: 1"></div>
+                  <span style="font-family: var(--mono); font-size: 12.5px; color: var(--txt-2)">{{ row.total }}</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ row.isRow }}" hint-placeholder-val="{{ true }}">
+                <div style="{{ row.rowStyle }}" style-hover="background: var(--shell)">
+                  <span style="{{ row.checkStyle }}" onClick="{{ row.onSelect }}">{{ row.check }}</span>
+                  <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="6">
+                    <sc-if value="{{ cell.isPerson }}" hint-placeholder-val="{{ false }}">
+                      <span style="{{ cell.style }}" onClick="{{ row.onPeek }}">
+                        <span style="width: 30px; height: 30px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; flex: none; font-size: 11.5px; font-weight: var(--w-bold); color: var(--txt-2)">{{ cell.initials }}</span>
+                        <span style="min-width: 0">
+                          <span style="display: block; font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ cell.text }}</span>
+                          <span style="display: block; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ cell.sub }}</span>
+                        </span>
+                      </span>
+                    </sc-if>
+                    <sc-if value="{{ cell.isStatus }}" hint-placeholder-val="{{ false }}">
+                      <span style="{{ cell.style }}">
+                        <span style="{{ cell.chipStyle }}" onClick="{{ cell.onEdit }}"><span style="{{ cell.dotStyle }}"></span>{{ cell.text }}</span>
+                        <sc-if value="{{ cell.editing }}" hint-placeholder-val="{{ false }}">
+                          <span style="position: absolute; top: 34px; left: 0; z-index: 30; width: 168px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); box-shadow: 0 16px 34px rgba(0,0,0,.16); padding: 6px; animation: rise .12s ease-out">
+                            <sc-for list="{{ cell.options }}" as="o" hint-placeholder-count="4">
+                              <span style="{{ o.style }}" onClick="{{ o.onPick }}"><span style="{{ o.dotStyle }}"></span>{{ o.label }}</span>
+                            </sc-for>
+                          </span>
+                        </sc-if>
+                      </span>
+                    </sc-if>
+                    <sc-if value="{{ cell.isEditable }}" hint-placeholder-val="{{ false }}">
+                      <span style="{{ cell.style }}">
+                        <sc-if value="{{ cell.editing }}" hint-placeholder-val="{{ false }}">
+                          <input value="{{ cell.draft }}" onInput="{{ cell.onInput }}" onKeyDown="{{ cell.onKey }}" onBlur="{{ cell.onCommit }}" style="width: 100%; text-align: right; font-family: var(--mono); font-size: 13.5px; border: 1.5px solid var(--accent); border-radius: 7px; padding: 4px 7px; box-sizing: border-box; background: var(--card)" />
+                        </sc-if>
+                        <sc-if value="{{ cell.idle }}" hint-placeholder-val="{{ true }}">
+                          <span style="font-family: var(--mono); font-size: 13.5px; border-radius: 7px; padding: 4px 7px; cursor: text; border: 1.5px solid transparent" style-hover="border-color: var(--line-2)" onClick="{{ cell.onEdit }}">{{ cell.text }}</span>
+                        </sc-if>
+                      </span>
+                    </sc-if>
+                    <sc-if value="{{ cell.isPlain }}" hint-placeholder-val="{{ true }}">
+                      <span style="{{ cell.style }}" onClick="{{ row.onPeek }}">{{ cell.text }}</span>
+                    </sc-if>
+                  </sc-for>
+                  <span style="width: 34px; flex: none; display: grid; place-items: center; color: var(--txt-4); cursor: pointer; border-radius: 8px" style-hover="background: var(--card); color: var(--txt-2)" onClick="{{ row.onPeek }}">&#8942;</span>
+                </div>
+              </sc-if>
+            </sc-for>
+          </sc-if>
+
+          <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ skeletons }}" as="sk" hint-placeholder-count="7">
+              <div style="display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-bottom: 1px solid var(--line)">
+                <span style="width: 18px; height: 18px; border-radius: 5px; background: var(--shell); display: block; flex: none"></span>
+                <span style="{{ sk.a }}"></span>
+                <span style="{{ sk.b }}"></span>
+                <div style="flex: 1"></div>
+                <span style="width: 84px; height: 12px; border-radius: 4px; background: var(--shell); display: block"></span>
+                <span style="width: 112px; height: 22px; border-radius: 999px; background: var(--shell); display: block"></span>
+              </div>
+            </sc-for>
+          </sc-if>
+
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 64px 40px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+              <span style="width: 48px; height: 48px; border-radius: 14px; background: var(--shell); display: grid; place-items: center; margin-bottom: 8px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg></span>
+              <div style="font-size: 20px; font-weight: var(--w-bold); letter-spacing: -0.025em">Nothing matches those filters</div>
+              <p style="font-size: 14px; color: var(--txt-2); line-height: 1.55; margin: 0; max-width: 420px">Three conditions are narrowing 3,412 records down to none. Removing the date range usually brings results back.</p>
+              <span style="display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 20px; cursor: pointer" onClick="{{ clearFilters }}">Clear filters</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 64px 40px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+              <span style="width: 48px; height: 48px; border-radius: 14px; background: var(--bad-tint); display: grid; place-items: center; margin-bottom: 8px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+              <div style="font-size: 20px; font-weight: var(--w-bold); letter-spacing: -0.025em; color: var(--bad)">Could not load orders</div>
+              <p style="font-size: 14px; color: var(--txt-2); line-height: 1.55; margin: 0; max-width: 420px">The Shopify connection returned a 503 four minutes ago. Cached figures are shown elsewhere and may be stale.</p>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px">
+                <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 20px; cursor: pointer" onClick="{{ retry }}">Retry</span>
+                <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 19px; cursor: pointer">Status page</span>
+              </div>
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-top: 10px">trace 8f2c-4471-be0a</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 12px 18px; background: var(--shell); border-top: 1px solid var(--line); flex: none">
+          <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ footerText }}</span>
+          <div style="flex: 1"></div>
+          <div style="display: flex; align-items: center; gap: 6px">
+            <sc-for list="{{ pages }}" as="p" hint-placeholder-count="5">
+              <span style="{{ p.style }}" onClick="{{ p.onClick }}">{{ p.label }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; overflow: hidden">
+          <div style="display: flex; align-items: center; gap: 10px; flex: none">
+            <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px">
+              <sc-for list="{{ inboxTabs }}" as="t" hint-placeholder-count="3">
+                <span style="{{ t.style }}" onClick="{{ t.onClick }}">{{ t.label }}<span style="{{ t.countStyle }}">{{ t.count }}</span></span>
+              </sc-for>
+            </div>
+            <div style="flex: 1"></div>
+            <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 9px 16px; cursor: pointer" onClick="{{ markAllRead }}">Mark all read</span>
+          </div>
+          <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; border: 1px solid var(--line); border-radius: var(--r2)">
+            <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="6">
+              <div style="{{ n.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ n.onRead }}">
+                <span style="{{ n.iconStyle }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.icon }}"></path></svg></span>
+                <div style="flex: 1; min-width: 0">
+                  <div style="{{ n.titleStyle }}">{{ n.title }}</div>
+                  <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.5; margin-top: 3px">{{ n.body }}</div>
+                </div>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); flex: none">{{ n.when }}</span>
+                <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}">
+                  <span style="width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: block; flex: none"></span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding-bottom: 26px">
+          <sc-for list="{{ searchGroups }}" as="g" hint-placeholder-count="3">
+            <div style="margin-bottom: 22px">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px">
+                <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">{{ g.label }}</span>
+                <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ g.count }}</span>
+                <span style="height: 1px; background: var(--line); flex: 1; display: block"></span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 14px; padding: 13px 16px; border-radius: var(--r3); cursor: pointer; background: var(--card)" style-hover="background: var(--shell)">
+                    <span style="{{ it.tileStyle }}">{{ it.tile }}</span>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ it.title }}</div>
+                      <div style="font-size: 13px; color: var(--txt-2); margin-top: 2px">{{ it.sub }}</div>
+                    </div>
+                    <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ it.meta }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+ </div>
+
+ <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); z-index: 60; display: flex; align-items: center; gap: 14px; background: var(--txt); border-radius: 999px; padding: 12px 14px 12px 22px; box-shadow: 0 20px 44px rgba(0,0,0,.24); animation: rise .16s ease-out">
+     <span style="font-family: var(--mono); font-size: 12px; color: var(--card)">{{ selectionLabel }}</span>
+     <span style="width: 1px; height: 20px; background: rgba(255,255,255,.18); display: block"></span>
+     <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--card); padding: 7px 12px; border-radius: 999px; cursor: pointer" style-hover="background: rgba(255,255,255,.12)" onClick="{{ bulkFulfil }}">Mark fulfilled</span>
+     <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--card); padding: 7px 12px; border-radius: 999px; cursor: pointer" style-hover="background: rgba(255,255,255,.12)" onClick="{{ bulkExport }}">Export</span>
+     <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--card); padding: 7px 12px; border-radius: 999px; cursor: pointer" style-hover="background: rgba(255,255,255,.12)" onClick="{{ bulkArchive }}">Archive</span>
+     <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--bad-fill); padding: 7px 12px; border-radius: 999px; cursor: pointer" style-hover="background: rgba(255,255,255,.12)" onClick="{{ bulkDelete }}">Delete</span>
+     <span style="width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; color: var(--card); cursor: pointer; flex: none" style-hover="background: rgba(255,255,255,.12)" onClick="{{ clearSelection }}">&#10005;</span>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ peek }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 70; background: rgba(8,10,14,.32)" onClick="{{ closePeek }}"></div>
+   <div style="position: absolute; top: 26px; right: 26px; bottom: 26px; width: 468px; z-index: 71; background: var(--card); border-radius: var(--r); box-shadow: -20px 0 60px rgba(0,0,0,.22); display: flex; flex-direction: column; overflow: hidden; animation: rise .18s ease-out">
+     <div style="padding: 26px 26px 20px; border-bottom: 1px solid var(--line); flex: none">
+       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
+         <div style="min-width: 0">
+           <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ peekEyebrow }}</div>
+           <div style="font-size: 26px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1.1">{{ peekTitle }}</div>
+         </div>
+         <span style="width: 34px; height: 34px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; color: var(--txt-2); cursor: pointer; flex: none" style-hover="background: var(--line)" onClick="{{ closePeek }}">&#10005;</span>
+       </div>
+       <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px">
+         <span style="{{ peekChipStyle }}"><span style="{{ peekDotStyle }}"></span>{{ peekStatus }}</span>
+         <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ peekMeta }}</span>
+       </div>
+     </div>
+     <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 24px 26px">
+       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px">
+         <sc-for list="{{ peekStats }}" as="s" hint-placeholder-count="4">
+           <div style="background: var(--shell); border-radius: var(--r2); padding: 16px; min-width: 0">
+             <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">{{ s.label }}</div>
+             <div style="font-size: 20px; font-weight: var(--w-bold); letter-spacing: -0.03em">{{ s.value }}</div>
+           </div>
+         </sc-for>
+       </div>
+       <div style="font-size: 15px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 12px">Recent activity</div>
+       <div style="display: flex; flex-direction: column">
+         <sc-for list="{{ peekActivity }}" as="a" hint-placeholder-count="4">
+           <div style="display: flex; gap: 14px; min-width: 0">
+             <div style="width: 9px; flex: none; display: flex; flex-direction: column; align-items: center">
+               <span style="{{ a.dotStyle }}"></span>
+               <span style="{{ a.lineStyle }}"></span>
+             </div>
+             <div style="flex: 1; min-width: 0; padding-bottom: 18px">
+               <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em; margin-top: -3px">{{ a.title }}</div>
+               <div style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3); margin-top: 4px">{{ a.when }}</div>
+             </div>
+           </div>
+         </sc-for>
+       </div>
+     </div>
+     <div style="padding: 18px 26px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 10px; flex: none">
+       <span style="flex: 1; text-align: center; font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 11px 0; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ closePeek }}">Close</span>
+       <span style="flex: 1; text-align: center; font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 12px 0; cursor: pointer" onClick="{{ openFull }}">Open full record</span>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ confirmOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 80; background: rgba(8,10,14,.38); display: grid; place-items: center" onClick="{{ closeConfirm }}">
+     <div style="width: 448px; max-width: calc(100% - 32px); background: var(--card); border-radius: var(--r); padding: 30px; box-shadow: 0 30px 70px rgba(0,0,0,.3); animation: rise .16s ease-out" onClick="{{ stopClick }}">
+       <span style="{{ confirmIconStyle }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ confirmIcon }}"></path></svg></span>
+       <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; margin: 20px 0 10px">{{ confirmTitle }}</div>
+       <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.6; margin: 0 0 22px">{{ confirmBody }}</p>
+       <sc-if value="{{ confirmTyped }}" hint-placeholder-val="{{ false }}">
+         <div style="background: var(--shell); border-radius: var(--r3); padding: 14px 16px; font-family: var(--mono); font-size: 12px; color: var(--txt-2); margin-bottom: 22px">Type <span style="color: var(--txt)">DELETE</span> to confirm</div>
+       </sc-if>
+       <div style="display: flex; align-items: center; gap: 10px">
+         <span style="flex: 1; text-align: center; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 12px 0; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ closeConfirm }}">{{ confirmCancel }}</span>
+         <span style="{{ confirmBtnStyle }}" onClick="{{ confirmYes }}">{{ confirmLabel }}</span>
+       </div>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; right: 44px; bottom: 44px; z-index: 90; display: flex; align-items: center; gap: 12px; background: var(--txt); border-radius: var(--r3); padding: 14px 18px; box-shadow: 0 18px 40px rgba(0,0,0,.24); animation: rise .16s ease-out">
+     <span style="width: 20px; height: 20px; border-radius: 999px; background: var(--ok-fill); display: grid; place-items: center; flex: none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+     <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--card)">{{ toast }}</span>
+   </div>
+ </sc-if>
+
+ <div style="position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 8px">
+   <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4)">Data state</span>
+   <sc-for list="{{ dataStates }}" as="d" hint-placeholder-count="4">
+     <span style="{{ d.style }}" onClick="{{ d.onClick }}">{{ d.label }}</span>
+   </sc-for>
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+
+  state = {
+    vw: 1440,
+    screen: "orders", view: "all", tab: "All", query: "", themeMode: null,
+    sortKey: "placed", sortDir: "desc", grouped: false,
+    hiddenCols: {}, colsOpen: false, filterOpen: false, dateOpen: false,
+    conditions: [{ field: "Channel", op: "is", value: "Direct store" }],
+    selected: {}, editing: null, draft: "", statusEdit: null,
+    dataState: "ready", peek: null, confirm: null, dismissed: {}, toast: "",
+    collapsed: {}, dateLabel: "Aug 1 – Aug 30", page: 1, readIds: {}, inboxTab: "All",
+    cursor: "2026-08", dateFrom: "2026-08-01", dateTo: "2026-08-30",
+    overrides: {}
+  };
+
+  static get SKINS() {
+    return {
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  static get ORDERS() {
+    return [
+      ["40218", "Alicia Duarte", "alicia.duarte@hey.com", "Direct store", 4, 486.00, "Unfulfilled", "Aug 28"],
+      ["40217", "Marcus Bell", "m.bell@northmail.com", "Amazon", 1, 72.00, "Fulfilled", "Aug 28"],
+      ["40216", "Priya Nair", "priya@nairstudio.in", "Direct store", 7, 318.50, "Unfulfilled", "Aug 27"],
+      ["40215", "Tomás Ferreira", "tomas.f@correo.pt", "Wholesale", 48, 2140.00, "Fulfilled", "Aug 27"],
+      ["40214", "Hanna Køhler", "hanna@kohler.dk", "Marketplaces", 2, 96.00, "Refunded", "Aug 26"],
+      ["40213", "Owen Reyes", "owen.reyes@fastmail.com", "Direct store", 3, 154.00, "Fulfilled", "Aug 26"],
+      ["40212", "Sara Lindqvist", "sara.l@post.se", "Amazon", 1, 68.00, "Cancelled", "Aug 25"],
+      ["40211", "Diego Ortiz", "diego@ortizcafe.mx", "Wholesale", 36, 1584.00, "Fulfilled", "Aug 25"],
+      ["40210", "Naomi Chen", "naomi.chen@zed.io", "Direct store", 5, 232.00, "Fulfilled", "Aug 24"],
+      ["40209", "Idris Okafor", "idris@okaforroast.ng", "Wholesale", 24, 1056.00, "Unfulfilled", "Aug 24"],
+      ["40208", "Lena Fischer", "lena.fischer@web.de", "Amazon", 2, 118.00, "Fulfilled", "Aug 23"],
+      ["40207", "Ravi Menon", "ravi@menon.co.in", "Direct store", 6, 274.50, "Refunded", "Aug 23"]
+    ].map((r) => ({ id: r[0], customer: r[1], email: r[2], channel: r[3], items: r[4], total: r[5], status: r[6], placed: r[7] }));
+  }
+
+  static get CUSTOMERS() {
+    return [
+      ["C-1043", "Alicia Duarte", "alicia.duarte@hey.com", "Direct store", 21, 3180.00, "Fulfilled", "Mar 2023"],
+      ["C-1042", "Diego Ortiz", "diego@ortizcafe.mx", "Wholesale", 64, 28400.00, "Fulfilled", "Jan 2022"],
+      ["C-1041", "Priya Nair", "priya@nairstudio.in", "Direct store", 9, 1120.00, "Unfulfilled", "Nov 2024"],
+      ["C-1040", "Marcus Bell", "m.bell@northmail.com", "Amazon", 4, 288.00, "Fulfilled", "Jun 2025"],
+      ["C-1039", "Idris Okafor", "idris@okaforroast.ng", "Wholesale", 38, 16240.00, "Fulfilled", "Sep 2022"],
+      ["C-1038", "Hanna Køhler", "hanna@kohler.dk", "Marketplaces", 2, 192.00, "Refunded", "Feb 2026"],
+      ["C-1037", "Naomi Chen", "naomi.chen@zed.io", "Direct store", 12, 1864.00, "Fulfilled", "Aug 2023"],
+      ["C-1036", "Sara Lindqvist", "sara.l@post.se", "Amazon", 1, 68.00, "Cancelled", "Jul 2026"]
+    ].map((r) => ({ id: r[0], customer: r[1], email: r[2], channel: r[3], items: r[4], total: r[5], status: r[6], placed: r[7] }));
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  resolvedTheme() {
+    const mode = this.state.themeMode || this.props.theme || "light";
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+
+    const accent = dark
+      ? { "--accent": acc(0.66), "--accent-ink": n(0.14, 1), "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(0.52), "--accent-ink": n(0.99, 0.2), "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+
+    const steps = dark ? [0.40, 0.52, 0.64, 0.76, 0.86] : [0.34, 0.46, 0.58, 0.70, 0.82];
+    const ratio = [0.81, 1, 0.88, 0.63, 0.38];
+    const series = {};
+    steps.forEach((l, i) => { series["--s" + (i + 1)] = acc(l, ratio[i]); });
+
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+
+    return Object.assign({}, surfaces, accent, series, semantics, {
+      "--hero": accent["--lead"], "--hero-hair": accent["--lead-line"],
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  componentDidMount() { this.hostSync(); this.apply(); }
+  componentDidUpdate(prevProps) {
+    this.apply();
+    if (this._onResize) this._onResize();
+  }
+  // Embedded in the Starter Admin shell: follow its navigation, let it own the tokens.
+  // __responsive: one width in state, every breakpoint derived from it
+  watchWidth() {
+    const measure = () => {
+      const el = this.rootRef.current;
+      const w = el ? Math.round(el.getBoundingClientRect().width) : window.innerWidth;
+      if (w && Math.abs(w - this.state.vw) > 8) this.setState({ vw: w });
+    };
+    this._onResize = measure;
+    requestAnimationFrame(measure);
+    window.addEventListener("resize", this._onResize);
+    if (window.ResizeObserver && this.rootRef.current) {
+      this._ro = new ResizeObserver(measure);
+      this._ro.observe(this.rootRef.current);
+    }
+  }
+
+  // Thresholds are the width this part actually has, not the window's.
+  cols(spec) {
+    const w = this.state.vw;
+    if (w < 620) return "grid-template-columns: minmax(0, 1fr); gap: 12px";
+    if (w < 960) return "grid-template-columns: " + (spec.mid || "minmax(0, 1fr)") + "; gap: 13px";
+    return "grid-template-columns: " + spec.wide + "; gap: 14px";
+  }
+
+  hostSync() {
+    this.watchWidth();
+    const mine = ["orders","customers","search","inbox"];
+    const want = window.__starterScreen;
+    if (want && mine.indexOf(want) >= 0 && want !== this.state.screen) this.setState({ screen: want });
+    this._navHandler = (e) => {
+      const s = e.detail && e.detail.screen;
+      if (s && mine.indexOf(s) >= 0 && s !== this.state.screen) this.setState({ screen: s });
+    };
+    window.addEventListener("starter:nav", this._navHandler);
+  }
+
+  embedded() { return !!window.__starterHost; }
+
+  componentWillUnmount() {
+    if (this._navHandler) window.removeEventListener("starter:nav", this._navHandler);
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._ro) this._ro.disconnect(); if (this._toast) clearTimeout(this._toast); if (this._load) clearTimeout(this._load); }
+
+  apply() {
+    const root = document.body;
+    if (!root || this.embedded()) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  // Any action can raise a confirm; only the tone and the copy change.
+  ask(opts) { this.setState({ confirm: opts }); }
+
+  visibleBanners() {
+    const tone = {
+      warn: ["var(--warn)", "var(--warn-tint)", "M12 8v5M12 17h.01"],
+      bad: ["var(--bad)", "var(--bad-tint)", "M12 8v5M12 17h.01"],
+      ok: ["var(--ok)", "var(--ok-tint)", "m5 13 5 5L20 7"],
+      info: ["var(--accent-text)", "var(--accent-tint)", "M12 8h.01M11 12h1v5"]
+    };
+    const defs = [
+      ["b1", "warn", "Showing cached figures.", "The Shopify sync failed 4 minutes ago, so totals may be behind.", "Retry sync"],
+      ["b2", "info", "Two integrations are unlinked.", "Meta and Klaviyo are not connected, so ad spend is missing from every report.", "Connect"]
+    ];
+    return defs.filter((b) => !this.state.dismissed[b[0]]).map((b) => {
+      const t = tone[b[1]];
+      return {
+        title: b[2], body: b[3], action: b[4], icon: t[2],
+        style: "display: flex; align-items: flex-start; gap: 12px; border-radius: var(--r2); padding: 13px 14px; background: " + t[1],
+        iconStyle: "width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; flex: none; color: " + t[0] + "; background: var(--card)",
+        titleStyle: "font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; color: " + t[0],
+        actionStyle: "font-size: 13px; font-weight: var(--w-semi); border-radius: 999px; padding: 6px 13px; cursor: pointer; flex: none; background: var(--card); color: " + t[0],
+        onAction: () => { if (b[1] === "warn") { this.setState({ dataState: "loading" }); setTimeout(() => this.setState({ dataState: "ready" }), 1200); } this.say(b[4] + " started"); },
+        onDismiss: () => { const x = Object.assign({}, this.state.dismissed); x[b[0]] = true; this.setState({ dismissed: x }); }
+      };
+    });
+  }
+
+  say(msg) {
+    this.setState({ toast: msg });
+    if (this._toast) clearTimeout(this._toast);
+    this._toast = setTimeout(() => this.setState({ toast: "" }), 2600);
+  }
+
+  money(v) { return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  statusColors(status) {
+    const map = {
+      Unfulfilled: ["var(--warn)", "var(--warn-tint)", "var(--warn-fill)"],
+      Fulfilled: ["var(--ok)", "var(--ok-tint)", "var(--ok-fill)"],
+      Refunded: ["var(--bad)", "var(--bad-tint)", "var(--bad-fill)"],
+      Cancelled: ["var(--txt-3)", "var(--shell)", "var(--txt-3)"]
+    };
+    return map[status] || map.Cancelled;
+  }
+
+  source() {
+    const base = this.state.screen === "customers" ? Component.CUSTOMERS : Component.ORDERS;
+    const ov = this.state.overrides;
+    return base.map((r) => Object.assign({}, r, ov[r.id] || {}));
+  }
+
+  // Real range picking: first click sets the start, second sets the end.
+  iso(d) { return d.toISOString().slice(0, 10); }
+
+  fmt(s) {
+    if (!s) return "Pick a date";
+    const p = s.split("-");
+    return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][parseInt(p[1], 10) - 1] + " " + parseInt(p[2], 10) + ", " + p[0];
+  }
+
+  calendar() {
+    const st = this.state;
+    const cursor = new Date(st.cursor + "-01T00:00:00");
+    const year = cursor.getFullYear();
+    const month = cursor.getMonth();
+    const first = new Date(year, month, 1);
+    const startPad = (first.getDay() + 6) % 7;
+    const total = new Date(year, month + 1, 0).getDate();
+    const from = st.dateFrom, to = st.dateTo;
+    const cells = [];
+    for (let i = 0; i < startPad; i++) cells.push(null);
+    for (let n = 1; n <= total; n++) cells.push(n);
+
+    const days = cells.map((n) => {
+      if (!n) return { label: "", style: "height: 30px; display: block", onPick: undefined };
+      const key = this.iso(new Date(Date.UTC(year, month, n)));
+      const isFrom = key === from, isTo = key === to;
+      const inRange = from && to && key > from && key < to;
+      const edge = isFrom || isTo;
+      return {
+        label: String(n),
+        style: "height: 30px; display: grid; place-items: center; border-radius: 7px; font-family: var(--mono); font-size: 11.5px; cursor: pointer; box-sizing: border-box; " + (edge
+          ? "background: var(--accent); color: var(--accent-ink); font-weight: var(--w-semi)"
+          : inRange ? "background: var(--accent-tint); color: var(--accent-text)" : "color: var(--txt-2)"),
+        onPick: () => {
+          if (!from || (from && to)) this.setState({ dateFrom: key, dateTo: "" });
+          else if (key < from) this.setState({ dateFrom: key });
+          else this.setState({ dateTo: key });
+        }
+      };
+    });
+
+    const shift = (delta) => () => {
+      const dt = new Date(year, month + delta, 1);
+      this.setState({ cursor: dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") });
+    };
+    const fieldBase = "flex: 1; min-width: 0; border-radius: 8px; padding: 8px 10px; font-family: var(--mono); font-size: 11.5px; box-sizing: border-box; border: 1px solid ";
+    return {
+      weekdays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+      days,
+      monthLabel: ["January","February","March","April","May","June","July","August","September","October","November","December"][month] + " " + year,
+      prevMonth: shift(-1),
+      nextMonth: shift(1),
+      fromLabel: from || "Start",
+      toLabel: to || "End",
+      fromStyle: fieldBase + (from && !to ? "var(--accent); color: var(--txt)" : "var(--line-2); color: var(--txt-2)"),
+      toStyle: fieldBase + (from && !to ? "var(--line-2); color: var(--txt-4)" : "var(--line-2); color: var(--txt-2)"),
+      rangeSummary: from && to
+        ? Math.round((new Date(to) - new Date(from)) / 86400000) + 1 + " days selected"
+        : from ? "Pick the end date" : "Pick the start date",
+      applyRange: () => {
+        if (!from || !to) return;
+        this.setState({ dateLabel: this.fmt(from).slice(0, 6) + " – " + this.fmt(to).slice(0, 6), dateOpen: false });
+        this.say("Range applied");
+      }
+    };
+  }
+
+  filtered() {
+    const q = this.state.query.trim().toLowerCase();
+    const tab = this.state.tab;
+    const view = this.state.view;
+    let rows = this.source();
+
+    if (q) rows = rows.filter((r) => (r.customer + " " + r.email + " " + r.id).toLowerCase().indexOf(q) >= 0);
+    if (tab === "Unfulfilled") rows = rows.filter((r) => r.status === "Unfulfilled");
+    if (tab === "Refunds") rows = rows.filter((r) => r.status === "Refunded");
+    if (tab === "Cancelled") rows = rows.filter((r) => r.status === "Cancelled");
+    if (view === "high") rows = rows.filter((r) => r.total >= 500);
+    if (view === "wholesale") rows = rows.filter((r) => r.channel === "Wholesale");
+    if (view === "waiting") rows = rows.filter((r) => r.status === "Unfulfilled");
+
+    this.state.conditions.forEach((c) => {
+      if (c.field === "Channel") rows = rows.filter((r) => r.channel === c.value);
+      if (c.field === "Status") rows = rows.filter((r) => r.status === c.value);
+      if (c.field === "Total") rows = rows.filter((r) => r.total >= parseFloat(String(c.value).replace(/[^0-9.]/g, "")) || 0);
+    });
+
+    const key = this.state.sortKey, dir = this.state.sortDir === "asc" ? 1 : -1;
+    rows = rows.slice().sort((a, b) => {
+      const x = a[key], y = b[key];
+      if (typeof x === "number" && typeof y === "number") return (x - y) * dir;
+      return String(x).localeCompare(String(y)) * dir;
+    });
+    return rows;
+  }
+
+  colDefs() {
+    const isCust = this.state.screen === "customers";
+    return [
+      { key: "id", label: isCust ? "Customer ID" : "Order", width: 108, locked: true, kind: "mono" },
+      { key: "customer", label: isCust ? "Name" : "Customer", flex: true, locked: true, kind: "person" },
+      { key: "channel", label: "Channel", width: 128, kind: "text" },
+      { key: "items", label: isCust ? "Orders" : "Items", width: 66, align: "right", kind: "mono" },
+      { key: "total", label: isCust ? "Lifetime" : "Total", width: 104, align: "right", kind: "edit" },
+      { key: "status", label: "Status", width: 138, kind: "status" },
+      { key: "placed", label: isCust ? "Since" : "Placed", width: 92, align: "right", kind: "mono" }
+    ].filter((c) => c.locked || !this.state.hiddenCols[c.key]);
+  }
+
+  cellFor(col, row) {
+    const alignRight = col.align === "right";
+    const narrow = this.state.vw < 720;
+    const base = (narrow
+      ? (col.kind === "person" ? "flex: 1 1 100%; min-width: 0" : "flex: 0 0 auto; min-width: 0")
+      : (col.flex ? "flex: 1; min-width: 0" : "width: " + col.width + "px; flex: none")) +
+      (alignRight && !narrow ? "; text-align: right" : "");
+    if (col.kind === "person") {
+      return {
+        isPerson: true, isPlain: false, isStatus: false, isEditable: false,
+        text: row.customer, sub: row.email,
+        initials: row.customer.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+        style: base + "; display: flex; align-items: center; gap: 11px; cursor: pointer"
+      };
+    }
+    if (col.kind === "status") {
+      const c = this.statusColors(row.status);
+      const editing = this.state.statusEdit === row.id;
+      return {
+        isStatus: true, isPlain: false, isPerson: false, isEditable: false,
+        text: row.status,
+        style: base + "; position: relative",
+        chipStyle: "display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; color: " + c[0] + "; background: " + c[1] + "; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; cursor: pointer",
+        dotStyle: "width: 5px; height: 5px; border-radius: 999px; display: block; flex: none; background: " + c[2],
+        editing,
+        onEdit: (e) => { e.stopPropagation(); this.setState({ statusEdit: editing ? null : row.id, editing: null }); },
+        options: ["Unfulfilled", "Fulfilled", "Refunded", "Cancelled"].map((s) => {
+          const sc = this.statusColors(s);
+          return {
+            label: s,
+            style: "display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; cursor: pointer; color: " + (s === row.status ? "var(--txt)" : "var(--txt-2)") + (s === row.status ? "; background: var(--shell); font-weight: var(--w-semi)" : ""),
+            dotStyle: "width: 6px; height: 6px; border-radius: 999px; display: block; flex: none; background: " + sc[2],
+            onPick: (e) => {
+              e.stopPropagation();
+              const ov = Object.assign({}, this.state.overrides);
+              ov[row.id] = Object.assign({}, ov[row.id], { status: s });
+              this.setState({ overrides: ov, statusEdit: null });
+              this.say(row.id + " set to " + s.toLowerCase());
+            }
+          };
+        })
+      };
+    }
+    if (col.kind === "edit") {
+      const editing = this.state.editing === row.id + ":" + col.key;
+      return {
+        isEditable: true, isPlain: false, isPerson: false, isStatus: false,
+        text: this.money(row.total), idle: !editing, editing, draft: this.state.draft,
+        style: base,
+        onEdit: (e) => { e.stopPropagation(); this.setState({ editing: row.id + ":" + col.key, draft: String(row.total.toFixed(2)), statusEdit: null }); },
+        onInput: (e) => this.setState({ draft: e.target.value }),
+        onKey: (e) => { if (e.key === "Enter") this.commit(row); if (e.key === "Escape") this.setState({ editing: null }); },
+        onCommit: () => this.commit(row)
+      };
+    }
+    const isMono = col.kind === "mono";
+    return {
+      isPlain: true, isPerson: false, isStatus: false, isEditable: false,
+      text: col.key === "items" ? String(row.items) : String(row[col.key]),
+      style: base + "; cursor: pointer; " + (isMono
+        ? "font-family: var(--mono); font-size: 13px; color: var(--txt-2)"
+        : "font-size: 13.5px; color: var(--txt-2)")
+    };
+  }
+
+  commit(row) {
+    const v = parseFloat(String(this.state.draft).replace(/[^0-9.]/g, ""));
+    if (!isNaN(v) && v !== row.total) {
+      const ov = Object.assign({}, this.state.overrides);
+      ov[row.id] = Object.assign({}, ov[row.id], { total: v });
+      this.setState({ overrides: ov, editing: null });
+      this.say(row.id + " total set to " + this.money(v));
+    } else this.setState({ editing: null });
+  }
+
+  navItem(label, icon, screen, badge) {
+    const active = this.state.screen === screen;
+    const base = "display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: var(--r3); font-size: 15px; position: relative; cursor: pointer; ";
+    return {
+      label, icon, active, badge: badge || false,
+      style: base + (active ? "font-weight: var(--w-semi); color: var(--txt); background: var(--card)" : "font-weight: 500; color: var(--txt-2)"),
+      hoverStyle: active ? "" : "background: var(--card); color: var(--txt)",
+      iconStroke: active ? "var(--accent-text)" : "var(--txt-3)",
+      badgeStyle: "margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 3px 8px",
+      onClick: () => this.setState({ screen, selected: {}, editing: null, statusEdit: null, page: 1 })
+    };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const isCust = st.screen === "customers";
+    const rowsAll = this.filtered();
+    const selectedIds = Object.keys(st.selected).filter((k) => st.selected[k]);
+    const chip = "font-family: var(--mono); font-size: 12px; padding: 8px 15px; border-radius: 999px; cursor: pointer; ";
+    const ctrl = "height: 38px; padding: 0 15px; border-radius: var(--r3); display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--w-semi); white-space: nowrap; cursor: pointer; box-sizing: border-box; ";
+    const on = "background: var(--accent-tint); color: var(--accent-text)";
+    const off = "border: 1px solid var(--line-2); color: var(--txt-2)";
+
+    // group rows fold the flat list into channel sections without a second renderer
+    let rows = [];
+    if (st.grouped) {
+      const groups = {};
+      rowsAll.forEach((r) => { (groups[r.channel] = groups[r.channel] || []).push(r); });
+      Object.keys(groups).forEach((g, gi) => {
+        const list = groups[g];
+        const collapsed = !!st.collapsed[g];
+        rows.push({
+          isGroup: true, isRow: false, label: g, count: list.length + (isCust ? " customers" : " orders"),
+          total: this.money(list.reduce((a, b) => a + b.total, 0)),
+          caret: collapsed ? "▸" : "▾",
+          barStyle: "width: 4px; height: 20px; border-radius: 2px; flex: none; display: block; background: var(--s" + ((gi % 5) + 1) + ")",
+          onToggle: () => { const c = Object.assign({}, st.collapsed); c[g] = !collapsed; this.setState({ collapsed: c }); }
+        });
+        if (!collapsed) list.forEach((r) => rows.push(r));
+      });
+    } else rows = rowsAll.slice();
+
+    const cols = this.colDefs();
+    const bodyRows = rows.map((r) => {
+      if (r.isGroup) return r;
+      const sel = !!st.selected[r.id];
+      return {
+      pair: this.cols({ wide: "repeat(2, minmax(0, 1fr))", mid: "repeat(2, minmax(0, 1fr))" }),
+      rootRef: this.rootRef,
+        isGroup: false, isRow: true,
+        rowStyle: (this.state.vw < 720 ? "display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; " : "display: flex; align-items: center; gap: 14px; ") + "padding: 13px 18px; border-bottom: 1px solid var(--line); background: " + (sel ? "var(--accent-tint)" : "var(--card)"),
+        check: sel ? "✓" : "",
+        checkStyle: "width: 18px; height: 18px; border-radius: 5px; flex: none; display: grid; place-items: center; font-size: 11px; box-sizing: border-box; cursor: pointer; " + (sel
+          ? "background: var(--accent); color: var(--accent-ink); border: 1.5px solid var(--accent)"
+          : "border: 1.5px solid var(--line-2); color: transparent"),
+        onSelect: (e) => { e.stopPropagation(); const s = Object.assign({}, st.selected); s[r.id] = !sel; this.setState({ selected: s }); },
+        onPeek: () => this.setState({ peek: r, statusEdit: null, editing: null }),
+        cells: cols.map((c) => this.cellFor(c, r))
+      };
+    });
+
+    const headers = cols.map((c) => ({
+      label: c.label,
+      sorted: st.sortKey === c.key,
+      arrow: st.sortDir === "asc" ? "▲" : "▼",
+      style: (c.flex ? "flex: 1; min-width: 0" : "width: " + c.width + "px; flex: none") +
+        (c.align === "right" ? "; justify-content: flex-end" : "") +
+        "; display: flex; align-items: center; gap: 6px; cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: " +
+        (st.sortKey === c.key ? "var(--txt)" : "var(--txt-3)"),
+      onClick: () => this.setState({
+        sortKey: c.key,
+        sortDir: st.sortKey === c.key && st.sortDir === "desc" ? "asc" : "desc"
+      })
+    }));
+
+    const allOn = bodyRows.filter((r) => r.isRow).length > 0 && rowsAll.every((r) => st.selected[r.id]);
+    const tabCounts = { All: this.source().length, Unfulfilled: 0, Refunds: 0, Cancelled: 0 };
+    this.source().forEach((r) => {
+      if (r.status === "Unfulfilled") tabCounts.Unfulfilled++;
+      if (r.status === "Refunded") tabCounts.Refunds++;
+      if (r.status === "Cancelled") tabCounts.Cancelled++;
+    });
+
+    const viewDefs = [
+      ["all", "All records", this.source().length, 1],
+      ["waiting", "Waiting on us", tabCounts.Unfulfilled, 2],
+      ["high", "Over $500", this.source().filter((r) => r.total >= 500).length, 3],
+      ["wholesale", "Wholesale only", this.source().filter((r) => r.channel === "Wholesale").length, 4]
+    ];
+
+    const notifData = [
+      ["n1", "Payment failed", "Order 40211 could not capture €1,584.00 — card declined.", "4m", true, "bad", "M12 8v5M12 17h.01"],
+      ["n2", "Refund needs approval", "Alicia Duarte requested $412.00 back on order 40218.", "22m", true, "warn", "M12 7.5v5l3 2"],
+      ["n3", "Sync completed", "Shopify brought in 148 new orders.", "1h", true, "ok", "m5 13 5 5L20 7"],
+      ["n4", "Stock low", "Cold Brew 12pk has 9 days of cover left.", "3h", false, "warn", "M12 7.5v5l3 2"],
+      ["n5", "New team member", "Sam Whitfield accepted the editor invitation.", "Yesterday", false, "accent", "M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8"],
+      ["n6", "Payout settled", "$18,240.00 arrived in the operating account.", "Yesterday", false, "ok", "m5 13 5 5L20 7"]
+    ];
+    const tone = { bad: ["var(--bad)", "var(--bad-tint)"], warn: ["var(--warn)", "var(--warn-tint)"], ok: ["var(--ok)", "var(--ok-tint)"], accent: ["var(--accent-text)", "var(--accent-tint)"] };
+    const notifications = notifData
+      .filter((n) => st.inboxTab === "All" || (st.inboxTab === "Unread" ? (n[4] && !st.readIds[n[0]]) : !n[4]))
+      .map((n, i) => {
+        const unread = n[4] && !st.readIds[n[0]];
+        const t = tone[n[5]];
+        return {
+          title: n[1], body: n[2], when: n[3], unread, icon: n[6],
+          rowStyle: "display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; cursor: pointer; " + (i < notifData.length - 1 ? "border-bottom: 1px solid var(--line); " : "") + "background: " + (unread ? "var(--card)" : "transparent"),
+          iconStyle: "width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; color: " + t[0] + "; background: " + t[1],
+          titleStyle: "font-size: 14.5px; letter-spacing: -0.01em; color: var(--txt); font-weight: " + (unread ? "var(--w-semi)" : "400"),
+          onRead: () => { const r = Object.assign({}, st.readIds); r[n[0]] = true; this.setState({ readIds: r }); }
+        };
+      });
+    const unreadCount = notifData.filter((n) => n[4] && !st.readIds[n[0]]).length;
+
+    const q = st.query.trim();
+    const searchGroups = [
+      { label: "Orders", count: "3 of 3,412", items: this.source().slice(0, 3).map((r) => ({
+          title: r.id + " · " + r.customer, sub: r.channel + " · " + this.money(r.total), meta: r.placed,
+          tile: "OR", tileStyle: "width: 34px; height: 34px; border-radius: 10px; background: var(--accent-tint); color: var(--accent-text); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 11px"
+        })) },
+      { label: "Customers", count: "2 of 1,284", items: Component.CUSTOMERS.slice(0, 2).map((r) => ({
+          title: r.customer, sub: r.email + " · " + r.items + " orders", meta: "since " + r.placed,
+          tile: "CU", tileStyle: "width: 34px; height: 34px; border-radius: 10px; background: var(--shell); color: var(--txt-2); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 11px"
+        })) },
+      { label: "Settings", count: "2 results", items: [
+          { title: "Approvals", sub: "Refunds above $250 need a second approver", meta: "Settings", tile: "SE", tileStyle: "width: 34px; height: 34px; border-radius: 10px; background: var(--shell); color: var(--txt-3); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 11px" },
+          { title: "Shopify integration", sub: "Connected · last sync 4 minutes ago", meta: "Integrations", tile: "IN", tileStyle: "width: 34px; height: 34px; border-radius: 10px; background: var(--shell); color: var(--txt-3); display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 11px" }
+        ] }
+    ];
+
+    const peek = st.peek;
+    const pc = peek ? this.statusColors(peek.status) : null;
+
+    return {
+      query: st.query,
+      onQuery: (e) => this.setState({ query: e.target.value, page: 1 }),
+      nav: [
+        this.navItem(isCust ? "Orders" : "Orders", "M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM9 13h6M9 17h4", "orders", String(tabCounts.Unfulfilled)),
+        this.navItem("Customers", "M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8", "customers"),
+        this.navItem("Search results", "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14M16.5 16.5 21 21", "search"),
+        this.navItem("Inbox", "M3 5h18v14H3zM3 5l9 7 9-7", "inbox", unreadCount ? String(unreadCount) : false)
+      ],
+      savedViews: viewDefs.map((v) => ({
+        label: v[1], count: String(v[2]),
+        style: "display: flex; align-items: center; gap: 10px; padding: 9px 13px; border-radius: var(--r3); font-size: 14px; cursor: pointer; " + (st.view === v[0]
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2)"),
+        hoverStyle: st.view === v[0] ? "" : "background: var(--card); color: var(--txt)",
+        dotStyle: "width: 4px; height: 16px; border-radius: 2px; flex: none; display: block; background: var(--s" + v[3] + ")",
+        countStyle: "margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--txt-4)",
+        onClick: () => this.setState({ view: v[0], screen: st.screen === "orders" || st.screen === "customers" ? st.screen : "orders", page: 1 })
+      })),
+      themeModes: [
+        ["light", "Light", "Light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
+        ["system", "System", "Auto", "M3 5h18v11H3zM8 20h8M12 16v4"],
+        ["dark", "Dark", "Dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"]
+      ].map((m) => {
+        const active = (st.themeMode || this.props.theme || "light") === m[0];
+        return {
+          label: m[1], short: m[2], icon: m[3],
+          style: "flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 0; border-radius: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; " + (active ? "background: var(--shell); color: var(--txt)" : "color: var(--txt-4)"),
+          onClick: () => this.setState({ themeMode: m[0] })
+        };
+      }),
+
+      isTable: st.screen === "orders" || st.screen === "customers",
+      isInbox: st.screen === "inbox",
+      isSearch: st.screen === "search",
+      title: isCust ? "Customers" : st.screen === "inbox" ? "Inbox" : st.screen === "search" ? "Search results" : "Orders",
+      subtitle: isCust
+        ? "Everyone who has bought at least once, newest account first."
+        : st.screen === "inbox" ? "Everything the system flagged for this workspace."
+        : st.screen === "search" ? "Matches for “cold brew” across orders, customers, and settings."
+        : "Everything placed in the last thirty days, newest first.",
+      metaLive: st.dataState === "error" ? "Degraded" : "Live",
+      metaCount: (isCust ? "1,284" : "3,412") + " records",
+      metaSync: st.dataState === "error" ? "sync failed" : "synced 4 min ago",
+      createLabel: isCust ? "New customer" : "New order",
+      createToast: () => this.say((isCust ? "Customer" : "Order") + " draft created"),
+      exportToast: () => this.say("Export queued — you will get an email"),
+
+      tabs: ["All", "Unfulfilled", "Refunds", "Cancelled"].map((t) => {
+        const active = st.tab === t;
+        return {
+          label: t, count: String(tabCounts[t]),
+          style: "display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 999px; font-size: 14px; cursor: pointer; " + (active
+            ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+            : "color: var(--txt-2); font-weight: 500"),
+          countStyle: "font-family: var(--mono); font-size: 11px; color: " + (active ? "var(--accent-text)" : "var(--txt-4)"),
+          onClick: () => this.setState({ tab: t, page: 1 })
+        };
+      }),
+
+      dateLabel: st.dateLabel, dateOpen: st.dateOpen,
+      ...this.calendar(),
+      dateBtnStyle: "height: 42px; padding: 0 18px; border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); white-space: nowrap; cursor: pointer; box-sizing: border-box; " + (st.dateOpen ? "background: var(--accent-tint); color: var(--accent-text)" : "border: 1px solid var(--line-2); color: var(--txt-2)"),
+      toggleDate: () => this.setState({ dateOpen: !st.dateOpen, colsOpen: false }),
+      datePresets: [["Today", "Aug 31"], ["Last 7 days", "Aug 25 – 31"], ["Aug 1 – Aug 30", "this month"], ["Last 90 days", "Jun – Aug"], ["Year to date", "Jan – Aug"]].map((d) => ({
+        label: d[0], hint: d[1],
+        style: "display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; font-size: 13.5px; cursor: pointer; " + (st.dateLabel === d[0] ? "background: var(--shell); color: var(--txt); font-weight: var(--w-semi)" : "color: var(--txt-2)"),
+        onClick: () => this.setState({ dateLabel: d[0], dateOpen: false })
+      })),
+
+      filterOpen: st.filterOpen,
+      filterBtnStyle: ctrl + (st.filterOpen || st.conditions.length ? on : off),
+      toggleFilter: () => this.setState({ filterOpen: !st.filterOpen, colsOpen: false, dateOpen: false }),
+      hasFilters: st.conditions.length > 0,
+      filterCount: String(st.conditions.length),
+      conditions: st.conditions.map((c, i) => ({
+        prefix: i === 0 ? "Where" : "And",
+        field: c.field, op: c.op, value: c.value,
+        cycleField: () => {
+          const fields = ["Channel", "Status", "Total"];
+          const next = fields[(fields.indexOf(c.field) + 1) % fields.length];
+          const defaults = { Channel: "Direct store", Status: "Unfulfilled", Total: "500" };
+          const list = st.conditions.slice();
+          list[i] = { field: next, op: next === "Total" ? "at least" : "is", value: defaults[next] };
+          this.setState({ conditions: list });
+        },
+        cycleValue: () => {
+          const opts = c.field === "Channel" ? ["Direct store", "Amazon", "Wholesale", "Marketplaces"]
+            : c.field === "Status" ? ["Unfulfilled", "Fulfilled", "Refunded", "Cancelled"]
+            : ["100", "500", "1000", "2000"];
+          const list = st.conditions.slice();
+          list[i] = Object.assign({}, c, { value: opts[(opts.indexOf(String(c.value)) + 1) % opts.length] });
+          this.setState({ conditions: list });
+        },
+        remove: () => this.setState({ conditions: st.conditions.filter((_, j) => j !== i) })
+      })),
+      addCondition: () => this.setState({ conditions: st.conditions.concat([{ field: "Status", op: "is", value: "Unfulfilled" }]) }),
+      clearFilters: () => this.setState({ conditions: [], query: "", tab: "All", view: "all", dataState: "ready" }),
+
+      groupBtnStyle: ctrl + (st.grouped ? on : off),
+      toggleGroup: () => this.setState({ grouped: !st.grouped }),
+
+      colsOpen: st.colsOpen,
+      colBtnStyle: ctrl + (st.colsOpen ? on : off),
+      toggleCols: () => this.setState({ colsOpen: !st.colsOpen, dateOpen: false }),
+      colOptions: [
+        { key: "id", label: "Order", locked: true }, { key: "customer", label: "Customer", locked: true },
+        { key: "channel", label: "Channel" }, { key: "items", label: "Items" },
+        { key: "total", label: "Total" }, { key: "status", label: "Status" }, { key: "placed", label: "Placed" }
+      ].map((c) => {
+        const shown = c.locked || !st.hiddenCols[c.key];
+        return {
+          label: c.label, locked: !!c.locked, check: shown ? "✓" : "",
+          rowStyle: "display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; color: var(--txt-2); cursor: " + (c.locked ? "default" : "pointer"),
+          boxStyle: "width: 16px; height: 16px; border-radius: 4px; flex: none; display: grid; place-items: center; font-size: 10px; box-sizing: border-box; " + (shown
+            ? "background: var(--accent); color: var(--accent-ink); border: 1.5px solid var(--accent)"
+            : "border: 1.5px solid var(--line-2); color: transparent") + (c.locked ? "; opacity: .55" : ""),
+          onClick: () => {
+            if (c.locked) return;
+            const h = Object.assign({}, st.hiddenCols);
+            h[c.key] = !h[c.key];
+            this.setState({ hiddenCols: h });
+          }
+        };
+      }),
+
+      headers, rows: bodyRows,
+      headerRowStyle: (st.vw < 720 ? "display: none; " : "display: flex; ") + "align-items: center; gap: 14px; padding: 11px 18px; background: var(--shell); border-bottom: 1px solid var(--line); flex: none; position: sticky; top: 0; z-index: 5",
+      selectAllMark: allOn ? "✓" : "",
+      selectAllStyle: "width: 18px; height: 18px; border-radius: 5px; flex: none; display: grid; place-items: center; font-size: 11px; box-sizing: border-box; cursor: pointer; " + (allOn
+        ? "background: var(--accent); color: var(--accent-ink); border: 1.5px solid var(--accent)"
+        : "border: 1.5px solid var(--line-2); color: transparent"),
+      toggleAll: () => {
+        if (allOn) return this.setState({ selected: {} });
+        const s = {};
+        rowsAll.forEach((r) => { s[r.id] = true; });
+        this.setState({ selected: s });
+      },
+
+      isReady: st.dataState === "ready" && rowsAll.length > 0,
+      isEmpty: st.dataState === "empty" || (st.dataState === "ready" && rowsAll.length === 0),
+      isLoading: st.dataState === "loading",
+      isError: st.dataState === "error",
+      skeletons: [0, 1, 2, 3, 4, 5, 6].map((i) => ({
+        a: "width: " + (74 + (i % 3) * 16) + "px; height: 12px; border-radius: 4px; background: var(--shell); display: block",
+        b: "width: " + (150 + (i % 4) * 28) + "px; height: 12px; border-radius: 4px; background: var(--shell); display: block"
+      })),
+      retry: () => {
+        this.setState({ dataState: "loading" });
+        if (this._load) clearTimeout(this._load);
+        this._load = setTimeout(() => { this.setState({ dataState: "ready" }); this.say("Orders reloaded"); }, 1400);
+      },
+      dataStates: [["ready", "Ready"], ["loading", "Loading"], ["empty", "Empty"], ["error", "Error"]].map((d) => ({
+        label: d[1],
+        style: "font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; padding: 5px 11px; border-radius: 999px; cursor: pointer; " + (st.dataState === d[0]
+          ? "background: var(--accent); color: var(--accent-ink)"
+          : "background: var(--card); color: var(--txt-3); border: 1px solid var(--line)"),
+        onClick: () => this.setState({ dataState: d[0] })
+      })),
+
+      footerText: selectedIds.length
+        ? selectedIds.length + " selected · showing " + rowsAll.length + " of " + (isCust ? "1,284" : "3,412")
+        : "Showing " + rowsAll.length + " of " + (isCust ? "1,284" : "3,412") + (st.grouped ? " · grouped by channel" : ""),
+      pages: ["‹", "1", "2", "3", "›"].map((p) => {
+        const isNum = /^[0-9]+$/.test(p);
+        const active = isNum && parseInt(p, 10) === st.page;
+        return {
+          label: p,
+          style: "width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; font-family: var(--mono); font-size: 12px; cursor: pointer; box-sizing: border-box; " + (active
+            ? "background: var(--accent); color: var(--accent-ink)"
+            : "background: var(--card); border: 1px solid var(--line); color: var(--txt-2)"),
+          onClick: () => { if (isNum) this.setState({ page: parseInt(p, 10) }); }
+        };
+      }),
+
+      hasSelection: selectedIds.length > 0,
+      selectionCount: String(selectedIds.length),
+      selectionLabel: selectedIds.length + (selectedIds.length === 1 ? " record selected" : " records selected"),
+      clearSelection: () => this.setState({ selected: {} }),
+      bulkFulfil: () => {
+        const ov = Object.assign({}, st.overrides);
+        selectedIds.forEach((id) => { ov[id] = Object.assign({}, ov[id], { status: "Fulfilled" }); });
+        this.setState({ overrides: ov, selected: {} });
+        this.say(selectedIds.length + " marked fulfilled");
+      },
+      bulkExport: () => { this.setState({ selected: {} }); this.say("Exporting " + selectedIds.length + " records"); },
+      bulkDelete: () => this.ask({
+        tone: "bad", typed: true, label: "Delete permanently", cancel: "Keep them",
+        title: "Delete " + selectedIds.length + " records?",
+        body: "Deleting removes the records and their payment history from reporting. Refunds already issued are not reversed. There is no undo.",
+        onYes: () => { this.setState({ selected: {} }); this.say(selectedIds.length + " records deleted"); }
+      }),
+      bulkArchive: () => this.ask({
+        tone: "accent", label: "Archive them", cancel: "Cancel",
+        title: "Archive " + selectedIds.length + " records?",
+        body: "Archived records leave the default views but stay in reporting and can be restored from the archive at any time.",
+        onYes: () => { this.setState({ selected: {} }); this.say(selectedIds.length + " archived"); }
+      }),
+      confirmOpen: !!st.confirm,
+      confirmTitle: st.confirm ? st.confirm.title : "",
+      confirmBody: st.confirm ? st.confirm.body : "",
+      confirmLabel: st.confirm ? st.confirm.label : "Confirm",
+      confirmCancel: st.confirm ? (st.confirm.cancel || "Cancel") : "Cancel",
+      confirmTyped: !!(st.confirm && st.confirm.typed),
+      confirmIcon: st.confirm && st.confirm.tone === "bad"
+        ? "M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"
+        : "M12 8h.01M11 12h1v5",
+      confirmIconStyle: "width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; " + (st.confirm && st.confirm.tone === "bad"
+        ? "background: var(--bad-tint); color: var(--bad)"
+        : "background: var(--accent-tint); color: var(--accent-text)"),
+      confirmBtnStyle: "flex: 1; text-align: center; font-size: 14.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 13px 0; cursor: pointer; " + (st.confirm && st.confirm.tone === "bad"
+        ? "background: var(--bad); color: var(--card)"
+        : "background: var(--accent); color: var(--accent-ink)"),
+      closeConfirm: () => this.setState({ confirm: null }),
+      confirmYes: () => { const c = st.confirm; this.setState({ confirm: null }); if (c && c.onYes) c.onYes(); },
+      hasBanners: this.visibleBanners().length > 0,
+      banners: this.visibleBanners(),
+
+      peek: !!peek,
+      peekEyebrow: peek ? (isCust ? "Customer" : "Order") + " · " + peek.channel : "",
+      peekTitle: peek ? (isCust ? peek.customer : "Order " + peek.id) : "",
+      peekStatus: peek ? peek.status : "",
+      peekMeta: peek ? (isCust ? "since " + peek.placed : "placed " + peek.placed + " · " + peek.customer) : "",
+      peekChipStyle: peek ? "display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; color: " + pc[0] + "; background: " + pc[1] + "; border-radius: 999px; padding: 5px 11px" : "",
+      peekDotStyle: peek ? "width: 5px; height: 5px; border-radius: 999px; display: block; background: " + pc[2] : "",
+      peekStats: peek ? [
+        { label: isCust ? "Lifetime value" : "Order total", value: this.money(peek.total) },
+        { label: isCust ? "Orders" : "Items", value: String(peek.items) },
+        { label: "Channel", value: peek.channel },
+        { label: isCust ? "Customer since" : "Placed", value: peek.placed }
+      ] : [],
+      peekActivity: peek ? [
+        ["Status set to " + peek.status.toLowerCase(), "today · 09:14", true],
+        ["Payment captured", "Aug 28 · 11:26", false],
+        ["Record created", "Aug 28 · 11:24", false]
+      ].map((a, i, arr) => ({
+        title: a[0], when: a[1],
+        dotStyle: "width: 9px; height: 9px; border-radius: 999px; flex: none; display: block; background: " + (a[2] ? "var(--accent)" : "var(--line-2)"),
+        lineStyle: "flex: 1; width: 2px; background: var(--line-2); display: " + (i < arr.length - 1 ? "block" : "none")
+      })) : [],
+      closePeek: () => this.setState({ peek: null }),
+      openFull: () => { this.setState({ peek: null }); this.say("Full record lives in Starter Records"); },
+
+      inboxTabs: [["All", notifData.length], ["Unread", unreadCount], ["Archived", 12]].map((t) => {
+        const active = st.inboxTab === t[0];
+        return {
+          label: t[0], count: String(t[1]),
+          style: "display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 999px; font-size: 14px; cursor: pointer; " + (active
+            ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+            : "color: var(--txt-2); font-weight: 500"),
+          countStyle: "font-family: var(--mono); font-size: 11px; color: " + (active ? "var(--accent-text)" : "var(--txt-4)"),
+          onClick: () => this.setState({ inboxTab: t[0] })
+        };
+      }),
+      notifications,
+      markAllRead: () => {
+        const r = Object.assign({}, st.readIds);
+        notifData.forEach((n) => { r[n[0]] = true; });
+        this.setState({ readIds: r });
+        this.say("Inbox cleared");
+      },
+      goInbox: () => this.setState({ screen: "inbox" }),
+      searchGroups,
+      stopClick: (e) => e.stopPropagation(),
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

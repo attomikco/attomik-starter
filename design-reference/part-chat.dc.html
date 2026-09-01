@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; }
+  input, textarea { font: inherit; color: inherit; background: none; border: none; outline: none; width: 100%; }
+  input::placeholder, textarea::placeholder { color: var(--txt-4); }
+  textarea { resize: none; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes blink { 0%, 80% { opacity: .22; } 40% { opacity: 1; } }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position: absolute; inset: 0; min-height: 0; display: flex; flex-direction: column">
+ <div style="flex: 1; min-height: 0; display: flex; position: relative">
+  <div style="display: none"></div>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column">
+
+    <sc-if value="{{ isAssistant }}" hint-placeholder-val="{{ true }}">
+      <div style="flex: 1; min-height: 0; display: flex; gap: 14px">
+
+        <sc-if value="{{ showThreadRail }}" hint-placeholder-val="{{ true }}">
+        <div style="width: 232px; flex: none; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 14px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box">
+          <span style="display: flex; align-items: center; justify-content: center; gap: 9px; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 11px 0; font-size: 14px; font-weight: var(--w-semi); cursor: pointer; flex: none" onClick="{{ newThread }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New chat
+          </span>
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); padding: 4px 10px 0">Recent</div>
+          <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; display: flex; flex-direction: column; gap: 2px">
+            <sc-for list="{{ threads }}" as="t" hint-placeholder-count="4">
+              <div style="{{ t.style }}" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ t.onPick }}">
+                <span style="{{ t.dotStyle }}"></span>
+                <span style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ t.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border-top: 1px solid var(--line); padding-top: 12px; flex: none; font-family: var(--mono); font-size: 10px; color: var(--txt-4); line-height: 1.6">Threads are kept 30 days, then deleted. Nothing here trains a model.</div>
+        </div>
+        </sc-if>
+
+        <div style="flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 15px 22px; border-bottom: 1px solid var(--line); flex: none">
+            <span style="width: 30px; height: 30px; border-radius: 9px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; display: grid; place-items: center; flex: none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"></path></svg></span>
+            <div style="min-width: 0; flex: 1">
+              <div style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ threadTitle }}</div>
+              <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">Reads live orders, customers and refunds</div>
+            </div>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); border: 1px solid var(--line-2); border-radius: 999px; padding: 6px 12px; cursor: pointer; flex: none" onClick="{{ cycleModel }}">{{ model }}</span>
+          </div>
+
+          <div ref="{{ aiRef }}" style="flex: 1; min-height: 180px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 24px 22px; background: var(--shell)">
+            <div style="max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px">
+
+              <sc-if value="{{ isEmptyThread }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 32px 0 4px; text-align: center">
+                  <div style="font-size: 26px; font-weight: var(--w-bold); letter-spacing: -0.035em; margin-bottom: 10px">What do you want to know?</div>
+                  <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.6; margin: 0 auto 24px; max-width: 460px">It reads this workspace — orders, customers, refunds, the audit log — and it says so when it is guessing.</p>
+                  <div style="display: grid; {{ pair }}; text-align: left">
+                    <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+                      <div style="background: var(--shell); border-radius: var(--r2); padding: 15px 17px; cursor: pointer" style-hover="background: var(--accent-tint)" onClick="{{ s.onPick }}">
+                        <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ s.title }}</div>
+                        <div style="font-size: 12.5px; color: var(--txt-3); margin-top: 4px; line-height: 1.45">{{ s.sub }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-for list="{{ messages }}" as="m" hint-placeholder-count="3">
+                <div style="{{ m.wrapStyle }}">
+                  <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                    <div style="{{ m.bubbleStyle }}">
+                      <sc-if value="{{ m.hasImages }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px">
+                          <sc-for list="{{ m.images }}" as="img" hint-placeholder-count="1">
+                            <span style="{{ img.style }}">{{ img.label }}</span>
+                          </sc-for>
+                        </span>
+                      </sc-if>
+                      <span style="white-space: pre-wrap">{{ m.text }}</span></div>
+                  </sc-if>
+                  <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ true }}">
+                    <div style="display: flex; gap: 14px; min-width: 0; width: 100%">
+                      <span style="width: 28px; height: 28px; border-radius: 8px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; display: grid; place-items: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"></path></svg></span>
+                      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 6px 18px 18px 18px; padding: 15px 18px; box-sizing: border-box">
+                        <div style="font-size: 15px; line-height: 1.65; color: var(--txt); white-space: pre-wrap">{{ m.text }}</div>
+                        <sc-if value="{{ m.hasRows }}" hint-placeholder-val="{{ false }}">
+                          <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+                            <sc-for list="{{ m.rows }}" as="r" hint-placeholder-count="3">
+                              <div style="{{ r.rowStyle }}">
+                                <span style="flex: 1; min-width: 0; font-size: 13.5px; color: var(--txt-2)">{{ r.left }}</span>
+                                <span style="font-family: var(--mono); font-size: 13px">{{ r.right }}</span>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ m.hasSources }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+                            <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-4)">Read</span>
+                            <sc-for list="{{ m.sources }}" as="src" hint-placeholder-count="2">
+                              <span style="font-family: var(--mono); font-size: 10.5px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 4px 9px">{{ src }}</span>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                        <div style="display: flex; align-items: center; gap: 6px">
+                          <sc-for list="{{ m.actions }}" as="act" hint-placeholder-count="3">
+                            <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); border-radius: 7px; padding: 5px 9px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt-2)" onClick="{{ act.onPick }}">{{ act.label }}</span>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+
+              <sc-if value="{{ thinking }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; gap: 14px; align-items: center">
+                  <span style="width: 28px; height: 28px; border-radius: 8px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; display: grid; place-items: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path></svg></span>
+                  <span style="display: flex; align-items: center; gap: 5px">
+                    <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--txt-3); display: block; animation: blink 1.1s infinite"></span>
+                    <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--txt-3); display: block; animation: blink 1.1s infinite .18s"></span>
+                    <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--txt-3); display: block; animation: blink 1.1s infinite .36s"></span>
+                  </span>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="flex: none; padding: 10px 22px 14px; border-top: 1px solid var(--line)">
+            <div style="max-width: 720px; margin: 0 auto">
+              <sc-if value="{{ hasDrafts }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px">
+                  <sc-for list="{{ drafts }}" as="d" hint-placeholder-count="1">
+                    <span style="{{ d.style }}">
+                      <span style="font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-3); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ d.label }}</span>
+                      <span style="width: 18px; height: 18px; border-radius: 999px; background: var(--card); display: grid; place-items: center; font-size: 10px; color: var(--txt-2); cursor: pointer; flex: none" onClick="{{ d.onRemove }}">&#10005;</span>
+                    </span>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <div style="{{ composerStyle }}">
+                <textarea rows="1" placeholder="Ask about orders, customers, or anything in this workspace" value="{{ input }}" onInput="{{ onInput }}" onKeyDown="{{ onKey }}" style="font-size: 14.5px; line-height: 1.5"></textarea>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px">
+                  <label style="width: 30px; height: 30px; border-radius: 8px; background: var(--shell); display: grid; place-items: center; cursor: pointer; flex: none" style-hover="background: var(--accent-tint)" title="Upload an image">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m3 17 5-4 4 3 3-2 6 5"></path></svg>
+                    <input type="file" accept="image/*" multiple onChange="{{ onFiles }}" style="display: none" />
+                  </label>
+                  <span style="width: 30px; height: 30px; border-radius: 8px; background: var(--shell); display: grid; place-items: center; cursor: pointer; flex: none" style-hover="background: var(--accent-tint)" title="Pick from library" onClick="{{ openPicker }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                  </span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); flex: 1; min-width: 0">{{ composerHint }}</span>
+                  <span style="{{ sendStyle }}" onClick="{{ send }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMessages }}" hint-placeholder-val="{{ false }}">
+      <div style="flex: 1; min-height: 0; display: flex; gap: 14px">
+
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+        <div style="{{ listStyle }}">
+          <div style="padding: 16px 16px 12px; border-bottom: 1px solid var(--line); flex: none">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+              <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em; flex: 1">Messages</span>
+              <span style="width: 30px; height: 30px; border-radius: 9px; background: var(--shell); display: grid; place-items: center; cursor: pointer" style-hover="background: var(--accent-tint)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="2.1" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 9px; background: var(--shell); border-radius: var(--r3); padding: 9px 12px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+              <input placeholder="Search conversations" value="{{ query }}" onInput="{{ onQuery }}" style="font-size: 13.5px" />
+            </div>
+          </div>
+          <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+            <sc-for list="{{ conversations }}" as="c" hint-placeholder-count="5">
+              <div style="{{ c.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ c.onPick }}">
+                <span style="{{ c.avatarStyle }}">{{ c.initials }}</span>
+                <div style="flex: 1; min-width: 0">
+                  <div style="display: flex; align-items: baseline; gap: 8px">
+                    <span style="{{ c.nameStyle }}">{{ c.name }}</span>
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ c.when }}</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; margin-top: 3px">
+                    <span style="{{ c.previewStyle }}">{{ c.preview }}</span>
+                    <sc-if value="{{ c.unread }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family: var(--mono); font-size: 10px; color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 2px 7px; flex: none">{{ c.unread }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+</sc-if>
+
+        <div style="{{ threadPaneStyle }}">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 13px 20px; border-bottom: 1px solid var(--line); flex: none">
+            <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+              <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; cursor: pointer; flex: none; color: var(--txt-2); font-family: var(--mono); font-size: 13px" onClick="{{ backToList }}">&#8249;</span>
+            </sc-if>
+            <span style="{{ activeAvatarStyle }}" onClick="{{ openProfile }}" title="Open the customer record">{{ activeInitials }}</span>
+            <div style="min-width: 0; flex: 1; cursor: pointer" onClick="{{ openProfile }}">
+              <div style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em">{{ activeName }}</div>
+              <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">{{ activeMeta }} &#183; open record</div>
+            </div>
+            <span style="{{ lastOpStyle }}" title="Last reply from this side">
+              <span style="{{ lastOpAvatarStyle }}">{{ lastOpInitials }}</span>
+              <span style="min-width: 0">
+                <span style="display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--txt-4)">Last reply</span>
+                <span style="display: block; font-size: 12.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; margin-top: 1px">{{ lastOpLabel }}</span>
+              </span>
+            </span>
+            <span style="{{ infoBtnStyle }}" onClick="{{ toggleInfo }}" title="Customer details"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v5"></path></svg></span>
+            <span style="{{ searchBtnStyle }}" onClick="{{ toggleThreadSearch }}" title="Search in conversation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg></span>
+            <div style="position: relative; flex: none">
+              <span style="{{ moreBtnStyle }}" onClick="{{ toggleMore }}" title="Conversation actions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></span>
+              <sc-if value="{{ moreOpen }}" hint-placeholder-val="{{ false }}">
+                <span style="position: absolute; top: 42px; right: 0; z-index: 30; width: 208px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 40px rgba(0,0,0,.18); padding: 6px; display: block; animation: rise .12s ease-out">
+                  <sc-for list="{{ moreItems }}" as="mi" hint-placeholder-count="4">
+                    <span style="{{ mi.style }}" style-hover="background: var(--shell)" onClick="{{ mi.onPick }}">{{ mi.label }}</span>
+                  </sc-for>
+                </span>
+              </sc-if>
+            </div>
+          </div>
+
+          <sc-if value="{{ threadSearchOn }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--shell); flex: none; animation: rise .12s ease-out">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+              <input placeholder="Search in this conversation" value="{{ threadQuery }}" onInput="{{ onThreadQuery }}" style="flex: 1; min-width: 0; font-size: 13.5px" />
+              <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); flex: none">{{ threadMatches }}</span>
+              <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); border: 1px solid var(--line-2); border-radius: 6px; padding: 3px 7px; cursor: pointer; flex: none" onClick="{{ closeThreadSearch }}">ESC</span>
+            </div>
+          </sc-if>
+
+          <div style="{{ threadStyle }}" ref="{{ threadRef }}">
+            <div style="display: flex; flex-direction: column; gap: 3px; max-width: 780px; margin: 0 auto; width: 100%">
+              <sc-for list="{{ chat }}" as="m" hint-placeholder-count="6">
+                <sc-if value="{{ m.isDay }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; justify-content: center; padding: 12px 0 8px">
+                    <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-3); background: var(--card); border-radius: 999px; padding: 5px 12px">{{ m.label }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isMsg }}" hint-placeholder-val="{{ true }}">
+                  <div style="{{ m.rowStyle }}">
+                    <div style="{{ m.bubbleStyle }}">
+                      <sc-if value="{{ m.hasImage }}" hint-placeholder-val="{{ false }}">
+                        <span style="{{ m.imageStyle }}">{{ m.imageLabel }}</span>
+                      </sc-if>
+                      <span style="{{ m.textStyle }}">{{ m.text }}</span>
+                      <span style="{{ m.metaStyle }}">
+                        <sc-if value="{{ m.author }}" hint-placeholder-val="{{ false }}">
+                          <span style="{{ m.authorStyle }}">{{ m.author }}</span>
+                        </sc-if>
+                        {{ m.time }} {{ m.tick }}
+                      </span>
+                    </div>
+                  </div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ draftClosed }}" hint-placeholder-val="{{ false }}">
+            <div style="flex: none; border-top: 1px solid var(--line); background: var(--shell); padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+              <span style="{{ askDraftStyle }}" onClick="{{ askDraft }}">
+                <sc-if value="{{ drafting }}" hint-placeholder-val="{{ false }}">
+                  <span style="width: 13px; height: 13px; border-radius: 999px; border: 2px solid var(--accent-tint); border-top-color: var(--accent-ink); display: block; animation: spin .8s linear infinite; flex: none"></span>
+                </sc-if>
+                <sc-if value="{{ notDrafting }}" hint-placeholder-val="{{ true }}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" style="flex: none"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"></path></svg>
+                </sc-if>
+                {{ askDraftLabel }}
+              </span>
+              <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); flex: 1; min-width: 0">{{ draftHint }}</span>
+              <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); flex: none">&#8984;&#8629;</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ draftOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ draftPanelStyle }}">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 20px 10px; flex-wrap: wrap">
+              <span style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 5px 11px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path></svg>
+                AI draft
+              </span>
+              <div style="display: flex; align-items: center; gap: 9px; min-width: 0">
+                <span style="{{ confBarStyle }}"><span style="{{ confFillStyle }}"></span><span style="{{ confMarkStyle }}"></span></span>
+                <span style="{{ confTextStyle }}">{{ confLabel }}</span>
+              </div>
+              <div style="flex: 1"></div>
+              <span style="{{ whyBtnStyle }}" onClick="{{ toggleWhy }}">{{ whyLabel }}</span>
+            </div>
+
+            <sc-if value="{{ whyOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 4px 20px 12px; animation: rise .14s ease-out">
+                <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+                  <div style="display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--line)">
+                    <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); flex: 1">What the draft was built from</span>
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">{{ evidenceCount }}</span>
+                  </div>
+                  <div style="max-height: 192px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+                  <sc-for list="{{ evidence }}" as="e" hint-placeholder-count="5">
+                    <div style="{{ e.rowStyle }}">
+                      <div style="display: flex; align-items: center; gap: 11px; cursor: pointer" onClick="{{ e.onToggle }}">
+                        <span style="{{ e.tagStyle }}">{{ e.source }}</span>
+                        <span style="flex: 1; min-width: 0; font-size: 13px; color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ e.claim }}</span>
+                        <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); flex: none">{{ e.weight }}</span>
+                        <span style="{{ e.caretStyle }}">&#9662;</span>
+                      </div>
+                      <sc-if value="{{ e.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top: 10px; background: var(--shell); border-radius: var(--r3); padding: 12px 14px">
+                          <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-2); line-height: 1.6">{{ e.snippet }}</div>
+                          <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px">
+                            <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); flex: 1; min-width: 0">{{ e.origin }}</span>
+                            <span style="font-family: var(--mono); font-size: 10px; color: var(--accent-text); cursor: pointer" onClick="{{ e.onOpen }}">Open source</span>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: var(--shell); border-top: 1px solid var(--line)">
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); flex: 1; min-width: 0">{{ ruleLine }}</span>
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ modelLine }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="padding: 0 20px 14px">
+              <div style="{{ draftBoxStyle }}">
+                <textarea rows="4" value="{{ draftText }}" onInput="{{ onDraftInput }}" style="font-size: 14.5px; line-height: 1.6"></textarea>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap">
+                  <span style="{{ approveStyle }}" onClick="{{ approveDraft }}">{{ approveLabel }}</span>
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 9px 15px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ regenerate }}">Regenerate</span>
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-2); border-radius: 999px; padding: 9px 13px; cursor: pointer" style-hover="background: var(--card); color: var(--txt)" onClick="{{ dismissDraft }}">Write my own</span>
+                  <div style="flex: 1"></div>
+                  <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">{{ editedNote }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <div style="flex: none; padding: 13px 20px 16px; border-top: 1px solid var(--line)" data-composer="1">
+            <sc-if value="{{ hasMsgDrafts }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px">
+                <sc-for list="{{ msgDrafts }}" as="d" hint-placeholder-count="1">
+                  <span style="{{ d.style }}">
+                    <span style="font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-3); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ d.label }}</span>
+                    <span style="width: 18px; height: 18px; border-radius: 999px; background: var(--card); display: grid; place-items: center; font-size: 10px; color: var(--txt-2); cursor: pointer; flex: none" onClick="{{ d.onRemove }}">&#10005;</span>
+                  </span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <label style="width: 40px; height: 40px; border-radius: var(--r3); background: var(--shell); display: grid; place-items: center; cursor: pointer; flex: none" style-hover="background: var(--accent-tint)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.5 12.5 21a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7.5-7.5"></path></svg>
+                <input type="file" accept="image/*" multiple onChange="{{ onMsgFiles }}" style="display: none" />
+              </label>
+              <div style="flex: 1; min-width: 0; background: var(--shell); border-radius: 20px; padding: 11px 16px; box-sizing: border-box">
+                <textarea rows="1" placeholder="Write a message" value="{{ msgInput }}" onInput="{{ onMsgInput }}" onKeyDown="{{ onMsgKey }}" style="font-size: 14.5px; line-height: 1.5"></textarea>
+              </div>
+              <span style="{{ inlineDraftStyle }}" onClick="{{ askDraft }}" title="Draft a reply with AI">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"></path></svg>
+              </span>
+              <span style="{{ msgSendStyle }}" onClick="{{ sendMsg }}">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"></path></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ infoOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="width: 280px; flex: none; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box">
+            <div style="padding: 20px 18px; border-bottom: 1px solid var(--line); text-align: center; flex: none">
+              <span style="width: 54px; height: 54px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 18px; font-weight: var(--w-bold); margin: 0 auto 12px; cursor: pointer" onClick="{{ openProfile }}">{{ activeInitials }}</span>
+              <div style="font-size: 15.5px; font-weight: var(--w-semi); letter-spacing: -0.015em; cursor: pointer" onClick="{{ openProfile }}">{{ activeName }}</div>
+              <div style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); margin-top: 4px">{{ activeMeta }}</div>
+              <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; flex-wrap: wrap">
+                <sc-for list="{{ infoTags }}" as="t" hint-placeholder-count="2">
+                  <span style="{{ t.style }}">{{ t.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 16px 18px; display: flex; flex-direction: column; gap: 18px">
+              <div>
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">At a glance</div>
+                <div style="display: grid; {{ pair }}">
+                  <sc-for list="{{ infoStats }}" as="s" hint-placeholder-count="4">
+                    <div style="background: var(--shell); border-radius: var(--r3); padding: 12px; min-width: 0">
+                      <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 7px">{{ s.label }}</div>
+                      <div style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.02em">{{ s.value }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Open right now</div>
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <sc-for list="{{ infoOpenItems }}" as="o" hint-placeholder-count="2">
+                    <div style="{{ o.rowStyle }}">
+                      <span style="{{ o.dotStyle }}"></span>
+                      <div style="min-width: 0; flex: 1">
+                        <div style="font-size: 13px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ o.title }}</div>
+                        <div style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); margin-top: 2px">{{ o.meta }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Contact</div>
+                <div style="display: flex; flex-direction: column">
+                  <sc-for list="{{ infoContact }}" as="r" hint-placeholder-count="3">
+                    <div style="{{ r.rowStyle }}">
+                      <span style="font-size: 12.5px; color: var(--txt-2); flex: none; width: 58px">{{ r.label }}</span>
+                      <span style="font-family: var(--mono); font-size: 11px; color: var(--txt); flex: 1; min-width: 0; text-align: right; overflow: hidden; text-overflow: ellipsis">{{ r.value }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Worth knowing</div>
+                <div style="display: flex; flex-direction: column; gap: 7px">
+                  <sc-for list="{{ infoPrefs }}" as="p" hint-placeholder-count="3">
+                    <div style="display: flex; align-items: center; gap: 8px">
+                      <span style="width: 4px; height: 4px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+                      <span style="font-size: 12.5px; color: var(--txt-2); line-height: 1.45">{{ p }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r3); padding: 14px">
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 8px">Last note</div>
+                <div style="font-size: 12.5px; color: var(--txt-2); line-height: 1.55">Prefers a written reply over a call. No lift in the building, so heavy orders need the porter warned.</div>
+              </div>
+            </div>
+
+            <div style="flex: none; padding: 14px 18px; border-top: 1px solid var(--line)">
+              <span style="display: block; text-align: center; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 0; cursor: pointer" onClick="{{ openProfile }}">Open full record</span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+
+      <div style="background: var(--card); border-radius: var(--r); padding: 24px 26px; flex: none">
+        <div style="display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 18px">
+          <span style="cursor: pointer; color: var(--accent-text)" onClick="{{ backToMessages }}">Messages</span>
+          <span style="color: var(--txt-4)">/</span>
+          <span>{{ profileName }}</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap">
+          <span style="width: 62px; height: 62px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 21px; font-weight: var(--w-bold); flex: none">{{ profileInitials }}</span>
+          <div style="min-width: 0; flex: 1">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+              <span style="font-size: 28px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1.1">{{ profileName }}</span>
+              <sc-for list="{{ profileTags }}" as="t" hint-placeholder-count="3">
+                <span style="{{ t.style }}">{{ t.label }}</span>
+              </sc-for>
+            </div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--txt-3); margin-top: 8px">{{ profileSub }}</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 9px; flex: none">
+            <span style="border: 1px solid var(--line-2); color: var(--txt-2); border-radius: 999px; padding: 10px 17px; font-size: 14px; font-weight: var(--w-semi); cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ backToMessages }}">Open chat</span>
+            <span style="background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 11px 19px; font-size: 14px; font-weight: var(--w-semi); cursor: pointer" onClick="{{ profileAction }}">New order</span>
+          </div>
+        </div>
+        <div style="display: grid; {{ quad }}; margin-top: 22px">
+          <sc-for list="{{ profileStats }}" as="s" hint-placeholder-count="4">
+            <div style="{{ s.cardStyle }}">
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">{{ s.label }}</div>
+              <div style="font-size: 23px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1">{{ s.value }}</div>
+              <div style="{{ s.subStyle }}">{{ s.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; margin-top: 20px; align-self: flex-start; width: fit-content">
+          <sc-for list="{{ profileTabs }}" as="t" hint-placeholder-count="4">
+            <span style="{{ t.style }}" onClick="{{ t.onPick }}">{{ t.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ split }}; align-items: start; flex: none">
+        <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+
+          <sc-if value="{{ tabActivity }}" hint-placeholder-val="{{ true }}">
+            <div style="background: var(--card); border-radius: var(--r); padding: 24px">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 18px">Everything that happened</div>
+              <div style="display: flex; flex-direction: column">
+                <sc-for list="{{ profileTimeline }}" as="e" hint-placeholder-count="6">
+                  <div style="display: flex; gap: 14px; min-width: 0">
+                    <div style="width: 10px; flex: none; display: flex; flex-direction: column; align-items: center">
+                      <span style="{{ e.dotStyle }}"></span>
+                      <span style="{{ e.lineStyle }}"></span>
+                    </div>
+                    <div style="flex: 1; min-width: 0; padding-bottom: 20px">
+                      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+                        <span style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; margin-top: -3px">{{ e.title }}</span>
+                        <span style="{{ e.chipStyle }}">{{ e.kind }}</span>
+                      </div>
+                      <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.5; margin-top: 3px">{{ e.body }}</div>
+                      <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 6px">{{ e.when }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabOrders }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--card); border-radius: var(--r); padding: 24px">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px">
+                <span style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em">Orders</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">21 total &#183; last 6 shown</span>
+              </div>
+              <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+                <sc-for list="{{ profileOrders }}" as="o" hint-placeholder-count="6">
+                  <div style="{{ o.rowStyle }}" style-hover="background: var(--shell)">
+                    <span style="width: 74px; flex: none; font-family: var(--mono); font-size: 12.5px; color: var(--txt-2)">{{ o.id }}</span>
+                    <span style="flex: 1; min-width: 0; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ o.items }}</span>
+                    <span style="width: 84px; flex: none; text-align: right; font-family: var(--mono); font-size: 13px">{{ o.total }}</span>
+                    <span style="width: 110px; flex: none"><span style="{{ o.chipStyle }}">{{ o.status }}</span></span>
+                    <span style="width: 62px; flex: none; text-align: right; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ o.when }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabConversations }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--card); border-radius: var(--r); padding: 24px">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 6px">Conversation history</div>
+              <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">Every thread with this customer, across email and chat.</div>
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{ profileThreads }}" as="t" hint-placeholder-count="4">
+                  <div style="background: var(--shell); border-radius: var(--r2); padding: 16px 18px; cursor: pointer" style-hover="background: var(--accent-tint)" onClick="{{ t.onOpen }}">
+                    <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+                      <span style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ t.title }}</span>
+                      <span style="{{ t.chipStyle }}">{{ t.channel }}</span>
+                      <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-left: auto">{{ t.when }}</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--txt-2); line-height: 1.5; margin-top: 5px">{{ t.preview }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabPreferences }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--card); border-radius: var(--r); padding: 24px">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Preferences</div>
+              <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 8px">What she has told us, and what we inferred. Inferred values are marked.</div>
+              <div style="display: flex; flex-direction: column">
+                <sc-for list="{{ profilePrefs }}" as="p" hint-placeholder-count="6">
+                  <div style="{{ p.rowStyle }}">
+                    <div style="flex: 1; min-width: 0">
+                      <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ p.label }}</div>
+                      <div style="font-size: 12.5px; color: var(--txt-3); margin-top: 3px">{{ p.note }}</div>
+                    </div>
+                    <span style="{{ p.valueStyle }}">{{ p.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+          <div style="background: var(--card); border-radius: var(--r); padding: 22px">
+            <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 14px">Contact</div>
+            <div style="display: flex; flex-direction: column">
+              <sc-for list="{{ profileContact }}" as="r" hint-placeholder-count="5">
+                <div style="{{ r.rowStyle }}">
+                  <span style="font-size: 13px; color: var(--txt-2); flex: none; width: 76px">{{ r.label }}</span>
+                  <span style="font-family: var(--mono); font-size: 12px; color: var(--txt); flex: 1; min-width: 0; text-align: right; overflow: hidden; text-overflow: ellipsis">{{ r.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r); padding: 22px">
+            <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 12px">Account health</div>
+            <div style="display: flex; align-items: baseline; gap: 10px">
+              <span style="font-size: 30px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1">72</span>
+              <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-2)">of 100 &#183; slipping</span>
+            </div>
+            <div style="height: 7px; border-radius: 4px; background: var(--card); overflow: hidden; margin: 14px 0 12px">
+              <span style="display: block; height: 100%; width: 72%; border-radius: 4px; background: var(--warn-fill)"></span>
+            </div>
+            <div style="font-size: 12.5px; color: var(--txt-2); line-height: 1.55">Two refunds in ninety days and a fourteen-day gap since the last order. Ordering cadence was every nine days.</div>
+          </div>
+
+          <div style="background: var(--card); border-radius: var(--r); padding: 22px">
+            <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">Open with us</div>
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <sc-for list="{{ profileOpen }}" as="o" hint-placeholder-count="2">
+                <div style="display: flex; align-items: flex-start; gap: 11px">
+                  <span style="{{ o.dotStyle }}"></span>
+                  <div style="min-width: 0; flex: 1">
+                    <div style="font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ o.title }}</div>
+                    <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">{{ o.meta }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: var(--card); border-radius: var(--r); padding: 22px">
+            <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">Internal note</div>
+            <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.6">Prefers a written reply over a call. Ships to a building with no lift, so the porter has to be warned for anything over 10kg.</div>
+            <div style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-top: 10px">Sam Whitfield · Aug 12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; z-index: 70; background: rgba(8,10,14,.38); display: grid; place-items: center" onClick="{{ closePicker }}">
+      <div style="width: 620px; max-width: calc(100% - 32px); max-height: 86%; background: var(--card); border-radius: var(--r); box-shadow: 0 30px 70px rgba(0,0,0,.3); display: flex; flex-direction: column; overflow: hidden; animation: rise .16s ease-out" onClick="{{ stopClick }}">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--line); flex: none">
+          <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em; flex: 1">Pick an image</span>
+          <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 9px 15px; cursor: pointer">
+            Upload
+            <input type="file" accept="image/*" multiple onChange="{{ onFiles }}" style="display: none" />
+          </label>
+          <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; cursor: pointer; color: var(--txt-2); flex: none" onClick="{{ closePicker }}">&#10005;</span>
+        </div>
+        <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 18px 22px">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 12px">Recent uploads</div>
+          <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+            <sc-for list="{{ library }}" as="img" hint-placeholder-count="8">
+              <div style="{{ img.tileStyle }}" onClick="{{ img.onPick }}">
+                <span style="{{ img.thumbStyle }}"></span>
+                <div style="font-family: var(--mono); font-size: 10px; color: var(--txt-3); margin-top: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ img.name }}</div>
+                <div style="font-family: var(--mono); font-size: 9.5px; color: var(--txt-4); margin-top: 2px">{{ img.meta }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border: 1px dashed var(--line-2); border-radius: var(--r2); padding: 22px; text-align: center; margin-top: 14px">
+            <div style="font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2)">Drop images here</div>
+            <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-top: 6px">PNG, JPG, WEBP &#183; up to 10 MB each</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+
+  state = {
+    vw: 1440,
+    screen: "assistant", thread: "t1", model: "Orion · fast", input: "", drafts: [],
+    thinking: false, pickerOpen: false, extra: {},
+    query: "", conversation: "c1", msgInput: "", msgDrafts: [], sent: {},
+    threadSearch: false, threadQuery: "", moreOpen: false, profile: "", profileTab: "Activity", infoOpen: true, listOpen: false,
+    draftOpen: true, draftEdited: false, whyOpen: false, evidenceOpen: -1, drafting: false,
+    draftText: "Hi Alicia — the refund of $412.00 on order 40218 was approved this morning. It goes back to the card ending 4417 and usually takes two to five working days to land. Sorry the box turned up in that state; we are looking at the carrier lane it shipped through."
+  };
+
+  static get SKINS() {
+    return {
+      split: "grid-template-columns: " + (this.state.vw < 760 ? "minmax(0, 1fr)" : "1.5fr 1fr") + "; gap: 14px",
+      pair: "grid-template-columns: " + (this.state.vw < 520 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))") + "; gap: 10px",
+      quad: "grid-template-columns: repeat(" + (this.state.vw < 560 ? 2 : 4) + ", minmax(0, 1fr)); gap: 12px",
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  resolvedTheme() {
+    const mode = this.props.theme || "light";
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+    const fillL = dark ? (s.alDark || 0.66) : (s.al || 0.52);
+    const inkOnFill = s.ink !== undefined ? n(s.ink, 1) : (dark ? n(0.14, 1) : n(0.99, 0.2));
+    const accent = dark
+      ? { "--accent": acc(fillL), "--accent-ink": inkOnFill, "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(fillL), "--accent-ink": inkOnFill, "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"), "--bad": sem(0.75, 1.3, 25), "--warn": sem(0.86, 1.25, 88) }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"), "--bad": sem(0.575, 1.5, 25), "--warn": sem(0.64, 1.15, 78) };
+    return Object.assign({}, surfaces, accent, semantics, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  threadRef = React.createRef();
+  aiRef = React.createRef();
+
+  componentDidMount() { this.hostSync(); this.apply(); this.pinThread(true); this.pinAssistant(true); }
+  componentDidUpdate() { this.apply(); if (this._onResize) this._onResize(); this.pinThread(false); this.pinAssistant(false); }
+
+  // Same rule as the message thread: open at the newest turn, follow while near the end.
+  pinAssistant(force) {
+    const jump = force || this._aiThread !== this.state.thread;
+    this._aiThread = this.state.thread;
+    const run = () => {
+      const el = this.aiRef.current;
+      if (!el) return;
+      const nearBottom = jump || (el.scrollHeight - el.scrollTop - el.clientHeight) < 240;
+      if (nearBottom) el.scrollTop = el.scrollHeight;
+    };
+    if (jump) {
+      if (this._aiRaf) cancelAnimationFrame(this._aiRaf);
+      this._aiRaf = requestAnimationFrame(() => { this._aiRaf = requestAnimationFrame(run); });
+    } else run();
+  }
+
+  componentWillUnmount2() {}
+
+  // Threads open at the newest message. The pin runs after layout, because on mount
+  // scrollHeight still equals clientHeight and an immediate assignment clamps to 0.
+  pinThread(force) {
+    const convChanged = this._pinConv !== this.state.conversation;
+    const jump = force || convChanged;
+    this._pinConv = this.state.conversation;
+    const run = () => {
+      const el = this.threadRef.current;
+      if (!el) return;
+      const nearBottom = jump || (el.scrollHeight - el.scrollTop - el.clientHeight) < 220;
+      if (nearBottom) el.scrollTop = el.scrollHeight;
+    };
+    if (jump) {
+      if (this._pinRaf) cancelAnimationFrame(this._pinRaf);
+      this._pinRaf = requestAnimationFrame(() => { this._pinRaf = requestAnimationFrame(run); });
+    } else run();
+  }
+
+  // __responsive: one width in state, every breakpoint derived from it
+  watchWidth() {
+    const measure = () => {
+      const el = this.rootRef.current;
+      const w = el ? Math.round(el.getBoundingClientRect().width) : window.innerWidth;
+      if (w && Math.abs(w - this.state.vw) > 8) this.setState({ vw: w });
+    };
+    this._onResize = measure;
+    requestAnimationFrame(measure);
+    window.addEventListener("resize", this._onResize);
+    if (window.ResizeObserver && this.rootRef.current) {
+      this._ro = new ResizeObserver(measure);
+      this._ro.observe(this.rootRef.current);
+    }
+  }
+
+  // Thresholds are the width this part actually has, not the window's.
+  cols(spec) {
+    const w = this.state.vw;
+    if (w < 620) return "grid-template-columns: minmax(0, 1fr); gap: 12px";
+    if (w < 960) return "grid-template-columns: " + (spec.mid || "minmax(0, 1fr)") + "; gap: 13px";
+    return "grid-template-columns: " + spec.wide + "; gap: 14px";
+  }
+
+  hostSync() {
+    this.watchWidth();
+    const mine = ["assistant", "messages"];
+    const want = window.__starterScreen;
+    if (want && mine.indexOf(want) >= 0 && want !== this.state.screen) this.setState({ screen: want });
+    this._navHandler = (e) => {
+      const s = e.detail && e.detail.screen;
+      if (s && mine.indexOf(s) >= 0 && s !== this.state.screen) this.setState({ screen: s });
+    };
+    window.addEventListener("starter:nav", this._navHandler);
+  }
+
+  embedded() { return !!window.__starterHost; }
+
+  componentWillUnmount() {
+    if (this._draftT) clearTimeout(this._draftT);
+    if (this._pinRaf) cancelAnimationFrame(this._pinRaf);
+    if (this._aiRaf) cancelAnimationFrame(this._aiRaf);
+    if (this._navHandler) window.removeEventListener("starter:nav", this._navHandler);
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._ro) this._ro.disconnect();
+    if (this._think) clearTimeout(this._think);
+  }
+
+  apply() {
+    const root = document.body;
+    if (!root || this.embedded()) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  static get THREADS() {
+    return {
+      t1: { label: "Why did refunds jump in August?", messages: [
+        { who: "user", text: "Why did refunds jump in August?" },
+        { who: "bot", text: "The rate actually fell, from 2.7% to 2.4% of orders. The absolute figure rose because volume grew 11%, and three quarters of it came from one SKU.",
+          rows: [["Cold Brew 12pk", "$2,410"], ["Pour-over kit", "$486"], ["Everything else", "$318"]], sources: ["orders", "refunds"] },
+        { who: "user", text: "What is wrong with the Cold Brew?" },
+        { who: "bot", text: "Eleven of the fourteen refund notes mention the box arriving crushed. All eleven shipped through the same Madrid carrier lane between Aug 12 and Aug 19, which points at handling rather than the product.",
+          sources: ["refunds", "shipments"] }
+      ] },
+      t2: { label: "Draft a reply to Alicia Duarte", messages: [
+        { who: "user", text: "Draft a reply to Alicia about her refund." },
+        { who: "bot", text: "Here is a draft. It approves the refund, does not admit a defect, and gives her a date she can hold you to.\n\n“Hi Alicia — we have approved the $412.00 refund on order 40218. It goes back to the card ending 4417 and should land by Sep 4. Sorry the box arrived in that state; we are looking into the carrier lane it shipped through.”",
+          sources: ["order 40218", "tone guide"] }
+      ] },
+      t3: { label: "Which wholesale accounts are slipping?", messages: [] }
+    };
+  }
+
+  static get CONVERSATIONS() {
+    return {
+      c1: { name: "Alicia Duarte", meta: "Customer · last seen 4 min ago", when: "09:41", unread: 2, preview: "Any update on the refund?",
+        chat: [["day", "Yesterday"], ["in", "Hi — my order arrived with the box crushed.", "17:02"],
+          ["in", "", "17:03", "damaged-box-1.png"],
+          ["out", "Thanks for the photo, Alicia. That should not have happened — I am putting a refund through now.", "17:20", null, "Sam Whitfield"],
+          ["day", "Today"], ["in", "Any update on the refund?", "09:38"], ["in", "It has been two days and nothing has landed yet.", "09:41"]] },
+      c2: { name: "Sam Whitfield", meta: "Team · admin", when: "1h", unread: 0, preview: "Approved the Meta budget shift.",
+        chat: [["day", "Today"], ["out", "Can you look at the Meta budget shift before it expires?", "08:12", null, "Anna Hayes"],
+          ["in", "Approved the Meta budget shift, over to you.", "08:47"], ["out", "Perfect, thanks.", "08:49", null, "Anna Hayes"]] },
+      c3: { name: "Diego Ortiz", meta: "Wholesale · Mexico City", when: "Yesterday", unread: 0, preview: "Sending next PO on Monday.",
+        chat: [["day", "Yesterday"], ["in", "Sending next wholesale PO on Monday, same volumes as August.", "14:20"], ["out", "Noted — I will hold the stock.", "14:35", null, "Mara Iversen"]] },
+      c4: { name: "Finance", meta: "Internal · 3 people", when: "3h", unread: 1, preview: "August payout reconciled.",
+        chat: [["day", "Today"], ["in", "August payout reconciled, $18,240 settled.", "06:14"]] },
+      c5: { name: "Priya Nair", meta: "Customer · Bengaluru", when: "Mon", unread: 0, preview: "Thanks, that worked.",
+        chat: [["day", "Monday"], ["in", "Thanks, that worked.", "11:02"]] }
+    };
+  }
+
+  initials(name) { return name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(); }
+
+  addFiles(list, key) {
+    const files = [];
+    for (let i = 0; i < list.length; i++) files.push(list[i].name);
+    if (!files.length) return;
+    const next = (this.state[key] || []).concat(files).slice(0, 4);
+    const patch = {};
+    patch[key] = next;
+    this.setState(patch);
+  }
+
+  reply(question) {
+    if (this._think) clearTimeout(this._think);
+    this.setState({ thinking: true });
+    this._think = setTimeout(() => {
+      const extra = Object.assign({}, this.state.extra);
+      const list = (extra[this.state.thread] || []).slice();
+      list.push({ who: "bot", text: "I can answer that from live data once this is wired to the API. In the prototype: “" + question + "” would be answered from orders, customers, and the audit log, with the rows it read listed underneath.", sources: ["prototype"] });
+      extra[this.state.thread] = list;
+      this.setState({ extra, thinking: false });
+    }, 1100);
+  }
+
+  renderVals() {
+    const st = this.state;
+    const thread = Component.THREADS[st.thread] || Component.THREADS.t1;
+    const extra = st.extra[st.thread] || [];
+    const all = thread.messages.concat(extra);
+    const chipStyle = "display: flex; align-items: center; gap: 8px; background: var(--shell); border-radius: 999px; padding: 6px 8px 6px 12px; max-width: 190px";
+
+    const messages = all.map((m) => ({
+      isUser: m.who === "user", isBot: m.who !== "user", text: m.text,
+      wrapStyle: "display: flex; " + (m.who === "user" ? "justify-content: flex-end" : "justify-content: flex-start"),
+      bubbleStyle: "max-width: 78%; width: fit-content; background: var(--accent-tint); border-radius: 18px 18px 6px 18px; padding: 12px 16px; font-size: 15px; line-height: 1.55; color: var(--txt)",
+      hasImages: !!(m.images && m.images.length),
+      images: (m.images || []).map((label) => ({
+        label,
+        style: "display: grid; place-items: center; width: 94px; height: 68px; border-radius: 10px; background: var(--card); border: 1px solid var(--lead-line); font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--txt-4); padding: 6px; box-sizing: border-box; text-align: center; overflow: hidden"
+      })),
+      hasRows: !!m.rows,
+      rows: (m.rows || []).map((r, i, arr) => ({
+        left: r[0], right: r[1],
+        rowStyle: "display: flex; align-items: center; gap: 14px; padding: 11px 16px; background: var(--shell)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })),
+      hasSources: !!m.sources, sources: m.sources || [],
+      actions: [["Copy", "Copied to clipboard"], ["Good", "Marked useful"], ["Bad", "Flagged for review"]].map((a) => ({
+        label: a[0], onPick: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: a[1] }))
+      }))
+    }));
+
+    const convKeys = Object.keys(Component.CONVERSATIONS).filter((k) => {
+      const q = st.query.trim().toLowerCase();
+      if (!q) return true;
+      const c = Component.CONVERSATIONS[k];
+      return (c.name + " " + c.preview).toLowerCase().indexOf(q) >= 0;
+    });
+    const conv = Component.CONVERSATIONS[st.conversation] || Component.CONVERSATIONS.c1;
+    const sentExtra = st.sent[st.conversation] || [];
+
+    return {
+      rootRef: this.rootRef,
+      split: "grid-template-columns: " + (st.vw < 820 ? "minmax(0, 1fr)" : "1.5fr 1fr") + "; gap: 14px",
+      pair: "grid-template-columns: " + (st.vw < 560 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))") + "; gap: 10px",
+      quad: "grid-template-columns: repeat(" + (st.vw < 620 ? 2 : 4) + ", minmax(0, 1fr)); gap: 12px",
+      aiRef: this.aiRef,
+      showThreadRail: st.vw >= 900,
+      isAssistant: st.screen === "assistant",
+      isMessages: st.screen === "messages" && !st.profile,
+      isProfile: st.screen === "messages" && !!st.profile,
+      openProfile: () => this.setState({ profile: st.conversation, profileTab: "Activity" }),
+      backToMessages: () => this.setState({ profile: "" }),
+      profileAction: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Draft order created for " + conv.name })),
+      profileName: conv.name,
+      profileInitials: this.initials(conv.name),
+      profileSub: conv.meta + " · customer since Mar 2023 · Madrid",
+      profileTags: [["VIP", "ok"], ["Direct store", "info"], ["Refund open", "warn"]].map((t) => ({
+        label: t[0],
+        style: "font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 5px 10px; " + (t[1] === "ok"
+          ? "color: var(--ok); background: var(--ok-tint)"
+          : t[1] === "warn" ? "color: var(--warn); background: var(--warn-tint)" : "color: var(--accent-text); background: var(--accent-tint)")
+      })),
+      profileStats: [
+        ["Lifetime value", "$3,180", "21 orders", true],
+        ["Average order", "$151.40", "up 8% this year", false],
+        ["Refunds", "2", "$504 of $3,180", false],
+        ["Last order", "14 days ago", "cadence was 9 days", false]
+      ].map((s) => ({
+        label: s[0], value: s[1], sub: s[2],
+        cardStyle: s[3]
+          ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 18px; min-width: 0"
+          : "background: var(--shell); border-radius: var(--r2); padding: 18px; min-width: 0",
+        subStyle: "font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 8px"
+      })),
+      profileTabs: ["Activity", "Orders", "Conversations", "Preferences"].map((t) => ({
+        label: t,
+        style: "padding: 8px 15px; border-radius: 999px; font-size: 13.5px; cursor: pointer; " + (st.profileTab === t
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2)"),
+        onPick: () => this.setState({ profileTab: t })
+      })),
+      tabActivity: st.profileTab === "Activity",
+      tabOrders: st.profileTab === "Orders",
+      tabConversations: st.profileTab === "Conversations",
+      tabPreferences: st.profileTab === "Preferences",
+      profileTimeline: [
+        ["Refund requested", "Asked for $412.00 back on order 40218, citing a crushed box.", "Today · 09:14", "warn", true],
+        ["Message received", "“It has been two days and nothing has landed yet.”", "Today · 09:41", "chat", false],
+        ["Order delivered", "40218 · SEUR marked it delivered in Madrid.", "Aug 30 · 08:02", "ok", false],
+        ["Order placed", "40218 · $486.00, four items, card ending 4417.", "Aug 28 · 11:26", "ok", false],
+        ["Email opened", "Weekly digest · opened twice.", "Aug 26 · 08:12", "chat", false],
+        ["Refund issued", "40109 · $92.00, damaged in transit.", "Jun 14 · 15:40", "warn", false]
+      ].map((e, i, arr) => ({
+        title: e[0], body: e[1], when: e[2], kind: e[3] === "ok" ? "order" : e[3] === "warn" ? "refund" : "message",
+        chipStyle: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; " + (e[3] === "ok"
+          ? "color: var(--ok); background: var(--ok-tint)"
+          : e[3] === "warn" ? "color: var(--warn); background: var(--warn-tint)" : "color: var(--txt-3); background: var(--shell)"),
+        dotStyle: "width: 10px; height: 10px; border-radius: 999px; flex: none; display: block; background: " + (e[4] ? "var(--accent)" : "var(--line-2)"),
+        lineStyle: "flex: 1; width: 2px; background: var(--line-2); display: " + (i < arr.length - 1 ? "block" : "none")
+      })),
+      profileOrders: [
+        ["40218", "Cold Brew 12pk, Single Origin, Pour-over kit", "$486.00", "Refund pending", "warn", "Aug 28"],
+        ["40092", "Cold Brew 12pk ×2", "$336.00", "Delivered", "ok", "Aug 12"],
+        ["39984", "Single Origin, Huila", "$19.50", "Delivered", "ok", "Jul 30"],
+        ["39871", "Pour-over kit, Ceramic mug", "$298.50", "Delivered", "ok", "Jul 18"],
+        ["40109", "Cold Brew 12pk", "$168.00", "Refunded", "bad", "Jun 14"],
+        ["39604", "Sampler box", "$74.00", "Delivered", "ok", "May 22"]
+      ].map((o, i, arr) => ({
+        id: o[0], items: o[1], total: o[2], status: o[3], when: o[5],
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        chipStyle: "font-family: var(--mono); font-size: 10.5px; border-radius: 999px; padding: 4px 9px; " + (o[4] === "ok"
+          ? "color: var(--ok); background: var(--ok-tint)"
+          : o[4] === "warn" ? "color: var(--warn); background: var(--warn-tint)" : "color: var(--bad); background: var(--bad-tint)")
+      })),
+      profileThreads: [
+        ["Where is my refund?", "chat", "Today", "Two messages this morning, still unanswered."],
+        ["Order 40218 delivered damaged", "chat", "Yesterday", "Photos attached, refund promised within the day."],
+        ["Wholesale pricing question", "email", "Jul 02", "Asked about case pricing; sent the sheet, no reply."],
+        ["Refund on 40109", "email", "Jun 14", "Resolved in one exchange."]
+      ].map((t) => ({
+        title: t[0], channel: t[1], when: t[2], preview: t[3],
+        chipStyle: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; color: var(--txt-3); background: var(--card)",
+        onOpen: () => this.setState({ profile: "" })
+      })),
+      profilePrefs: [
+        ["Preferred channel", "Chat", "Replies within minutes on chat, days on email.", true],
+        ["Language", "Spanish", "Stated at sign-up.", false],
+        ["Contact window", "09:00 – 18:00 CET", "Never opens anything sent at night.", true],
+        ["Marketing consent", "Granted", "Weekly digest only, no promotions.", false],
+        ["Packaging", "No plastic filler", "Asked twice in notes.", false],
+        ["Delivery", "Leave with porter", "No lift in the building.", false]
+      ].map((p, i, arr) => ({
+        label: p[0], value: p[1], note: p[2],
+        rowStyle: "display: flex; align-items: center; gap: 16px; padding: 14px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        valueStyle: "font-family: var(--mono); font-size: 12px; border-radius: 999px; padding: 5px 11px; flex: none; " + (p[3]
+          ? "color: var(--accent-text); background: var(--accent-tint)"
+          : "color: var(--txt); background: var(--shell)")
+      })),
+      profileContact: [
+        ["Email", "alicia.duarte@hey.com"], ["Phone", "+34 611 204 887"], ["Address", "Calle Serrano 41, 3B"],
+        ["City", "28001 Madrid"], ["Customer ID", "C-1043"]
+      ].map((r, i, arr) => ({
+        label: r[0], value: r[1],
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 9px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })),
+      profileOpen: [
+        ["Refund of $412.00", "order 40218 · awaiting second approval", "warn"],
+        ["Unanswered message", "2 messages · 3 hours old", "bad"]
+      ].map((o) => ({
+        title: o[0], meta: o[1],
+        dotStyle: "width: 8px; height: 8px; border-radius: 999px; margin-top: 5px; flex: none; display: block; background: " + (o[2] === "bad" ? "var(--bad-fill)" : "var(--warn-fill)")
+      })),
+
+      threads: Object.keys(Component.THREADS).map((k) => {
+        const on = k === st.thread;
+        return {
+          label: Component.THREADS[k].label,
+          style: "display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 9px; font-size: 13.5px; cursor: pointer; color: " + (on ? "var(--txt)" : "var(--txt-2)") + (on ? "; background: var(--shell); font-weight: var(--w-semi)" : ""),
+          dotStyle: "width: 4px; height: 14px; border-radius: 2px; flex: none; display: block; background: " + (on ? "var(--accent)" : "var(--line-2)"),
+          onPick: () => this.setState({ thread: k })
+        };
+      }),
+      threadTitle: thread.label,
+      isEmptyThread: all.length === 0,
+      messages,
+      thinking: st.thinking,
+      model: st.model,
+      cycleModel: () => {
+        const list = ["Orion · fast", "Orion · deep", "Orion · draft"];
+        this.setState({ model: list[(list.indexOf(st.model) + 1) % list.length] });
+      },
+      newThread: () => this.setState({ thread: "t3", input: "", drafts: [] }),
+      suggestions: [
+        ["Where is revenue coming from?", "Channel split for the last 30 days"],
+        ["What needs a decision today?", "Refunds, reorders and price changes"],
+        ["Which customers are slipping?", "Accounts ordering less than usual"],
+        ["Draft a reply to a refund", "In the tone the team already uses"]
+      ].map((s) => ({
+        title: s[0], sub: s[1],
+        onPick: () => { this.setState({ input: s[0] }); }
+      })),
+
+      input: st.input,
+      onInput: (e) => this.setState({ input: e.target.value }),
+      onKey: (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); this.sendNow(); } },
+      composerStyle: "background: var(--shell); border: 1.5px solid " + (st.input.trim() ? "var(--accent)" : "var(--line-2)") + "; border-radius: var(--r2); padding: 10px 14px; box-sizing: border-box",
+      composerHint: "Enter to send · Shift + Enter for a new line",
+      sendStyle: "width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; flex: none; " + (st.input.trim()
+        ? "background: var(--accent); color: var(--accent-ink)"
+        : "background: var(--card); color: var(--txt-4); cursor: default"),
+      send: () => this.sendNow(),
+      hasDrafts: st.drafts.length > 0,
+      drafts: st.drafts.map((d, i) => ({
+        label: d, style: chipStyle,
+        onRemove: () => this.setState({ drafts: st.drafts.filter((_, j) => j !== i) })
+      })),
+      onFiles: (e) => { this.addFiles(e.target.files, "drafts"); this.setState({ pickerOpen: false }); },
+      openPicker: () => this.setState({ pickerOpen: true }),
+      closePicker: () => this.setState({ pickerOpen: false }),
+      pickerOpen: st.pickerOpen,
+      stopClick: (e) => e.stopPropagation(),
+      library: [
+        ["damaged-box-1.png", "1.2 MB · today", 1], ["damaged-box-2.png", "1.1 MB · today", 2],
+        ["cold-brew-12pk.jpg", "840 KB · Aug 28", 3], ["pour-over-kit.jpg", "1.4 MB · Aug 27", 4],
+        ["warehouse-madrid.jpg", "2.1 MB · Aug 20", 5], ["carrier-label.png", "320 KB · Aug 19", 1],
+        ["packaging-v2.png", "980 KB · Aug 14", 2], ["shelf-display.jpg", "1.7 MB · Aug 09", 3]
+      ].map((f) => ({
+        name: f[0], meta: f[1],
+        tileStyle: "border-radius: var(--r3); padding: 10px; cursor: pointer; box-sizing: border-box; border: 1px solid var(--line); background: var(--card); min-width: 0",
+        thumbStyle: "display: block; width: 100%; height: 72px; border-radius: 8px; background: var(--s" + f[2] + "); opacity: .32",
+        onPick: () => { this.setState({ drafts: st.drafts.concat([f[0]]).slice(0, 4), pickerOpen: false }); }
+      })),
+
+      query: st.query,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      conversations: convKeys.map((k) => {
+        const c = Component.CONVERSATIONS[k];
+        const on = k === st.conversation;
+        return {
+          name: c.name, preview: c.preview, when: c.when, unread: c.unread ? String(c.unread) : false,
+          initials: this.initials(c.name),
+          rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; cursor: pointer; border-bottom: 1px solid var(--line); background: " + (on ? "var(--shell)" : "transparent"),
+          avatarStyle: "width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; flex: none; font-size: 12.5px; font-weight: var(--w-bold); " + (on
+            ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text)"
+            : "background: var(--shell); color: var(--txt-2)"),
+          nameStyle: "font-size: 14.5px; letter-spacing: -0.01em; color: var(--txt); font-weight: " + (c.unread ? "var(--w-semi)" : "500"),
+          previewStyle: "font-size: 13px; color: var(--txt-3); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap",
+          preview: (() => {
+            const outs = c.chat.filter((x) => x[0] === "out");
+            const last = c.chat[c.chat.length - 1];
+            if (last && last[0] === "out") return (last[4] || "Anna Hayes").split(" ")[0] + ": " + last[1];
+            return c.preview;
+          })(),
+          onPick: () => this.setState({ conversation: k, listOpen: false })
+        };
+      }),
+      activeName: conv.name,
+      activeMeta: conv.meta,
+      activeInitials: this.initials(conv.name),
+      lastOpLabel: (() => {
+        const rows = conv.chat.concat(sentExtra).filter((x) => x[0] === "out");
+        if (!rows.length) return "No reply yet";
+        const last = rows[rows.length - 1];
+        return (last[4] || "Anna Hayes") + " · " + last[2];
+      })(),
+      lastOpInitials: (() => {
+        const rows = conv.chat.concat(sentExtra).filter((x) => x[0] === "out");
+        const who = rows.length ? (rows[rows.length - 1][4] || "Anna Hayes") : "—";
+        return who === "—" ? "—" : who.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+      })(),
+      lastOpStyle: "display: flex; align-items: center; gap: 9px; background: var(--shell); border-radius: 999px; padding: 5px 12px 5px 5px; flex: none",
+      lastOpAvatarStyle: "width: 24px; height: 24px; border-radius: 999px; background: var(--card); display: grid; place-items: center; flex: none; font-size: 9.5px; font-weight: var(--w-bold); color: var(--txt-2)",
+      activeAvatarStyle: "width: 38px; height: 38px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; flex: none; font-size: 12.5px; font-weight: var(--w-bold); cursor: pointer",
+      threadRef: this.threadRef,
+      threadStyle: "flex: 1 1 auto; min-height: 120px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 16px 20px; background: var(--shell)",
+      chat: conv.chat.concat(sentExtra).filter((c) => {
+        const q = st.threadQuery.trim().toLowerCase();
+        if (!q) return true;
+        return c[0] !== "day" && String(c[1] || "").toLowerCase().indexOf(q) >= 0;
+      }).map((c) => {
+        if (c[0] === "day") return { isDay: true, isMsg: false, label: c[1] };
+        const out = c[0] === "out";
+        return {
+          isDay: false, isMsg: true, text: c[1], time: c[2], tick: out ? "✓✓" : "",
+          author: out ? (c[4] || "Anna Hayes") : false,
+          authorStyle: "font-family: var(--mono); font-size: 9.5px; color: var(--accent-text); margin-right: 6px",
+          hasImage: !!c[3], imageLabel: c[3] || "",
+          imageStyle: "display: grid; place-items: center; width: 172px; height: 118px; border-radius: 10px; margin-bottom: 8px; box-sizing: border-box; padding: 8px; text-align: center; background: var(--card); border: 1px solid var(--line); font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-4)",
+          rowStyle: "display: flex; " + (out ? "justify-content: flex-end" : "justify-content: flex-start"),
+          bubbleStyle: "max-width: 72%; border-radius: " + (out ? "16px 16px 4px 16px" : "16px 16px 16px 4px") + "; padding: 9px 13px 7px; display: flex; flex-direction: column; " + (out
+            ? "background: var(--accent-tint)"
+            : "background: var(--card)"),
+          textStyle: "font-size: 14.5px; line-height: 1.5; color: var(--txt)",
+          metaStyle: "font-family: var(--mono); font-size: 9.5px; color: var(--txt-4); align-self: flex-end; margin-top: 3px"
+        };
+      }),
+      // --- AI draft, and the evidence behind it ---
+      draftPanelStyle: "flex: none; border-top: 1px solid var(--line); background: var(--shell)",
+      draftOpen: st.draftOpen && !st.drafting,
+      draftClosed: !st.draftOpen,
+      drafting: st.drafting,
+      notDrafting: !st.drafting,
+      askDraftLabel: st.drafting ? "Reading the account…" : "Draft a reply",
+      askDraftStyle: "display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 10px 17px; cursor: pointer; flex: none; background: var(--accent); color: var(--accent-ink)" + (st.drafting ? "; opacity: .8" : ""),
+      draftHint: st.drafting
+        ? "Pulling order 40218, the refund policy, and the last two messages"
+        : "Two unanswered messages · a refund on this order was approved 09:14",
+      inlineDraftStyle: "width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; cursor: pointer; flex: none; background: var(--accent-tint); color: var(--accent-text)",
+      askDraft: () => {
+        if (st.drafting) return;
+        this.setState({ drafting: true });
+        if (this._draftT) clearTimeout(this._draftT);
+        this._draftT = setTimeout(() => this.setState({
+          drafting: false, draftOpen: true, draftEdited: false, whyOpen: false, evidenceOpen: -1,
+          draftText: "Hi Alicia — the refund of $412.00 on order 40218 was approved this morning. It goes back to the card ending 4417 and usually takes two to five working days to land. Sorry the box turned up in that state; we are looking at the carrier lane it shipped through."
+        }), 1200);
+      },
+      draftText: st.draftText,
+      onDraftInput: (e) => this.setState({ draftText: e.target.value, draftEdited: true }),
+      draftBoxStyle: "background: var(--card); border: 1.5px solid " + (st.draftEdited ? "var(--accent)" : "var(--line-2)") + "; border-radius: var(--r2); padding: 14px 16px; box-sizing: border-box",
+      editedNote: st.draftEdited ? "Edited — your version becomes context for the next draft" : "Unedited draft",
+      approveLabel: st.draftEdited ? "Send my version" : "Send as drafted",
+      approveStyle: "font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 10px 18px; cursor: pointer",
+      approveDraft: () => {
+        const sent = Object.assign({}, st.sent);
+        const list = (sent[st.conversation] || []).slice();
+        const now = new Date();
+        list.push(["out", st.draftText, String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0"), null, "Anna Hayes"]);
+        sent[st.conversation] = list;
+        this.setState({ sent, draftOpen: false, draftEdited: false });
+        window.dispatchEvent(new CustomEvent("starter:toast", { detail: st.draftEdited ? "Sent — correction saved as context" : "Draft sent" }));
+      },
+      regenerate: () => {
+        this.setState({ draftEdited: false, draftText: "Hi Alicia — the $412.00 refund on order 40218 was approved this morning and is on its way back to the card ending 4417. Banks usually take two to five working days, so expect it by Sep 4. Sorry again about the box." });
+        window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Redrafted with the same context" }));
+      },
+      dismissDraft: () => this.setState({ draftOpen: false }),
+      whyOpen: st.whyOpen,
+      toggleWhy: () => this.setState({ whyOpen: !st.whyOpen }),
+      whyLabel: st.whyOpen ? "Hide the reasoning" : "Why this draft?",
+      whyBtnStyle: "font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 6px 12px; cursor: pointer; " + (st.whyOpen
+        ? "background: var(--accent); color: var(--accent-ink)" : "border: 1px solid var(--line-2); color: var(--txt-2)"),
+      confLabel: "confidence 0.94 · threshold 0.90",
+      confTextStyle: "font-family: var(--mono); font-size: 10.5px; color: var(--ok)",
+      confBarStyle: "position: relative; display: block; width: 96px; height: 6px; border-radius: 3px; background: var(--line); flex: none",
+      confFillStyle: "position: absolute; left: 0; top: 0; bottom: 0; width: 94%; border-radius: 3px; background: var(--ok-fill); display: block",
+      confMarkStyle: "position: absolute; left: 90%; top: -3px; bottom: -3px; width: 2px; background: var(--txt-3); display: block",
+      evidenceCount: "11 sources · retrieved in 380ms",
+      ruleLine: "Above threshold, so it may be sent without a second approver",
+      modelLine: "orion-2 · " + st.model.toLowerCase(),
+      evidence: [
+        ["order", "Order 40218 is refunded and in transit to the card", "high",
+          "status: refund_approved · amount: $412.00 · method: card_4417 · approved_at: 2026-08-31 09:14 · expected_settlement: 2026-09-04",
+          "orders / 40218 · read 12 seconds ago"],
+        ["policy", "Card refunds quote two to five working days, never a date", "high",
+          "Refund communication policy §4: give a range, not a promise. Say “two to five working days”. Do not name a settlement date unless finance has confirmed it.",
+          "policies / refunds · version 9"],
+        ["history", "She has asked twice today and is owed a reply", "medium",
+          "09:38 “Any update on the refund?” · 09:41 “It has been two days and nothing has landed yet.” · no agent reply since 17:20 yesterday",
+          "conversation c1 · last 24 hours"],
+        ["tone", "Short, first-person, no corporate hedging", "medium",
+          "Team voice: apologise once, plainly. Avoid “we sincerely apologise for any inconvenience caused”. Use contractions. Sign nothing.",
+          "tone guide · edited by Sam Whitfield"],
+        ["prior edit", "An operator previously cut the closing line from this template", "low",
+          "Aug 12 · Sam Whitfield removed “Please do not hesitate to reach out” before sending. That edit is now part of the draft.",
+          "operator corrections · 3 similar"],
+        ["shipment", "The parcel was delivered, so this is damage and not a loss", "high",
+          "carrier: SEUR · scan: delivered 2026-08-30 08:02 · lane: MAD-03 · 11 damage reports on this lane since Aug 12",
+          "shipments / 40218 · read 12 seconds ago"],
+        ["customer", "Twenty-one orders, two prior refunds, no abuse pattern", "medium",
+          "lifetime_value: $3,180 · orders: 21 · refunds: 2 ($504) · first_order: 2023-03-14 · risk_flag: none",
+          "customers / C-1043"],
+        ["preference", "She reads chat within minutes and email within days", "medium",
+          "preferred_channel: chat (inferred, 94% of replies) · contact_window: 09:00–18:00 CET · language: es-ES, writes in English",
+          "preferences · inferred from 38 interactions"],
+        ["threshold", "Above $250, so a second approver already signed it off", "high",
+          "Approval rule: refunds over $250.00 require a second approver. Approved by Anna Hayes at 09:14 today.",
+          "settings / approvals · rule 3"],
+        ["sla", "Two days open against a three-day promise", "medium",
+          "opened: 2026-08-30 09:14 · sla_target: 72h · elapsed: 48h · breach_at: 2026-09-02 09:14",
+          "service levels · refunds"],
+        ["similar", "Nine near-identical drafts were sent unedited last month", "low",
+          "Template “refund approved · card” · 9 sent, 7 unedited, average edit distance 12 characters. No complaints followed.",
+          "draft history · last 30 days"]
+      ].map((e, i, arr) => {
+        const open = st.evidenceOpen === i;
+        const tone = e[2] === "high" ? ["var(--ok)", "var(--ok-tint)"] : e[2] === "medium" ? ["var(--accent-text)", "var(--accent-tint)"] : ["var(--txt-3)", "var(--shell)"];
+        return {
+          source: e[0], claim: e[1], weight: e[2], snippet: e[3], origin: e[4], open,
+          rowStyle: "padding: 12px 14px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          tagStyle: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 4px 9px; flex: none; color: " + tone[0] + "; background: " + tone[1],
+          caretStyle: "font-family: var(--mono); font-size: 9px; color: var(--txt-4); flex: none; transform: rotate(" + (open ? "0deg" : "-90deg") + "); transition: transform .12s",
+          onToggle: () => this.setState({ evidenceOpen: open ? -1 : i }),
+          onOpen: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Opening " + e[4] }))
+        };
+      }),
+
+      // Layout floors: the thread is the screen, so the side columns give way first.
+      showList: st.vw >= 760 || st.listOpen,
+      showBack: st.vw < 760,
+      backToList: () => this.setState({ listOpen: true }),
+      listStyle: (st.vw < 760
+        ? "position: absolute; z-index: 40; top: 0; left: 0; bottom: 0; width: 296px; box-shadow: 0 20px 50px rgba(0,0,0,.24); "
+        : "width: " + (st.vw < 1040 ? "252px" : "296px") + "; flex: none; ") + "background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box",
+      threadPaneStyle: "flex: 1 1 auto; min-width: 360px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden",
+      infoOpen: st.infoOpen && st.vw >= 1040,
+      toggleInfo: () => this.setState({ infoOpen: !st.infoOpen, moreOpen: false }),
+      infoBtnStyle: "width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center; cursor: pointer; flex: none; " + (st.infoOpen
+        ? "background: var(--accent-tint); color: var(--accent-text)" : "background: var(--shell); color: var(--txt-2)"),
+      infoTags: [["VIP", "ok"], ["Refund open", "warn"]].map((t) => ({
+        label: t[0],
+        style: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 4px 9px; " + (t[1] === "ok"
+          ? "color: var(--ok); background: var(--ok-tint)" : "color: var(--warn); background: var(--warn-tint)")
+      })),
+      infoStats: [["Lifetime", "$3,180"], ["Orders", "21"], ["Avg order", "$151"], ["Last order", "14d ago"]].map((s) => ({ label: s[0], value: s[1] })),
+      infoOpenItems: [
+        ["Refund of $412.00", "order 40218 · needs approval", "warn"],
+        ["Reply owed", "2 messages · 3h old", "bad"]
+      ].map((o) => ({
+        title: o[0], meta: o[1],
+        rowStyle: "display: flex; align-items: flex-start; gap: 10px; background: var(--shell); border-radius: var(--r3); padding: 11px 12px",
+        dotStyle: "width: 7px; height: 7px; border-radius: 999px; margin-top: 5px; flex: none; display: block; background: " + (o[2] === "bad" ? "var(--bad-fill)" : "var(--warn-fill)")
+      })),
+      infoContact: [["Email", "alicia.duarte@hey.com"], ["Phone", "+34 611 204 887"], ["City", "Madrid, ES"]].map((r, i, arr) => ({
+        label: r[0], value: r[1],
+        rowStyle: "display: flex; align-items: center; gap: 10px; padding: 8px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })),
+      infoPrefs: ["Replies fast on chat, slowly on email", "Contact 09:00 – 18:00 CET", "No plastic filler in packaging"],
+      threadSearchOn: st.threadSearch,
+      threadMatches: (() => {
+        const q = st.threadQuery.trim().toLowerCase();
+        if (!q) return "type to filter";
+        const n = conv.chat.concat(sentExtra).filter((x) => x[0] !== "day" && String(x[1] || "").toLowerCase().indexOf(q) >= 0).length;
+        return n + (n === 1 ? " match" : " matches");
+      })(),
+      threadQuery: st.threadQuery,
+      onThreadQuery: (e) => this.setState({ threadQuery: e.target.value }),
+      closeThreadSearch: () => this.setState({ threadSearch: false, threadQuery: "" }),
+      toggleThreadSearch: () => this.setState({ threadSearch: !st.threadSearch, threadQuery: "", moreOpen: false }),
+      searchBtnStyle: "width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center; cursor: pointer; flex: none; " + (st.threadSearch
+        ? "background: var(--accent-tint); color: var(--accent-text)" : "background: var(--shell); color: var(--txt-2)"),
+      moreBtnStyle: "width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center; cursor: pointer; flex: none; " + (st.moreOpen
+        ? "background: var(--accent-tint); color: var(--accent-text)" : "background: var(--shell); color: var(--txt-2)"),
+      moreOpen: st.moreOpen,
+      toggleMore: () => this.setState({ moreOpen: !st.moreOpen, threadSearch: false }),
+      moreItems: [
+        ["Mark as unread", "Marked unread"], ["Mute notifications", "Muted for 8 hours"],
+        ["Export transcript", "Transcript export queued"], ["Archive conversation", "Conversation archived"]
+      ].map((m) => ({
+        label: m[0],
+        style: "display: block; padding: 9px 11px; border-radius: 8px; font-size: 13.5px; color: var(--txt-2); cursor: pointer",
+        onPick: () => { this.setState({ moreOpen: false }); window.dispatchEvent(new CustomEvent("starter:toast", { detail: m[1] })); }
+      })),
+      msgInput: st.msgInput,
+      onMsgInput: (e) => this.setState({ msgInput: e.target.value }),
+      onMsgKey: (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); this.sendMessage(); } },
+      msgSendStyle: "width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; cursor: pointer; flex: none; " + (st.msgInput.trim() || st.msgDrafts.length
+        ? "background: var(--accent); color: var(--accent-ink)"
+        : "background: var(--shell); color: var(--txt-4); cursor: default"),
+      sendMsg: () => this.sendMessage(),
+      hasMsgDrafts: st.msgDrafts.length > 0,
+      msgDrafts: st.msgDrafts.map((d, i) => ({
+        label: d, style: chipStyle,
+        onRemove: () => this.setState({ msgDrafts: st.msgDrafts.filter((_, j) => j !== i) })
+      })),
+      onMsgFiles: (e) => this.addFiles(e.target.files, "msgDrafts")
+    };
+  }
+
+  sendNow() {
+    const text = this.state.input.trim();
+    if (!text && !this.state.drafts.length) return;
+    const extra = Object.assign({}, this.state.extra);
+    const list = (extra[this.state.thread] || []).slice();
+    list.push({ who: "user", text: text, images: this.state.drafts.slice() });
+    extra[this.state.thread] = list;
+    this.setState({ extra, input: "", drafts: [] });
+    this.reply(text || "the attached image");
+  }
+
+  sendMessage() {
+    const text = this.state.msgInput.trim();
+    if (!text && !this.state.msgDrafts.length) return;
+    const sent = Object.assign({}, this.state.sent);
+    const list = (sent[this.state.conversation] || []).slice();
+    const now = new Date();
+    const time = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    if (this.state.msgDrafts.length) list.push(["out", text, time, this.state.msgDrafts[0], "Anna Hayes"]);
+    else list.push(["out", text, time, null, "Anna Hayes"]);
+    sent[this.state.conversation] = list;
+    this.setState({ sent, msgInput: "", msgDrafts: [] });
+  }
+}
+</script>
+</body>
+</html>

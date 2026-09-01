@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --s1: oklch(.34 .13 250); --s2: oklch(.46 .16 250); --s3: oklch(.58 .14 250);
+    --s4: oklch(.70 .10 250); --s5: oklch(.82 .06 250);
+    --hero: oklch(.965 .014 250); --hero-txt: #4c5158; --hero-strong: #0e1013; --hero-accent: oklch(.44 .15 250);
+    --hero-fill: #ffffff; --hero-hair: oklch(.90 .04 250); --hero-mute: #a6abb1;
+    --ok: oklch(.575 .195 147); --ok-fill: oklch(.66 .203 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-fill: oklch(.83 .203 92); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-fill: oklch(.64 .233 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --r: 22px; --r2: 16px; --r3: 11px;
+    --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--txt); text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  a:hover { color: var(--accent-text); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input { font: inherit; color: inherit; background: none; border: none; outline: none; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="position: absolute; inset: 0; min-height: 0; display: flex; flex-direction: column">
+ <div style="flex: 1; min-height: 0; display: flex; position: relative">
+
+  <sc-if value="{{ railOpen }}" hint-placeholder-val="{{ true }}">
+  <div style="display: none">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px 26px">
+      <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ true }}">
+        <img alt="{{ brandName }}" ref="{{ logoRef }}" style="height: 28px; width: auto; display: block; max-width: 168px" />
+      </sc-if>
+      <sc-if value="{{ hasWordmark }}" hint-placeholder-val="{{ true }}">
+        <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+          <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+          <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+        </span>
+      </sc-if>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 40px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; margin-right: -4px; padding-right: 4px">
+    <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 0 12px 10px">Operate</div>
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <sc-for list="{{ navOperate }}" as="item" hint-placeholder-count="4">
+        <div style="display: flex; flex-direction: column; gap: 3px">
+          <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+            <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+            </sc-if>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+            {{ item.label }}
+            <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ item.badgeStyle }}">{{ item.badge }}</span>
+            </sc-if>
+            <sc-if value="{{ item.hasChildren }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ item.caretStyle }}" onClick="{{ item.onToggle }}">&#9662;</span>
+            </sc-if>
+          </div>
+          <sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 2px; padding: 1px 0 5px 29px">
+              <sc-for list="{{ item.children }}" as="c" hint-placeholder-count="3">
+                <div style="{{ c.style }}" style-hover="color: var(--txt)" onClick="{{ c.onClick }}">
+                  <span style="{{ c.dotStyle }}"></span>
+                  {{ c.label }}
+                  <sc-if value="{{ c.count }}" hint-placeholder-val="{{ false }}">
+                    <span style="margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ c.count }}</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 20px 12px 10px">General</div>
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <sc-for list="{{ navGeneral }}" as="item" hint-placeholder-count="3">
+        <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+          <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+            <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+          </sc-if>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+          {{ item.label }}
+        </div>
+      </sc-for>
+    </div>
+
+    </div>
+
+    <div style="flex: none; display: flex; gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); padding: 3px; margin: 0 4px 8px 0; box-sizing: border-box">
+      <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+        <span style="{{ m.style }}" onClick="{{ m.onClick }}" title="{{ m.label }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ m.icon }}"></path></svg>
+          {{ m.short }}
+        </span>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ showPromo }}" hint-placeholder-val="{{ true }}">
+      <div style="flex: none; background: var(--hero); border: 1px solid var(--hero-hair); box-sizing: border-box; border-radius: var(--r2); padding: 15px; margin: 0 4px 0 0; display: flex; align-items: center; gap: 11px" data-rail-promo="1">
+        <span style="width: 26px; height: 26px; border-radius: 8px; background: var(--hero-fill); display: grid; place-items: center; flex: none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--hero-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg></span>
+        <div style="flex: 1; min-width: 0">
+          <div style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--hero-strong); letter-spacing: -0.015em">Connect a source</div>
+          <div style="font-family: var(--mono); font-size: 10.5px; color: var(--hero-txt); margin-top: 2px">2 of 4 unlinked</div>
+        </div>
+        <span style="font-family: var(--mono); font-size: 13px; color: var(--hero-accent); flex: none" onClick="{{ goEmpty }}">&#8250;</span>
+      </div>
+    </sc-if>
+
+    <a href="https://attomik.co" target="_blank" rel="noopener" style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; padding: 14px 12px 2px; flex: none; display: flex; align-items: center; gap: 7px" style-hover="color: var(--txt-3)">
+      Built by
+      <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+        <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+          <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+          <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+        </g>
+        <g transform="translate(-11.56 -7)" fill="currentColor">
+          <circle cx="50" cy="16" r="9"></circle>
+          <circle cx="79.44" cy="67" r="9"></circle>
+          <circle cx="20.56" cy="67" r="9"></circle>
+        </g>
+      </svg>
+      Attomik
+    </a>
+  </div>
+  </sc-if>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+
+
+    <sc-if value="{{ desktop }}" hint-placeholder-val="{{ true }}">
+    <div style="display: none">
+      <div style="flex: 1; min-width: 0; max-width: 460px; display: flex; align-items: center; gap: 11px; background: var(--shell); border-radius: 13px; padding: 11px 14px; cursor: pointer" onClick="{{ openPalette }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        <span style="font-size: 14.5px; color: var(--txt-3); flex: 1">Search orders, customers, SKUs</span>
+        <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-4); background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px">&#8984;K</span>
+      </div>
+      <div style="flex: 1"></div>
+      <div style="display: flex; align-items: center; gap: 9px">
+        <div style="position: relative">
+          <span style="{{ mailBtnStyle }}" onClick="{{ toggleMail }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg>
+            <sc-if value="{{ mailUnread }}" hint-placeholder-val="{{ true }}">
+              <span style="position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 999px; background: var(--accent); border: 2px solid var(--shell)"></span>
+            </sc-if>
+          </span>
+          <sc-if value="{{ mailOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ panelStyle }}">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line)">
+                <span style="font-size: 15px; font-weight: var(--w-bold); letter-spacing: -0.02em; flex: 1">Messages</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ readAllMail }}">Mark all read</span>
+              </div>
+              <div style="max-height: 340px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+                <sc-for list="{{ messages }}" as="m" hint-placeholder-count="4">
+                  <div style="{{ m.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ m.onOpen }}">
+                    <span style="{{ m.avatarStyle }}">{{ m.initials }}</span>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="display: flex; align-items: baseline; gap: 8px">
+                        <span style="{{ m.nameStyle }}">{{ m.name }}</span>
+                        <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ m.when }}</span>
+                      </div>
+                      <div style="font-size: 13px; color: var(--txt-2); line-height: 1.45; margin-top: 3px">{{ m.body }}</div>
+                    </div>
+                    <sc-if value="{{ m.unread }}" hint-placeholder-val="{{ false }}">
+                      <span style="width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: block; flex: none; margin-top: 6px"></span>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding: 12px 16px; border-top: 1px solid var(--line); text-align: center">
+                <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); cursor: pointer" onClick="{{ goInbox }}">Open all messages</span>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+        <div style="position: relative">
+          <span style="{{ bellBtnStyle }}" onClick="{{ toggleBell }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+            <sc-if value="{{ bellUnread }}" hint-placeholder-val="{{ true }}">
+              <span style="position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 999px; background: var(--bad-fill); border: 2px solid var(--shell)"></span>
+            </sc-if>
+          </span>
+          <sc-if value="{{ bellOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ panelStyle }}">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line)">
+                <span style="font-size: 15px; font-weight: var(--w-bold); letter-spacing: -0.02em; flex: 1">Notifications</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ readAllAlerts }}">Mark all read</span>
+              </div>
+              <div style="max-height: 340px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+                <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                  <div style="{{ a.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ a.onOpen }}">
+                    <span style="{{ a.iconStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ a.icon }}"></path></svg></span>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="display: flex; align-items: baseline; gap: 8px">
+                        <span style="{{ a.titleStyle }}">{{ a.title }}</span>
+                        <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ a.when }}</span>
+                      </div>
+                      <div style="font-size: 13px; color: var(--txt-2); line-height: 1.45; margin-top: 3px">{{ a.body }}</div>
+                    </div>
+                    <sc-if value="{{ a.unread }}" hint-placeholder-val="{{ false }}">
+                      <span style="width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: block; flex: none; margin-top: 6px"></span>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding: 12px 16px; border-top: 1px solid var(--line); text-align: center">
+                <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); cursor: pointer" onClick="{{ goInbox }}">See everything in the inbox</span>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <div style="width: 1px; height: 30px; background: var(--line)"></div>
+      <div style="position: relative">
+        <div style="{{ accountBtnStyle }}" onClick="{{ toggleAccount }}">
+          <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--hero); border: 1px solid var(--hero-hair); box-sizing: border-box; color: var(--hero-accent); display: grid; place-items: center; font-size: 13.5px; font-weight: var(--w-bold); flex: none">AH</span>
+          <div style="min-width: 0">
+            <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">Anna Hayes</div>
+            <div style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">anna@attomik.co</div>
+          </div>
+          <span style="{{ accountCaretStyle }}">&#9662;</span>
+        </div>
+        <sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ accountPanelStyle }}">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid var(--line)">
+              <span style="width: 42px; height: 42px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 15px; font-weight: var(--w-bold); flex: none">AH</span>
+              <div style="min-width: 0; flex: 1">
+                <div style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em">Anna Hayes</div>
+                <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">anna@attomik.co</div>
+              </div>
+              <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 4px 9px; flex: none">Owner</span>
+            </div>
+            <div style="padding: 8px">
+              <sc-for list="{{ accountItems }}" as="a" hint-placeholder-count="4">
+                <div style="{{ a.style }}" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ a.onPick }}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ a.icon }}"></path></svg>
+                  {{ a.label }}
+                  <span style="margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ a.hint }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="padding: 10px 16px 14px; border-top: 1px solid var(--line)">
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 8px">Appearance</div>
+              <div style="display: flex; gap: 3px; background: var(--shell); border-radius: var(--r3); padding: 3px">
+                <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+                  <span style="{{ m.style }}" onClick="{{ m.onClick }}">{{ m.short }}</span>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding: 10px; border-top: 1px solid var(--line)">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r3); font-size: 14px; font-weight: var(--w-semi); color: var(--bad); cursor: pointer" style-hover="background: var(--bad-tint)" onClick="{{ signOut }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M15 17l5-5-5-5M20 12H9M12 3H5v18h7"></path></svg>
+                Sign out
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; display: flex; flex-direction: column; gap: 16px; margin-right: -6px; padding-right: 6px">
+
+    <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+    <div style="background: var(--card); border-radius: var(--r); padding: {{ panelPad }}; display: flex; flex-direction: column; gap: 22px">
+
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+        <div style="min-width: 0">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--accent); display: block"></span>Live</span>
+            <span style="color: var(--txt-4)">&#183;</span><span>Shopify</span>
+            <span style="color: var(--txt-4)">&#183;</span><span>synced 4 min ago</span>
+          </div>
+          <h1 style="font-size: 38px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.02; margin: 0 0 8px">Overview</h1>
+          <p style="font-size: 15px; color: var(--txt-2); line-height: 1.5; margin: 0">Thirty days to Aug 30, against the thirty before it.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 9px; flex: none">
+          <div style="position: relative">
+            <div style="{{ dateBtnStyle }}" onClick="{{ toggleDate }}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              {{ dateLabel }}
+              <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">&#9662;</span>
+            </div>
+            <sc-if value="{{ dateOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; top: 50px; right: 0; z-index: 40; width: 276px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 44px rgba(0,0,0,.16); padding: 14px; animation: rise .14s ease-out">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); padding: 2px 8px 8px">Range</div>
+                <sc-for list="{{ datePresets }}" as="d" hint-placeholder-count="4">
+                  <div style="{{ d.style }}" onClick="{{ d.onClick }}">{{ d.label }}<span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-left: auto">{{ d.hint }}</span></div>
+                </sc-for>
+                <div style="border-top: 1px solid var(--line); margin-top: 10px; padding-top: 12px">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px">
+                    <span style="width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; color: var(--txt-2); font-family: var(--mono); font-size: 12px" style-hover="background: var(--shell)" onClick="{{ prevMonth }}">&#8249;</span>
+                    <span style="flex: 1; text-align: center; font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ monthLabel }}</span>
+                    <span style="width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; color: var(--txt-2); font-family: var(--mono); font-size: 12px" style-hover="background: var(--shell)" onClick="{{ nextMonth }}">&#8250;</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; margin-bottom: 4px">
+                    <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                      <span style="text-align: center; font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--txt-4); padding: 4px 0">{{ w }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px">
+                    <sc-for list="{{ days }}" as="day" hint-placeholder-count="35">
+                      <span style="{{ day.style }}" onClick="{{ day.onPick }}">{{ day.label }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px">
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); flex: 1">{{ rangeSummary }}</span>
+                    <span style="font-family: var(--mono); font-size: 10.5px; color: var(--accent-text); cursor: pointer" onClick="{{ applyRange }}">Apply</span>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="height: 42px; padding: 0 20px; background: var(--accent); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); white-space: nowrap; flex: none">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add source
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ grid4 }}">
+        <div style="background: var(--hero); border: 1px solid var(--hero-hair); box-sizing: border-box; border-radius: var(--r2); padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <span style="font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--hero-txt)">Revenue</span>
+            <span style="width: 28px; height: 28px; border-radius: 999px; background: var(--hero-fill); display: grid; place-items: center; flex: none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--hero-accent)" stroke-width="2.4" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="9 7 17 7 17 15"></polyline></svg></span>
+          </div>
+          <div style="font-size: 38px; font-weight: var(--w-bold); letter-spacing: -0.045em; line-height: 1; color: var(--hero-strong); overflow-wrap: anywhere">$248,310</div>
+          <div style="display: flex; align-items: center; gap: 9px; margin-top: -4px">
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--ok); background: var(--ok-tint); border-radius: 999px; padding: 4px 9px">&#8593; 18.4%</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--hero-txt)">vs $209,720</span>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <span style="font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">Orders</span>
+            <span style="width: 28px; height: 28px; border-radius: 999px; background: var(--card); display: grid; place-items: center; flex: none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="2.4" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="9 7 17 7 17 15"></polyline></svg></span>
+          </div>
+          <div style="font-size: 38px; font-weight: var(--w-bold); letter-spacing: -0.045em; line-height: 1">3,412</div>
+          <div style="display: flex; align-items: center; gap: 9px; margin-top: -4px">
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--ok); background: var(--ok-tint); border-radius: 999px; padding: 4px 9px">&#8593; 11.2%</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">vs 3,068</span>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <span style="font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">Avg order</span>
+            <span style="width: 28px; height: 28px; border-radius: 999px; background: var(--card); display: grid; place-items: center; flex: none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="2.4" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="9 7 17 7 17 15"></polyline></svg></span>
+          </div>
+          <div style="font-size: 38px; font-weight: var(--w-bold); letter-spacing: -0.045em; line-height: 1">$72.78</div>
+          <div style="display: flex; align-items: center; gap: 9px; margin-top: -4px">
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--ok); background: var(--ok-tint); border-radius: 999px; padding: 4px 9px">&#8593; 6.4%</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">vs $68.36</span>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <span style="font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">Ad spend return</span>
+            <span style="width: 28px; height: 28px; border-radius: 999px; background: var(--card); display: grid; place-items: center; flex: none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2.4" stroke-linecap="round"><line x1="7" y1="7" x2="17" y2="17"></line><polyline points="17 9 17 17 9 17"></polyline></svg></span>
+          </div>
+          <div style="font-size: 38px; font-weight: var(--w-bold); letter-spacing: -0.045em; line-height: 1">3.14x</div>
+          <div style="display: flex; align-items: center; gap: 9px; margin-top: -4px">
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--bad); background: var(--bad-tint); border-radius: 999px; padding: 4px 9px">&#8595; 0.08</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">vs 3.22x</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ grid3 }}; align-items: stretch">
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 26px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Revenue by day</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">this week</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 12px; height: 216px; padding-top: 34px; box-sizing: content-box">
+            <sc-for list="{{ bars }}" as="bar" hint-placeholder-count="7">
+              <div style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0">
+                <sc-if value="{{ bar.lead }}" hint-placeholder-val="{{ false }}">
+                  <span style="position: absolute; bottom: 100%; margin-bottom: 9px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-family: var(--mono); font-size: 11.5px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 3px 8px">{{ bar.value }}</span>
+                </sc-if>
+                <div style="{{ bar.style }}"></div>
+                <span style="{{ bar.labelStyle }}">{{ bar.day }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0; display: flex; flex-direction: column">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 20px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Target</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">August</span>
+          </div>
+          <div style="flex: 1; display: grid; place-items: center; margin: 4px 0 18px">
+            <div style="position: relative; width: 100%; max-width: 216px">
+              <svg viewBox="0 0 240 140" width="100%" style="display: block" role="img" aria-label="Monthly target progress">
+                <path d="M 24 128 A 96 96 0 0 1 216 128" fill="none" stroke="var(--line-2)" stroke-width="20" stroke-linecap="butt"></path>
+                <path d="M 24 128 A 96 96 0 0 1 216 128" fill="none" stroke="var(--accent)" stroke-width="20" stroke-linecap="butt" stroke-dasharray="207 302"></path>
+              </svg>
+              <div style="position: absolute; left: 0; right: 0; bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 2px">
+                <span style="font-size: 34px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1">69%</span>
+                <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">of $360k</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px"><span style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--txt-2)"><span style="width: 8px; height: 8px; border-radius: 999px; background: var(--accent); display: block"></span>Booked</span><span style="font-family: var(--mono); font-size: 13px">$248,310</span></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px"><span style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--txt-2)"><span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block"></span>Remaining</span><span style="font-family: var(--mono); font-size: 13px; color: var(--txt-2)">$111,690</span></div>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Channels</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3); border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 10px">All</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{ channels }}" as="row" hint-placeholder-count="4">
+              <div style="{{ row.rowStyle }}">
+                <span style="{{ row.tileStyle }}"></span>
+                <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-4); flex: none">{{ row.code }}</span>
+                <div style="flex: 1; min-width: 0"><div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ row.name }}</div><div style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ row.sub }}</div></div>
+                <div style="text-align: right"><div style="font-family: var(--mono); font-size: 13.5px">{{ row.value }}</div><div style="{{ row.deltaStyle }}">{{ row.delta }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ grid2 }}; align-items: start">
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Needs a decision</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--warn); background: var(--warn-tint); border-radius: 999px; padding: 4px 10px">4 waiting</span>
+          </div>
+          <div style="display: flex; flex-direction: column">
+            <sc-for list="{{ decisions }}" as="row" hint-placeholder-count="4">
+              <div style="{{ row.rowStyle }}">
+                <span style="width: 34px; height: 34px; border-radius: 999px; background: var(--card); display: grid; place-items: center; flex: none; font-size: 12.5px; font-weight: var(--w-bold); color: var(--txt-2)">{{ row.code }}</span>
+                <div style="flex: 1; min-width: 0"><div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ row.title }}</div><div style="font-size: 13px; color: var(--txt-2)">{{ row.sub }}</div></div>
+                <span style="{{ row.chipStyle }}">{{ row.action }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--hero); border: 1px solid var(--hero-hair); box-sizing: border-box; border-radius: var(--r2); padding: 26px 24px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em; color: var(--hero-strong)">Next action</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--hero-txt)">today</span>
+          </div>
+          <div>
+            <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; line-height: 1.2; color: var(--hero-strong)">Weekly growth review</div>
+            <div style="font-family: var(--mono); font-size: 12.5px; color: var(--hero-txt); margin-top: 8px">15:00 &#8211; 15:45 &#183; Anna, Sam</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px; border-top: 1px solid var(--hero-hair); padding-top: 16px">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--hero-txt)"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--hero-accent); display: block; flex: none"></span>Retention cohort slipped 2 points</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--hero-txt)"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--hero-mute); display: block; flex: none"></span>Amazon buy box lost twice</div>
+          </div>
+          <div style="flex: 1"></div>
+          <div style="background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 12px 0; text-align: center; font-size: 14.5px; font-weight: var(--w-semi)">Open agenda</div>
+        </div>
+      </div>
+
+    </div>
+    </sc-if>
+
+
+
+
+    <sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
+    <div style="background: var(--card); border-radius: var(--r); padding: {{ panelPad }}; display: flex; flex-direction: column; gap: 20px; flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; flex: none">
+        <div style="min-width: 0">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--accent); display: block"></span>Live</span>
+            <span style="color: var(--txt-4)">&#183;</span><span>Shopify, Stripe</span>
+            <span style="color: var(--txt-4)">&#183;</span><span>synced 4 min ago</span>
+          </div>
+          <h1 style="font-size: 32px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.05; margin: 0 0 6px">Analytics</h1>
+          <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.5; margin: 0">Ninety days to Aug 30, with the previous ninety behind it as a dashed ghost.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; flex: none">
+          <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="3">
+            <span style="{{ r.style }}" onClick="{{ r.onClick }}">{{ r.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ grid4 }}; flex: none">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+          <div style="{{ k.cardStyle }}">
+            <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 14px">{{ k.label }}</div>
+            <div style="font-size: 30px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1">{{ k.value }}</div>
+            <div style="display: flex; align-items: center; gap: 9px; margin-top: 12px">
+              <span style="{{ k.deltaStyle }}">{{ k.delta }}</span>
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ k.prior }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; flex: none">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; flex-wrap: wrap">
+          <div>
+            <div style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Revenue trend</div>
+            <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 5px">weekly, thirteen weeks</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px">
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--txt-2)"><span style="width: 14px; height: 3px; border-radius: 2px; background: var(--accent); display: block"></span>This period</span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--txt-3)"><span style="width: 14px; height: 0; border-top: 2px dashed var(--line-2); display: block"></span>Prior period</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 14px">
+          <div style="width: 52px; flex: none; display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 22px">
+            <sc-for list="{{ axis }}" as="a" hint-placeholder-count="5">
+              <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); text-align: right">{{ a }}</span>
+            </sc-for>
+          </div>
+          <div style="flex: 1; min-width: 0">
+            <svg viewBox="0 0 720 240" width="100%" height="240" preserveAspectRatio="none" style="display: block" role="img" aria-label="Weekly revenue against the prior period">
+              <defs>
+                <linearGradient id="trendWash" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.26"></stop>
+                  <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+              <g stroke="var(--line)" stroke-width="1">
+                <line x1="0" y1="4" x2="720" y2="4"></line>
+                <line x1="0" y1="63" x2="720" y2="63"></line>
+                <line x1="0" y1="122" x2="720" y2="122"></line>
+                <line x1="0" y1="181" x2="720" y2="181"></line>
+                <line x1="0" y1="236" x2="720" y2="236"></line>
+              </g>
+              <path d="{{ trendArea }}" fill="url(#trendWash)"></path>
+              <path d="{{ priorLine }}" fill="none" stroke="var(--line-2)" stroke-width="2" stroke-dasharray="5 5" vector-effect="non-scaling-stroke"></path>
+              <path d="{{ trendLine }}" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"></path>
+              <circle cx="{{ markX }}" cy="{{ markY }}" r="4.5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5"></circle>
+            </svg>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px">
+              <sc-for list="{{ weeks }}" as="w" hint-placeholder-count="7">
+                <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ w }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; flex: none">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 20px">
+          <div style="min-width: 0">
+            <div style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Service matrix</div>
+            <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 6px">{{ matrixMeta }}</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+            <sc-for list="{{ matrixLegend }}" as="l" hint-placeholder-count="4">
+              <span style="{{ l.style }}" onClick="{{ l.onPick }}"><span style="{{ l.dotStyle }}"></span>{{ l.label }}</span>
+            </sc-for>
+            <span style="{{ matrixDenseStyle }}" onClick="{{ toggleMatrixDense }}">{{ matrixDenseLabel }}</span>
+          </div>
+        </div>
+
+        <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; background: var(--card)">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--shell); border-bottom: 1px solid var(--line)">
+            <span style="width: 168px; flex: none; font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">Account</span>
+            <div style="flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 4px">
+              <sc-for list="{{ matrixDays }}" as="d" hint-placeholder-count="15">
+                <span style="text-align: center; font-family: var(--mono); font-size: 9.5px; color: var(--txt-4)">{{ d }}</span>
+              </sc-for>
+            </div>
+            <span style="width: 58px; flex: none; text-align: right; font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">Rate</span>
+          </div>
+          <sc-for list="{{ matrixRows }}" as="row" hint-placeholder-count="8">
+            <div style="{{ row.rowStyle }}" style-hover="background: var(--shell)">
+              <span style="width: 168px; flex: none; font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ row.name }}</span>
+              <div style="flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 4px">
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="15">
+                  <span style="{{ cell.style }}" title="{{ cell.title }}" onClick="{{ cell.onPick }}">{{ cell.mark }}</span>
+                </sc-for>
+              </div>
+              <span style="{{ row.rateStyle }}">{{ row.rate }}</span>
+            </div>
+          </sc-for>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--shell); border-top: 1px solid var(--line); flex-wrap: wrap">
+            <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); flex: 1; min-width: 0">Missed reasons: no dock access · container empty · client cancelled · vehicle in workshop · rescheduled</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt)">Month {{ matrixTotal }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ grid3 }}; flex: none">
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 20px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Revenue bridge</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">Jul &#8594; Aug</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 8px; height: 196px">
+            <sc-for list="{{ waterfall }}" as="w" hint-placeholder-count="6">
+              <div style="flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 7px">
+                <span style="{{ w.valueStyle }}">{{ w.value }}</span>
+                <span style="{{ w.barStyle }}"></span>
+                <span style="{{ w.labelStyle }}">{{ w.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0; display: flex; flex-direction: column">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Share of revenue</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">August</span>
+          </div>
+          <div style="flex: 1; display: grid; place-items: center; margin-bottom: 12px">
+            <div style="position: relative; width: 100%; max-width: 170px">
+              <svg viewBox="0 0 120 120" width="100%" style="display: block; transform: rotate(-90deg)" role="img" aria-label="Revenue share by channel">
+                <circle cx="60" cy="60" r="46" fill="none" stroke="var(--line)" stroke-width="17"></circle>
+                <sc-for list="{{ donut }}" as="d" hint-placeholder-count="4">
+                  <circle cx="60" cy="60" r="46" fill="none" stroke="{{ d.color }}" stroke-width="17" stroke-dasharray="{{ d.dash }}" stroke-dashoffset="{{ d.offset }}"></circle>
+                </sc-for>
+              </svg>
+              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+                <span style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1">$248k</span>
+                <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-3)">4 channels</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 7px; border-top: 1px solid var(--line); padding-top: 12px">
+            <sc-for list="{{ donutLegend }}" as="l" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span style="{{ l.dotStyle }}"></span>
+                <span style="font-size: 13px; color: var(--txt-2); flex: 1; min-width: 0">{{ l.label }}</span>
+                <span style="font-family: var(--mono); font-size: 12px">{{ l.share }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 18px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">When orders land</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">local time</span>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 17px; flex: none">
+              <sc-for list="{{ heatRows }}" as="r" hint-placeholder-count="7">
+                <span style="height: 19px; display: flex; align-items: center; font-family: var(--mono); font-size: 10px; color: var(--txt-4)">{{ r.label }}</span>
+              </sc-for>
+            </div>
+            <div style="flex: 1; min-width: 0">
+              <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin-bottom: 5px">
+                <sc-for list="{{ heatCols }}" as="c" hint-placeholder-count="6">
+                  <span style="text-align: center; font-family: var(--mono); font-size: 9.5px; color: var(--txt-4)">{{ c }}</span>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <sc-for list="{{ heatRows }}" as="r" hint-placeholder-count="7">
+                  <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px">
+                    <sc-for list="{{ r.cells }}" as="cell" hint-placeholder-count="6">
+                      <span style="{{ cell.style }}" title="{{ cell.title }}"></span>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 7px; margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px">
+            <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">Fewer</span>
+            <sc-for list="{{ heatScale }}" as="s" hint-placeholder-count="5">
+              <span style="{{ s }}"></span>
+            </sc-for>
+            <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4)">More</span>
+            <span style="flex: 1"></span>
+            <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-3)">Peak Fri 18:00</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; {{ grid2 }}; flex: none">
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 22px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Revenue by channel</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">per month</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 16px; height: 176px">
+            <sc-for list="{{ stacks }}" as="s" hint-placeholder-count="6">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 10px">
+                <div style="{{ s.colStyle }}">
+                  <sc-for list="{{ s.segments }}" as="seg" hint-placeholder-count="4">
+                    <span style="{{ seg.style }}"></span>
+                  </sc-for>
+                </div>
+                <span style="{{ s.labelStyle }}">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px 16px; border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px">
+            <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4">
+              <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--txt-2)"><span style="{{ l.dotStyle }}"></span>{{ l.label }}<span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-4)">{{ l.share }}</span></span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 20px">
+            <span style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em">Retention</span>
+            <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">by cohort</span>
+          </div>
+          <div style="display: flex; flex-direction: column">
+            <sc-for list="{{ cohorts }}" as="c" hint-placeholder-count="5">
+              <div style="{{ c.rowStyle }}">
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--txt-2); width: 64px; flex: none">{{ c.label }}</span>
+                <span style="flex: 1; min-width: 0; display: flex; gap: 3px; align-items: flex-end; height: 26px">
+                  <sc-for list="{{ c.bars }}" as="b" hint-placeholder-count="6">
+                    <span style="{{ b.style }}"></span>
+                  </sc-for>
+                </span>
+                <span style="{{ c.valueStyle }}">{{ c.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 12.5px; color: var(--txt-3); line-height: 1.55; margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px">Month six is the number that matters. Anything under 30% means the product is renting customers, not keeping them.</div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    </div>
+  </div>
+ </div>
+
+ <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 95; background: rgba(8,10,14,.34); display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh" onClick="{{ closePalette }}">
+     <div style="width: 560px; max-width: calc(100% - 32px); background: var(--card); border-radius: var(--r2); box-shadow: 0 30px 70px rgba(0,0,0,.3); overflow: hidden; animation: rise .14s ease-out">
+       <div style="display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line)">
+         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+         <input placeholder="Search screens and actions" value="{{ paletteQuery }}" onInput="{{ onPaletteQuery }}" style="flex: 1; min-width: 0; font-size: 15.5px" />
+         <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; flex: none">ESC</span>
+       </div>
+       <div style="max-height: 380px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 10px">
+         <sc-for list="{{ paletteGroups }}" as="g" hint-placeholder-count="2">
+           <div style="margin-bottom: 8px">
+             <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); padding: 8px 12px 6px">{{ g.label }}</div>
+             <sc-for list="{{ g.items }}" as="i" hint-placeholder-count="4">
+               <div style="{{ i.style }}" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ i.onPick }}">
+                 {{ i.label }}
+                 <span style="margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--txt-4)">{{ i.hint }}</span>
+               </div>
+             </sc-for>
+           </div>
+         </sc-for>
+       </div>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; right: 44px; bottom: 44px; z-index: 96; display: flex; align-items: center; gap: 12px; background: var(--txt); border-radius: var(--r3); padding: 14px 18px; box-shadow: 0 18px 40px rgba(0,0,0,.24); animation: rise .16s ease-out">
+     <span style="width: 20px; height: 20px; border-radius: 999px; background: var(--ok-fill); display: grid; place-items: center; flex: none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+     <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--card)">{{ toast }}</span>
+   </div>
+ </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;'comfortable' | 'compact'&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;showPromo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;brandName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Brand&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Brand&quot;},&quot;logoSrc&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Brand&quot;}}">
+class Component extends DCLogic {
+  state = { screen: "overview", tab: "Unfulfilled", themeMode: null, tall: true, range: "90d", matrixDense: false, matrixFilter: "", dateOpen: false, dateLabel: "Aug 1 – Aug 30", cursor: "2026-08", dateFrom: "2026-08-01", dateTo: "2026-08-30", paletteOpen: false, paletteQuery: "", toast: "", vw: 1440, open: { or: true }, railOpen: false, panel: null, readMail: {}, readAlerts: {} };
+  logoRef = React.createRef();
+
+  componentDidMount() {
+    this.hostSync();
+    this.applyBrand(); this.applyLogo();
+    this._onResize = () => {
+      const tall = window.innerHeight >= 720;
+      const vw = window.innerWidth;
+      if (tall !== this.state.tall || Math.abs(vw - this.state.vw) > 8) this.setState({ tall, vw });
+    };
+    this._onResize();
+    window.addEventListener("resize", this._onResize);
+    this._onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === "k") { e.preventDefault(); this.setState({ paletteOpen: !this.state.paletteOpen, paletteQuery: "" }); }
+      if (e.key === "Escape") this.setState({ paletteOpen: false, panel: null, railOpen: false });
+    };
+    window.addEventListener("keydown", this._onKey);
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq && mq.addEventListener) {
+      this._mq = mq;
+      this._onMq = () => { if (this.themeMode() === "system") this.forceUpdate(); };
+      mq.addEventListener("change", this._onMq);
+    }
+  }
+
+  // Embedded in the Starter Admin shell: follow its navigation, let it own the tokens.
+  hostSync() {
+    const mine = ["overview","analytics","empty","help"];
+    const want = window.__starterScreen;
+    if (want && mine.indexOf(want) >= 0 && want !== this.state.screen) this.setState({ screen: want });
+    this._navHandler = (e) => {
+      const s = e.detail && e.detail.screen;
+      if (s && mine.indexOf(s) >= 0 && s !== this.state.screen) this.setState({ screen: s });
+    };
+    window.addEventListener("starter:nav", this._navHandler);
+  }
+
+  embedded() { return !!window.__starterHost; }
+
+  componentWillUnmount() {
+    if (this._navHandler) window.removeEventListener("starter:nav", this._navHandler);
+    if (this._mq && this._onMq) this._mq.removeEventListener("change", this._onMq);
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._onKey) window.removeEventListener("keydown", this._onKey);
+    if (this._toastT) clearTimeout(this._toastT);
+  }
+  componentDidUpdate(prevProps) {
+    this.applyBrand(); this.applyLogo();
+  }
+
+  applyLogo() {
+    const el = this.logoRef.current;
+    if (!el) return;
+    const src = this.resolvedLogo();
+    if (src && el.getAttribute("src") !== src) el.setAttribute("src", src);
+  }
+
+  // No artwork ships with the starter: a project points logoSrc at its own file
+  // (light and dark variants) and the placeholder slot disappears.
+  resolvedLogo() {
+    return (this.props.logoSrc || "").trim() || null;
+  }
+
+  static get SKINS() {
+    return {
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  // Nine brand inputs in, the whole token set out — same rules for every skin.
+  // "system" follows the OS; an explicit pick in the rail wins over the prop.
+  themeMode() { return this.state.themeMode || this.props.theme || "light"; }
+
+  resolvedTheme() {
+    const mode = this.themeMode();
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+
+    const accent = dark
+      ? { "--accent": acc(0.66), "--accent-ink": n(0.14, 1), "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(0.52), "--accent-ink": n(0.99, 0.2), "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+
+    const steps = dark ? [0.40, 0.52, 0.64, 0.76, 0.86] : [0.34, 0.46, 0.58, 0.70, 0.82];
+    const ratio = [0.81, 1, 0.88, 0.63, 0.38];
+    const series = {};
+    steps.forEach((l, i) => { series["--s" + (i + 1)] = acc(l, ratio[i]); });
+
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+
+    // Emphasised panels are a tinted lift of the accent, never a near-black slab.
+    const hero = {
+      "--hero": accent["--lead"], "--hero-hair": accent["--lead-line"],
+      "--hero-strong": surfaces["--txt"], "--hero-txt": surfaces["--txt-2"],
+      "--hero-fill": dark ? surfaces["--line"] : surfaces["--card"],
+      "--hero-mute": surfaces["--txt-4"], "--hero-accent": accent["--accent-text"]
+    };
+
+    return Object.assign({}, surfaces, accent, series, semantics, hero, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  applyBrand() {
+    const root = document.body;
+    if (!root || this.embedded()) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  go(screen) { return () => this.setState({ screen }); }
+
+  say(msg) {
+    this.setState({ toast: msg });
+    if (this._toastT) clearTimeout(this._toastT);
+    this._toastT = setTimeout(() => this.setState({ toast: "" }), 2600);
+  }
+
+  // Weekly revenue, this period and last, as SVG paths in a 720×240 box.
+  series() {
+    if (this._series) return this._series;
+    const now = [38, 44, 41, 52, 49, 58, 54, 61, 57, 66, 63, 71, 78];
+    const prior = [34, 39, 37, 45, 43, 49, 47, 52, 50, 55, 54, 58, 61];
+    const x = (i) => (i / (now.length - 1)) * 720;
+    const y = (v) => 236 - (v / 84) * 232;
+    const path = (arr) => arr.map((v, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1)).join(" ");
+    this._series = { line: path(now), prior: path(prior), area: path(now) + " L720 236 L0 236 Z",
+      markX: x(now.length - 1).toFixed(1), markY: y(now[now.length - 1]).toFixed(1) };
+    return this._series;
+  }
+
+  stacks() {
+    const months = [["Mar", [42, 24, 15, 9]], ["Apr", [48, 26, 16, 10]], ["May", [46, 28, 14, 11]],
+      ["Jun", [54, 30, 18, 12]], ["Jul", [58, 32, 17, 13]], ["Aug", [66, 36, 22, 14]]];
+    return months.map((m, mi) => {
+      const total = m[1].reduce((a, b) => a + b, 0);
+      const last = mi === months.length - 1;
+      return {
+        label: m[0],
+        colStyle: "width: 100%; max-width: 44px; height: " + Math.round((total / 140) * 150) + "px; border-radius: 3px; overflow: hidden; display: flex; flex-direction: column-reverse",
+        labelStyle: "font-family: var(--mono); font-size: 11.5px; color: " + (last ? "var(--txt)" : "var(--txt-3)"),
+        segments: m[1].map((v, i) => ({
+          style: "display: block; width: 100%; flex: " + v + " 0 0; background: var(--s" + (i + 1) + ")" + (last ? "" : "; opacity: .72")
+        }))
+      };
+    });
+  }
+
+  messages() {
+    const rows = [
+      ["Alicia Duarte", "AD", "Any update on the refund for order 40218?", "12m", true],
+      ["Sam Whitfield", "SW", "Approved the Meta budget shift, over to you.", "1h", true],
+      ["Finance", "FI", "August payout reconciled, $18,240 settled.", "3h", false],
+      ["Diego Ortiz", "DO", "Sending next wholesale PO on Monday.", "Yesterday", false]
+    ];
+    return rows.map((m, i) => {
+      const unread = m[4] && !this.state.readMail[i];
+      return {
+        name: m[0], initials: m[1], body: m[2], when: m[3], unread,
+        rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; cursor: pointer" + (i < rows.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        avatarStyle: "width: 32px; height: 32px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; flex: none; font-size: 11.5px; font-weight: var(--w-bold); color: var(--txt-2)",
+        nameStyle: "font-size: 14px; letter-spacing: -0.01em; color: var(--txt); font-weight: " + (unread ? "var(--w-semi)" : "500"),
+        onOpen: () => { const r = Object.assign({}, this.state.readMail); r[i] = true; this.setState({ readMail: r }); }
+      };
+    });
+  }
+
+  alerts() {
+    const tone = { bad: ["var(--bad)", "var(--bad-tint)"], warn: ["var(--warn)", "var(--warn-tint)"], ok: ["var(--ok)", "var(--ok-tint)"], accent: ["var(--accent-text)", "var(--accent-tint)"] };
+    const rows = [
+      ["Payment failed", "Order 40211 could not capture $1,584.00.", "4m", true, "bad", "M12 8v5M12 17h.01"],
+      ["Refund needs approval", "Alicia Duarte requested $412.00 back.", "22m", true, "warn", "M12 7.5v5l3 2"],
+      ["Sync completed", "Shopify brought in 148 new orders.", "1h", true, "ok", "m5 13 5 5L20 7"],
+      ["Stock low", "Cold Brew 12pk has 9 days of cover left.", "3h", false, "warn", "M12 7.5v5l3 2"]
+    ];
+    return rows.map((a, i) => {
+      const unread = a[3] && !this.state.readAlerts[i];
+      const t = tone[a[4]];
+      return {
+        title: a[0], body: a[1], when: a[2], unread, icon: a[5],
+        rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; cursor: pointer" + (i < rows.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        iconStyle: "width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; color: " + t[0] + "; background: " + t[1],
+        titleStyle: "font-size: 14px; letter-spacing: -0.01em; color: var(--txt); font-weight: " + (unread ? "var(--w-semi)" : "500"),
+        onOpen: () => { const r = Object.assign({}, this.state.readAlerts); r[i] = true; this.setState({ readAlerts: r }); }
+      };
+    });
+  }
+
+  paletteGroups() {
+    const q = (this.state.paletteQuery || "").trim().toLowerCase();
+    const defs = [
+      ["Go to", [
+        ["Overview", "⏎", () => this.setState({ screen: "overview", paletteOpen: false })],
+        ["Analytics", "⏎", () => this.setState({ screen: "analytics", paletteOpen: false })],
+        ["Orders and tables", "→", () => { window.location.href = "Starter Data.dc.html"; }],
+        ["Records and forms", "→", () => { window.location.href = "Starter Records.dc.html"; }],
+        ["Settings", "→", () => { window.location.href = "Starter Settings.dc.html"; }],
+        ["Sign in screens", "→", () => { window.location.href = "Starter Auth.dc.html"; }]
+      ]],
+      ["Actions", [
+        ["Export this view as CSV", "", () => { this.setState({ paletteOpen: false }); this.say("Export queued"); }],
+        ["Switch to dark", "", () => this.setState({ themeMode: "dark", paletteOpen: false })],
+        ["Switch to light", "", () => this.setState({ themeMode: "light", paletteOpen: false })]
+      ]]
+    ];
+    return defs.map((g) => ({
+      label: g[0],
+      items: g[1].filter((i) => !q || i[0].toLowerCase().indexOf(q) >= 0).map((i) => ({
+        label: i[0], hint: i[1],
+        style: "display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--r3); font-size: 14.5px; color: var(--txt-2); cursor: pointer",
+        onPick: i[2]
+      }))
+    })).filter((g) => g.items.length > 0);
+  }
+
+  navItem(id, label, icon, screen, badge, disabled, href, children) {
+    const active = this.state.screen === screen;
+    const base = "display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: var(--r3); font-size: 15px; position: relative; cursor: pointer; ";
+    let style;
+    if (disabled) style = base + "font-weight: 400; color: var(--txt-4); cursor: default";
+    else if (active) style = base + "font-weight: var(--w-semi); color: var(--txt); background: var(--card)";
+    else style = base + "font-weight: 500; color: var(--txt-2)";
+    return {
+      label, icon, active, badge: badge || false,
+      style,
+      hoverStyle: active || disabled ? "" : "background: var(--card); color: var(--txt)",
+      iconStroke: active ? "var(--accent-text)" : (disabled ? "var(--txt-4)" : "var(--txt-3)"),
+      badgeStyle: "margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 3px 8px",
+      hasChildren: !!(children && children.length),
+      expanded: !!(children && children.length) && !!this.state.open[id],
+      caretStyle: "margin-left: auto; font-family: var(--mono); font-size: 9px; color: var(--txt-4); cursor: pointer; transform: rotate(" + (this.state.open[id] ? "0deg" : "-90deg") + "); transition: transform .12s",
+      onToggle: (e) => { e.stopPropagation(); const o = Object.assign({}, this.state.open); o[id] = !o[id]; this.setState({ open: o }); },
+      children: (children || []).map((c) => ({
+        label: c[0], count: c[1] || false,
+        style: "display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 8px; font-size: 13.5px; color: var(--txt-3); cursor: pointer",
+        dotStyle: "width: 4px; height: 4px; border-radius: 999px; background: var(--line-2); display: block; flex: none",
+        onClick: c[2] ? c[2] : () => { if (c[3]) window.location.href = c[3]; }
+      })),
+      onClick: disabled ? undefined : (children && children.length
+        ? () => { const o = Object.assign({}, this.state.open); o[id] = !o[id]; this.setState({ open: o, railOpen: false }); }
+        : (href ? () => { window.location.href = href; } : () => this.setState({ screen, railOpen: false })))
+    };
+  }
+
+  statusChip(status) {
+    const map = {
+      Unfulfilled: ["var(--warn)", "var(--warn-tint)"],
+      Fulfilled: ["var(--ok)", "var(--ok-tint)"],
+      Refunded: ["var(--bad)", "var(--bad-tint)"],
+      Cancelled: ["var(--txt-3)", "var(--card)"]
+    };
+    const c = map[status] || map.Cancelled;
+    return {
+      statusStyle: "display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; color: " + c[0] + "; background: " + c[1] + "; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px",
+      dotStyle: "width: 5px; height: 5px; border-radius: 999px; display: block; flex: none; background: " + c[0]
+    };
+  }
+
+  iso(d) { return d.toISOString().slice(0, 10); }
+
+  // Same range picker as the table view: presets, then a real month grid.
+  calendar() {
+    const st = this.state;
+    const cursor = new Date(st.cursor + "-01T00:00:00");
+    const year = cursor.getFullYear(), month = cursor.getMonth();
+    const startPad = (new Date(year, month, 1).getDay() + 6) % 7;
+    const total = new Date(year, month + 1, 0).getDate();
+    const from = st.dateFrom, to = st.dateTo;
+    const cells = [];
+    for (let i = 0; i < startPad; i++) cells.push(null);
+    for (let n = 1; n <= total; n++) cells.push(n);
+
+    const days = cells.map((n) => {
+      if (!n) return { label: "", style: "height: 30px; display: block", onPick: undefined };
+      const key = this.iso(new Date(Date.UTC(year, month, n)));
+      const edge = key === from || key === to;
+      const inRange = from && to && key > from && key < to;
+      return {
+        label: String(n),
+        style: "height: 30px; display: grid; place-items: center; border-radius: 7px; font-family: var(--mono); font-size: 11.5px; cursor: pointer; box-sizing: border-box; " + (edge
+          ? "background: var(--accent); color: var(--accent-ink); font-weight: var(--w-semi)"
+          : inRange ? "background: var(--accent-tint); color: var(--accent-text)" : "color: var(--txt-2)"),
+        onPick: () => {
+          if (!from || (from && to)) this.setState({ dateFrom: key, dateTo: "" });
+          else if (key < from) this.setState({ dateFrom: key });
+          else this.setState({ dateTo: key });
+        }
+      };
+    });
+    const shift = (delta) => () => {
+      const dt = new Date(year, month + delta, 1);
+      this.setState({ cursor: dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") });
+    };
+    const short = (s2) => {
+      if (!s2) return "";
+      const p = s2.split("-");
+      return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][parseInt(p[1], 10) - 1] + " " + parseInt(p[2], 10);
+    };
+    return {
+      weekdays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+      days,
+      monthLabel: ["January","February","March","April","May","June","July","August","September","October","November","December"][month] + " " + year,
+      prevMonth: shift(-1), nextMonth: shift(1),
+      rangeSummary: from && to
+        ? Math.round((new Date(to) - new Date(from)) / 86400000) + 1 + " days selected"
+        : from ? "Pick the end date" : "Pick the start date",
+      applyRange: () => {
+        if (!from || !to) return;
+        this.setState({ dateLabel: short(from) + " – " + short(to), dateOpen: false });
+      },
+      dateOpen: st.dateOpen,
+      dateLabel: st.dateLabel,
+      dateBtnStyle: "height: 42px; padding: 0 18px; border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); white-space: nowrap; cursor: pointer; box-sizing: border-box; " + (st.dateOpen
+        ? "background: var(--accent-tint); color: var(--accent-text)"
+        : "border: 1px solid var(--line-2); color: var(--txt-2)"),
+      toggleDate: () => this.setState({ dateOpen: !st.dateOpen }),
+      datePresets: [["Last 7 days", "Aug 24 – 30"], ["Aug 1 – Aug 30", "this month"], ["Last 90 days", "Jun – Aug"], ["Year to date", "Jan – Aug"]].map((d) => ({
+        label: d[0], hint: d[1],
+        style: "display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; font-size: 13.5px; cursor: pointer; " + (st.dateLabel === d[0]
+          ? "background: var(--shell); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2)"),
+        onClick: () => this.setState({ dateLabel: d[0], dateOpen: false })
+      }))
+    };
+  }
+
+  renderVals() {
+    const s = this.state.screen;
+    const brandName = this.props.brandName ?? "Brand";
+    const logo = this.resolvedLogo();
+    const rowPad = this.props.density === "compact" ? "10px 20px" : "14px 20px";
+
+    const orderRows = [
+      ["40218", "Alicia Duarte", "alicia.duarte@hey.com", "Direct store", "4", "$486.00", "Unfulfilled", "Aug 28", true],
+      ["40217", "Marcus Bell", "m.bell@northmail.com", "Amazon", "1", "$72.00", "Fulfilled", "Aug 28", false],
+      ["40216", "Priya Nair", "priya@nairstudio.in", "Direct store", "7", "$318.50", "Unfulfilled", "Aug 27", true],
+      ["40215", "Tomás Ferreira", "tomas.f@correo.pt", "Wholesale", "48", "$2,140.00", "Fulfilled", "Aug 27", false],
+      ["40214", "Hanna Køhler", "hanna@kohler.dk", "Marketplaces", "2", "$96.00", "Refunded", "Aug 26", false],
+      ["40213", "Owen Reyes", "owen.reyes@fastmail.com", "Direct store", "3", "$154.00", "Fulfilled", "Aug 26", false],
+      ["40212", "Sara Lindqvist", "sara.l@post.se", "Amazon", "1", "$68.00", "Cancelled", "Aug 25", false],
+      ["40211", "Diego Ortiz", "diego@ortizcafe.mx", "Wholesale", "36", "$1,584.00", "Fulfilled", "Aug 25", false],
+      ["40210", "Naomi Chen", "naomi.chen@zed.io", "Direct store", "5", "$232.00", "Fulfilled", "Aug 24", false]
+    ].map((r, i) => {
+      const chip = this.statusChip(r[6]);
+      return {
+        id: r[0], customer: r[1], email: r[2], channel: r[3], items: r[4], total: r[5],
+        status: r[6], placed: r[7],
+        initials: r[1].split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+        rowStyle: "display: flex; align-items: center; gap: 14px; padding: " + rowPad + "; cursor: pointer; border-bottom: 1px solid var(--line); background: var(--card)",
+        check: r[8] ? "✓" : "",
+        checkStyle: "width: 18px; height: 18px; border-radius: 5px; flex: none; display: grid; place-items: center; font-size: 11px; box-sizing: border-box; " + (r[8]
+          ? "background: var(--accent); color: var(--accent-ink); border: 1.5px solid var(--accent)"
+          : "border: 1.5px solid var(--line-2); color: transparent"),
+        statusStyle: chip.statusStyle, dotStyle: chip.dotStyle
+      };
+    });
+
+    const barData = [["S", 118, ""], ["M", 152, ""], ["T", 134, ""], ["W", 174, ""], ["T", 158, ""], ["F", 186, ""], ["S", 196, "$9,240"]];
+    const bars = barData.map((b) => ({
+      day: b[0], value: b[2], lead: !!b[2],
+      style: "width: 100%; max-width: 46px; height: " + b[1] + "px; border-radius: 3px 3px 0 0; background: " + (b[2] ? "var(--accent)" : "var(--line-2)"),
+      labelStyle: "font-family: var(--mono); font-size: 12px; color: " + (b[2] ? "var(--txt)" : "var(--txt-3)") + (b[2] ? "; font-weight: 500" : "")
+    }));
+
+    const channelData = [
+      ["01", "Direct store", "1,964 orders", "$142,880", "↑ 22.1%", "accent"],
+      ["02", "Amazon", "1,012 orders", "$61,420", "↑ 8.6%", "txt2"],
+      ["03", "Wholesale", "318 orders", "$31,540", "↑ 3.2%", "txt2"],
+      ["04", "Marketplaces", "118 orders", "$12,470", "↓ 4.1%", "txt3"]
+    ];
+    const channels = channelData.map((c, i) => ({
+      code: c[0], name: c[1], sub: c[2], value: c[3], delta: c[4],
+      rowStyle: "display: flex; align-items: center; gap: 12px; padding: 11px 0" + (i < channelData.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+      tileStyle: "width: 4px; height: 26px; border-radius: 2px; flex: none; display: block; background: var(--s" + (i + 1) + ")",
+      deltaStyle: "font-family: var(--mono); font-size: 11.5px; color: " + (c[4].indexOf("↓") === 0 ? "var(--bad)" : "var(--ok)")
+    }));
+
+    const decisionData = [
+      ["AD", "Refund over threshold", "Order 40218 · $412.00", "Review", true],
+      ["EA", "Stock reorder, Cold Brew 12pk", "9 days of cover left", "Approve", false],
+      ["IO", "Budget shift to Meta", "Proposed +$1,800 for the week", "Approve", false],
+      ["DO", "Price change, Single Origin", "$18.00 to $19.50", "Approve", false]
+    ];
+    const decisions = decisionData.map((d, i) => ({
+      code: d[0], title: d[1], sub: d[2], action: d[3],
+      rowStyle: "display: flex; align-items: center; gap: 14px; padding: 13px 0" + (i < decisionData.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+      chipStyle: "font-family: var(--mono); font-size: 11.5px; border-radius: 999px; padding: 4px 10px; flex: none; " + (d[4]
+        ? "color: var(--accent-text); background: var(--accent-tint)"
+        : "color: var(--txt-2); background: var(--card)")
+    }));
+
+    const tabData = [["All", "3,412"], ["Unfulfilled", "14"], ["Refunds", "4"], ["Cancelled", "31"]];
+    const tabs = tabData.map((t) => {
+      const on = this.state.tab === t[0];
+      return {
+        label: t[0], count: t[1],
+        style: "display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 999px; font-size: 14px; cursor: pointer; " + (on
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2); font-weight: 500"),
+        countStyle: "font-family: var(--mono); font-size: 11px; color: " + (on ? "var(--accent-text)" : "var(--txt-4)"),
+        onClick: () => this.setState({ tab: t[0] })
+      };
+    });
+
+    const lineData = [
+      ["CB", "Cold Brew 12pk", "SKU CB-12", "2", "$168.00"],
+      ["SO", "Single Origin, Huila", "SKU SO-HU-1", "1", "$19.50"],
+      ["EQ", "Pour-over kit", "SKU EQ-PO", "1", "$298.50"]
+    ];
+    const lineItems = lineData.map((r, i) => ({
+      code: r[0], name: r[1], sku: r[2], qty: r[3], total: r[4],
+      rowStyle: "display: flex; align-items: center; gap: 14px; padding: 12px 0" + (i < lineData.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+    }));
+
+    const actData = [
+      ["Refund requested", "Alicia asked for $412.00 back on three of four items.", "Aug 30 · 09:14", true],
+      ["Delivered", "SEUR marked the parcel delivered in Madrid.", "Aug 30 · 08:02", false],
+      ["Fulfilled", "Picked and packed from the Madrid warehouse.", "Aug 28 · 17:40", false],
+      ["Order placed", "Paid by card ending 4417.", "Aug 28 · 11:26", false]
+    ];
+    const activity = actData.map((a, i) => ({
+      title: a[0], body: a[1], when: a[2],
+      dotStyle: "width: 10px; height: 10px; border-radius: 999px; flex: none; display: block; background: " + (a[3] ? "var(--accent)" : "var(--line-2)"),
+      lineStyle: "flex: 1; width: 2px; background: var(--line-2); display: " + (i < actData.length - 1 ? "block" : "none")
+    }));
+
+    const settingsNavData = ["Identity", "Approvals", "Members", "Integrations", "Billing", "Audit log"];
+    const settingsNav = settingsNavData.map((label, i) => ({
+      label,
+      style: "padding: 10px 14px; border-radius: var(--r3); font-size: 14.5px; cursor: pointer; " + (i === 0
+        ? "background: var(--shell); color: var(--txt); font-weight: var(--w-semi)"
+        : "color: var(--txt-2); font-weight: 500")
+    }));
+
+    const toggleData = [
+      ["Refunds above $250", "Needs a second approver before it settles.", true],
+      ["Price changes over 10%", "Applies to every published channel.", true],
+      ["Purchase orders above $5,000", "Routed to finance.", false],
+      ["Budget shifts between channels", "Currently anyone with an editor seat can do this.", false]
+    ];
+    const toggles = toggleData.map((t, i) => ({
+      title: t[0], sub: t[1],
+      rowStyle: "display: flex; align-items: center; gap: 20px; padding: 16px 0" + (i < toggleData.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+      titleStyle: "font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em; color: var(--txt)",
+      trackStyle: "width: 44px; height: 26px; border-radius: 999px; flex: none; display: flex; align-items: center; padding: 3px; box-sizing: border-box; cursor: pointer; justify-content: " + (t[2] ? "flex-end" : "flex-start") + "; background: " + (t[2] ? "var(--accent)" : "var(--line-2)"),
+      knobStyle: "width: 20px; height: 20px; border-radius: 999px; display: block; background: " + (t[2] ? "var(--accent-ink, #000)" : "var(--card)")
+    }));
+
+    const radioData = [
+      ["Overview", "The metric wall and today's decisions.", true],
+      ["Orders", "Straight into the work queue.", false],
+      ["Last visited", "Wherever they left off.", false]
+    ];
+    const radios = radioData.map((r) => ({
+      title: r[0], sub: r[1],
+      cardStyle: "border-radius: var(--r3); padding: 18px; min-width: 0; cursor: pointer; box-sizing: border-box; background: var(--card); border: 1.5px solid " + (r[2] ? "var(--accent)" : "var(--line)"),
+      dotStyle: "width: 18px; height: 18px; border-radius: 999px; display: grid; place-items: center; box-sizing: border-box; border: 1.5px solid " + (r[2] ? "var(--accent-text)" : "var(--line-2)"),
+      innerStyle: "width: 9px; height: 9px; border-radius: 999px; display: block; background: " + (r[2] ? "var(--accent-text)" : "transparent")
+    }));
+
+    return {
+      ...this.calendar(),
+      brandName,
+      logoRef: this.logoRef,
+      hasLogo: !!logo,
+      hasWordmark: !logo,
+      // On a short window the promo prompt yields before the nav or the theme switch.
+      showPromo: this.props.showPromo !== false && this.state.tall,
+      themeModes: [
+        ["light", "Light", "Light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
+        ["system", "System", "Auto", "M3 5h18v11H3zM8 20h8M12 16v4"],
+        ["dark", "Dark", "Dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"]
+      ].map((m) => {
+        const on = this.themeMode() === m[0];
+        return {
+          label: m[1], short: m[2], icon: m[3],
+          style: "flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 0; border-radius: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; " + (on
+            ? "background: var(--shell); color: var(--txt)"
+            : "color: var(--txt-4)"),
+          onClick: () => this.setState({ themeMode: m[0] })
+        };
+      }),
+      navOperate: [
+        this.navItem("ov", "Overview", "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z", "overview"),
+        this.navItem("or", "Orders", "M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM9 13h6M9 17h4", "list", "14", false, false, [
+          ["All orders", "3,412", null, "Starter Data.dc.html"],
+          ["Unfulfilled", "14", null, "Starter Data.dc.html"],
+          ["Refunds", "4", null, "Starter Data.dc.html"],
+          ["Single record", false, null, "Starter Records.dc.html"]
+        ]),
+        this.navItem("cu", "Customers", "M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8", "detail", false, false, false, [
+          ["Everyone", "1,284", null, "Starter Data.dc.html"],
+          ["Wholesale", "38", null, "Starter Data.dc.html"],
+          ["Create or edit", false, null, "Starter Records.dc.html"]
+        ]),
+        this.navItem("an", "Analytics", "M4 21v-7M12 21V10M20 21v-5M1 14h6M9 10h6M17 16h6", "analytics")
+      ],
+      navGeneral: [
+        this.navItem("se", "Settings", "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z", "settings"),
+        this.navItem("he", "Help", "M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01", "help", false, false, "Starter Auth.dc.html"),
+        this.navItem("ar", "Archive", "M3 8h18v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM3 3h18v5H3zM10 12h4", "archive", false, true)
+      ],
+      isOverview: s === "overview",
+      isList: s === "list",
+      isDetail: s === "detail",
+      isSettings: s === "settings",
+      isAnalytics: s === "analytics" || s === "empty" || s === "help",
+      goList: this.go("list"),
+      goDetail: this.go("detail"),
+      goEmpty: this.go("empty"),
+      bars, channels, decisions, orders: orderRows, tabs, lineItems, activity,
+      settingsNav, toggles, radios,
+      detailStats: [],
+
+      ranges: ["30d", "90d", "12m"].map((r) => ({
+        label: r,
+        style: "padding: 7px 14px; border-radius: 999px; font-family: var(--mono); font-size: 11.5px; cursor: pointer; " + (this.state.range === r
+          ? "background: var(--card); color: var(--txt)"
+          : "color: var(--txt-3)"),
+        onClick: () => this.setState({ range: r })
+      })),
+      kpis: [
+        ["Revenue", "$742,180", "↑ 14.2%", "vs $649,900", true],
+        ["Gross margin", "61.4%", "↑ 1.8 pts", "vs 59.6%", false],
+        ["New customers", "1,284", "↑ 22.6%", "vs 1,047", false],
+        ["Refund rate", "2.4%", "↓ 0.3 pts", "vs 2.7%", false]
+      ].map((k) => {
+        const up = k[2].indexOf("↑") === 0;
+        const positive = k[0] === "Refund rate" ? !up : up;
+        return {
+          label: k[0], value: k[1], delta: k[2], prior: k[3],
+          cardStyle: k[4]
+            ? "background: var(--hero); border: 1px solid var(--hero-hair); box-sizing: border-box; border-radius: var(--r2); padding: 20px; min-width: 0"
+            : "background: var(--shell); border-radius: var(--r2); padding: 20px; min-width: 0",
+          deltaStyle: "font-family: var(--mono); font-size: 11px; border-radius: 999px; padding: 4px 9px; " + (positive
+            ? "color: var(--ok); background: var(--ok-tint)"
+            : "color: var(--bad); background: var(--bad-tint)")
+        };
+      }),
+      axis: ["$80k", "$60k", "$40k", "$20k", "$0"],
+      weeks: ["Jun 1", "Jun 22", "Jul 6", "Jul 20", "Aug 3", "Aug 17", "Aug 30"],
+      trendArea: this.series().area,
+      trendLine: this.series().line,
+      priorLine: this.series().prior,
+      markX: this.series().markX,
+      markY: this.series().markY,
+      stacks: this.stacks(),
+      legend: [["Direct store", "46%", 1], ["Amazon", "26%", 2], ["Wholesale", "16%", 3], ["Marketplaces", "12%", 4]].map((l) => ({
+        label: l[0], share: l[1],
+        dotStyle: "width: 9px; height: 9px; border-radius: 3px; display: block; flex: none; background: var(--s" + l[2] + ")"
+      })),
+      // --- service matrix: sites × days, one cell per scheduled service ---
+      matrixDays: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"],
+      matrixMeta: "8 of 42 accounts · 1,208 services executed · August",
+      matrixTotal: "93%",
+      matrixDenseLabel: this.state.matrixDense ? "Dots" : "Marks",
+      matrixDenseStyle: "font-family: var(--mono); font-size: 10.5px; border-radius: 999px; padding: 6px 12px; cursor: pointer; border: 1px solid var(--line-2); color: var(--txt-2)",
+      toggleMatrixDense: () => this.setState({ matrixDense: !this.state.matrixDense }),
+      matrixLegend: [
+        ["done", "Done", "var(--ok-tint)", "var(--ok-fill)"],
+        ["late", "Late", "var(--warn-tint)", "var(--warn-fill)"],
+        ["miss", "Missed", "var(--bad-tint)", "var(--bad-fill)"],
+        ["none", "Unscheduled", "var(--shell)", "var(--line-2)"]
+      ].map((l) => {
+        const on = this.state.matrixFilter === l[0];
+        return {
+          label: l[1],
+          style: "display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 10.5px; border-radius: 999px; padding: 6px 11px; cursor: pointer; color: var(--txt-2); background: " + (on ? l[2] : "transparent") + "; border: 1px solid " + (on ? l[3] : "var(--line)"),
+          dotStyle: "width: 8px; height: 8px; border-radius: 3px; display: block; background: " + l[3],
+          onPick: () => this.setState({ matrixFilter: on ? "" : l[0] })
+        };
+      }),
+      matrixRows: (() => {
+        const dense = this.state.matrixDense;
+        const filter = this.state.matrixFilter;
+        const data = [
+          ["Northwind Retail", "dddddddddddd..."],
+          ["Harbor Foods", "dddddddddmdd..."],
+          ["Meridian Hotels", "dxddddddddddd.."],
+          ["Copper & Oak", "ddddddddddmd..."],
+          ["Lakeside Clinics", "ddxddddddddd..."],
+          ["Ferro Logistics", "ddddddddddld..."],
+          ["Atlas Studios", "dddxdddddddd..."],
+          ["Vista Group", "ddddddddddddd.."]
+        ];
+        const kind = { d: "done", x: "miss", m: "miss", l: "late", ".": "none" };
+        const look = {
+          done: ["var(--ok-tint)", "var(--ok)", "✓"],
+          late: ["var(--warn-tint)", "var(--warn)", "!"],
+          miss: ["var(--bad-tint)", "var(--bad)", "✕"],
+          none: ["var(--shell)", "var(--txt-4)", "·"]
+        };
+        return data.map((r, ri) => {
+          const cells = r[1].split("").slice(0, 15);
+          const scheduled = cells.filter((c) => c !== ".").length;
+          const done = cells.filter((c) => c === "d").length;
+          const rate = scheduled ? Math.round((done / scheduled) * 100) : 100;
+          return {
+            name: r[0],
+            rate: rate + "%",
+            rateStyle: "width: 58px; flex: none; text-align: right; font-family: var(--mono); font-size: 12.5px; color: " + (rate === 100 ? "var(--ok)" : rate < 90 ? "var(--bad)" : "var(--txt)"),
+            rowStyle: "display: flex; align-items: center; gap: 12px; padding: " + (dense ? "7px 16px" : "10px 16px") + "; background: var(--card)" + (ri < data.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+            cells: cells.map((c, ci) => {
+              const k = kind[c] || "none";
+              const l = look[k];
+              const dim = filter && filter !== k;
+              return {
+                mark: dense ? "" : l[2],
+                title: r[0] + " · day " + String(ci + 1).padStart(2, "0") + " · " + k,
+                style: "display: grid; place-items: center; height: " + (dense ? "16px" : "26px") + "; border-radius: " + (dense ? "4px" : "7px") + "; font-family: var(--mono); font-size: 11px; cursor: pointer; background: " + l[0] + "; color: " + l[1] + "; opacity: " + (dim ? ".24" : "1"),
+                onPick: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: r[0] + " · day " + String(ci + 1).padStart(2, "0") + " · " + k }))
+              };
+            })
+          };
+        });
+      })(),
+
+      waterfall: (() => {
+        const steps = [["Jul", 214, true], ["New", 46, false], ["Return", 28, false], ["Refunds", -21, false], ["Discount", -19, false], ["Aug", 248, true]];
+        const max = 300, h = 148;
+        let running = 0;
+        return steps.map((s) => {
+          const value = s[1], isTotal = s[2];
+          const height = Math.max(3, Math.round((Math.abs(value) / max) * h));
+          let offset;
+          if (isTotal) { offset = 0; running = value; }
+          else if (value > 0) { offset = Math.round((running / max) * h); running += value; }
+          else { running += value; offset = Math.round((running / max) * h); }
+          return {
+            label: s[0],
+            value: isTotal ? "$" + value + "k" : (value > 0 ? "+" : "") + value + "k",
+            valueStyle: "font-family: var(--mono); font-size: 10px; color: " + (isTotal ? "var(--txt-2)" : value > 0 ? "var(--ok)" : "var(--bad)"),
+            barStyle: "display: block; width: 100%; max-width: 40px; height: " + height + "px; border-radius: 3px; margin-bottom: " + offset + "px; background: " + (isTotal ? "var(--s2)" : value > 0 ? "var(--ok-fill)" : "var(--bad-fill)"),
+            labelStyle: "font-family: var(--mono); font-size: 10px; color: " + (isTotal ? "var(--txt)" : "var(--txt-3)")
+          };
+        });
+      })(),
+      donut: (() => {
+        const data = [[46, 1], [26, 2], [16, 3], [12, 4]];
+        const circ = 2 * Math.PI * 46;
+        let acc = 0;
+        return data.map((d) => {
+          const len = (d[0] / 100) * circ;
+          const seg = { color: "var(--s" + d[1] + ")", dash: len.toFixed(1) + " " + (circ - len).toFixed(1), offset: (-acc).toFixed(1) };
+          acc += len;
+          return seg;
+        });
+      })(),
+      donutLegend: [["Direct store", "46%", 1], ["Amazon", "26%", 2], ["Wholesale", "16%", 3], ["Marketplaces", "12%", 4]].map((l) => ({
+        label: l[0], share: l[1],
+        dotStyle: "width: 9px; height: 9px; border-radius: 3px; display: block; flex: none; background: var(--s" + l[2] + ")"
+      })),
+      heatCols: ["06", "09", "12", "15", "18", "21"],
+      heatRows: [
+        ["Mon", [1, 2, 3, 3, 4, 2]], ["Tue", [1, 2, 3, 4, 4, 2]], ["Wed", [1, 3, 4, 4, 3, 1]],
+        ["Thu", [2, 3, 4, 5, 4, 2]], ["Fri", [2, 3, 4, 5, 5, 3]], ["Sat", [3, 4, 4, 3, 2, 1]], ["Sun", [2, 3, 3, 2, 1, 1]]
+      ].map((r) => ({
+        label: r[0],
+        cells: r[1].map((v, i) => ({
+          title: r[0] + " " + ["06", "09", "12", "15", "18", "21"][i] + ":00 · level " + v,
+          style: "display: block; height: 19px; border-radius: 4px; background: var(--accent); opacity: " + (0.12 + v * 0.17).toFixed(2)
+        }))
+      })),
+      heatScale: [1, 2, 3, 4, 5].map((v) => "display: block; width: 15px; height: 10px; border-radius: 3px; background: var(--accent); opacity: " + (0.12 + v * 0.17).toFixed(2)),
+
+      cohorts: [
+        ["Mar", [100, 68, 54, 47, 42, 39], "39%"],
+        ["Apr", [100, 71, 58, 50, 45, 41], "41%"],
+        ["May", [100, 66, 51, 44, 38, 34], "34%"],
+        ["Jun", [100, 74, 61, 53, 48, 0], "48%"],
+        ["Jul", [100, 70, 57, 0, 0, 0], "57%"]
+      ].map((c, i, arr) => ({
+        label: c[0], value: c[2],
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 10px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        valueStyle: "font-family: var(--mono); font-size: 12.5px; width: 44px; text-align: right; flex: none; color: " + (parseInt(c[2], 10) >= 40 ? "var(--ok)" : "var(--txt-2)"),
+        bars: c[1].map((v, j) => ({
+          style: "flex: 1; display: block; border-radius: 2px; height: " + (v ? Math.max(4, Math.round(v * 0.26)) : 3) + "px; background: " + (v ? "var(--s" + Math.min(5, j + 1) + ")" : "var(--line)")
+        }))
+      })),
+
+      pageStyle: "width: 100%; max-width: 1440px; margin: 0 auto; height: 100vh; padding: " + (this.state.vw < 900 ? "10px" : "26px") + "; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; position: relative",
+      shellStyle: "background: var(--shell); border-radius: " + (this.state.vw < 900 ? "20px" : "30px") + "; padding: " + (this.state.vw < 900 ? "10px" : "16px") + "; display: flex; gap: 16px; flex: 1; min-height: 0; box-sizing: border-box; overflow: hidden; position: relative",
+      railStyle: this.state.vw < 900
+        ? "position: absolute; z-index: 50; top: 10px; left: 10px; bottom: 10px; width: 250px; background: var(--card); border-radius: var(--r); box-shadow: 0 24px 60px rgba(0,0,0,.26); display: flex; flex-direction: column; padding: 14px 10px 8px 14px; box-sizing: border-box"
+        : "width: 228px; flex: none; align-self: stretch; display: flex; flex-direction: column; padding: 10px 6px 4px 10px; box-sizing: border-box",
+      panelPad: this.state.vw < 900 ? "16px" : "28px",
+      grid4: "grid-template-columns: repeat(" + (this.state.vw < 720 ? 1 : this.state.vw < 1100 ? 2 : 4) + ", minmax(0, 1fr)); gap: 12px",
+      grid3: "grid-template-columns: " + (this.state.vw < 1100 ? "minmax(0, 1fr)" : "1.55fr 1fr 1fr") + "; gap: 14px",
+      grid2: "grid-template-columns: " + (this.state.vw < 1100 ? "minmax(0, 1fr)" : "1.55fr 1fr") + "; gap: 14px",
+
+      accountOpen: this.state.panel === "account",
+      toggleAccount: () => this.setState({ panel: this.state.panel === "account" ? null : "account" }),
+      accountBtnStyle: "display: flex; align-items: center; gap: 11px; padding: 4px 10px 4px 4px; border-radius: 999px; cursor: pointer; background: " + (this.state.panel === "account" ? "var(--shell)" : "transparent"),
+      accountCaretStyle: "color: var(--txt-4); font-size: 11px; font-family: var(--mono); transform: rotate(" + (this.state.panel === "account" ? "180deg" : "0deg") + "); transition: transform .12s",
+      accountPanelStyle: "position: absolute; top: 52px; right: 0; z-index: 60; width: 316px; max-width: calc(100vw - 40px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 22px 50px rgba(0,0,0,.18); overflow: hidden; animation: rise .14s ease-out",
+      accountItems: [
+        ["Profile and account", "M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1", "", () => { window.location.href = "Starter Settings.dc.html"; }],
+        ["Workspace settings", "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M20 12h1M3 12h1M12 3v1M12 20v1", "", () => { window.location.href = "Starter Settings.dc.html"; }],
+        ["Command palette", "M9 3h6v6H9zM3 9h6v6H3zM15 9h6v6h-6zM9 15h6v6H9z", "⌘K", () => this.setState({ panel: null, paletteOpen: true })],
+        ["Switch workspace", "M4 7h16M4 12h16M4 17h10", "", () => { this.setState({ panel: null }); this.say("Only one workspace on this account"); }]
+      ].map((a) => ({
+        label: a[0], icon: a[1], hint: a[2],
+        style: "display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r3); font-size: 14px; color: var(--txt-2); cursor: pointer",
+        onPick: a[3]
+      })),
+      signOut: () => { window.location.href = "Starter Auth.dc.html"; },
+
+      mailOpen: this.state.panel === "mail",
+      bellOpen: this.state.panel === "bell",
+      toggleMail: () => this.setState({ panel: this.state.panel === "mail" ? null : "mail" }),
+      toggleBell: () => this.setState({ panel: this.state.panel === "bell" ? null : "bell" }),
+      mailBtnStyle: "width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; position: relative; cursor: pointer; " + (this.state.panel === "mail"
+        ? "background: var(--accent-tint); color: var(--accent-text)"
+        : "background: var(--shell); color: var(--txt-2)"),
+      bellBtnStyle: "width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; position: relative; cursor: pointer; " + (this.state.panel === "bell"
+        ? "background: var(--accent-tint); color: var(--accent-text)"
+        : "background: var(--shell); color: var(--txt-2)"),
+      panelStyle: "position: absolute; top: 48px; right: 0; z-index: 60; width: 380px; max-width: calc(100vw - 40px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 22px 50px rgba(0,0,0,.18); overflow: hidden; animation: rise .14s ease-out",
+      messages: this.messages(),
+      alerts: this.alerts(),
+      mailUnread: this.messages().some((m) => m.unread),
+      bellUnread: this.alerts().some((a) => a.unread),
+      readAllMail: () => { const r = {}; [0,1,2,3].forEach((i) => { r[i] = true; }); this.setState({ readMail: r }); this.say("Messages marked read"); },
+      readAllAlerts: () => { const r = {}; [0,1,2,3].forEach((i) => { r[i] = true; }); this.setState({ readAlerts: r }); this.say("Notifications cleared"); },
+      goInbox: () => { window.location.href = "Starter Data.dc.html"; },
+
+      paletteOpen: this.state.paletteOpen,
+      paletteQuery: this.state.paletteQuery,
+      onPaletteQuery: (e) => this.setState({ paletteQuery: e.target.value }),
+      closePalette: () => this.setState({ paletteOpen: false, paletteQuery: "" }),
+      openPalette: () => this.setState({ paletteOpen: true, paletteQuery: "" }),
+      paletteGroups: this.paletteGroups(),
+      toast: this.state.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

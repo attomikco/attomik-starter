@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --s1: oklch(.34 .13 250); --s2: oklch(.46 .16 250); --s3: oklch(.58 .14 250);
+    --s4: oklch(.70 .10 250); --s5: oklch(.82 .06 250);
+    --ok: oklch(.575 .195 147); --ok-fill: oklch(.66 .203 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-fill: oklch(.83 .203 92); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-fill: oklch(.64 .233 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --r: 22px; --r2: 16px; --r3: 11px; --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--accent-text); } a:hover { color: var(--txt); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input, textarea { font: inherit; color: inherit; background: none; border: none; outline: none; width: 100%; }
+  input::placeholder { color: var(--txt-4); }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position: absolute; inset: 0; min-height: 0; display: flex; flex-direction: column">
+ <div style="flex: 1; min-height: 0; display: flex; position: relative">
+
+  <div style="display: none">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px 22px; flex: none">
+      <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+        <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+        <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+      </span>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 40px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; margin-right: -4px; padding-right: 4px">
+      <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 0 12px 10px">Workspace</div>
+      <div style="display: flex; flex-direction: column; gap: 3px">
+        <sc-for list="{{ navWorkspace }}" as="item" hint-placeholder-count="4">
+          <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+            <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+            </sc-if>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+            {{ item.label }}
+            <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ item.badgeStyle }}">{{ item.badge }}</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 20px 12px 10px">Personal</div>
+      <div style="display: flex; flex-direction: column; gap: 3px">
+        <sc-for list="{{ navPersonal }}" as="item" hint-placeholder-count="2">
+          <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+            <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+            </sc-if>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+            {{ item.label }}
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex: none; display: flex; gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); padding: 3px; margin: 8px 4px 8px 0; box-sizing: border-box">
+      <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+        <span style="{{ m.style }}" onClick="{{ m.onClick }}" title="{{ m.label }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ m.icon }}"></path></svg>
+          {{ m.short }}
+        </span>
+      </sc-for>
+    </div>
+
+    <a href="https://attomik.co" target="_blank" rel="noopener" style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; padding: 4px 12px 2px; flex: none; display: flex; align-items: center; gap: 7px" style-hover="color: var(--txt-3)">
+      Built by
+      <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+        <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+          <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+          <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+        </g>
+        <g transform="translate(-11.56 -7)" fill="currentColor">
+          <circle cx="50" cy="16" r="9"></circle>
+          <circle cx="79.44" cy="67" r="9"></circle>
+          <circle cx="20.56" cy="67" r="9"></circle>
+        </g>
+      </svg>
+      Attomik
+    </a>
+  </div>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+
+    <div style="background: var(--card); border-radius: var(--r); padding: 26px 26px 0; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; flex: none">
+        <div style="min-width: 0">
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 10px">{{ eyebrow }}</div>
+          <h1 style="font-size: 32px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1.05; margin: 0 0 6px">{{ title }}</h1>
+          <p style="font-size: 14.5px; color: var(--txt-2); line-height: 1.5; margin: 0; max-width: 640px">{{ subtitle }}</p>
+        </div>
+        <sc-if value="{{ hasAction }}" hint-placeholder-val="{{ true }}">
+          <div style="height: 42px; padding: 0 20px; background: var(--accent); border-radius: 999px; display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); white-space: nowrap; cursor: pointer; flex: none" onClick="{{ primaryAction }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            {{ actionLabel }}
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding-bottom: 26px; display: flex; flex-direction: column; gap: 14px">
+
+        <sc-if value="{{ isTeam }}" hint-placeholder-val="{{ true }}">
+          <div style="display: grid; {{ quad }}">
+            <sc-for list="{{ seatStats }}" as="s" hint-placeholder-count="4">
+              <div style="{{ s.cardStyle }}">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">{{ s.label }}</div>
+                <div style="font-size: 26px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1">{{ s.value }}</div>
+                <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 8px">{{ s.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="flex: none; box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+            <div style="display: flex; align-items: center; gap: 14px; padding: 11px 18px; background: var(--shell); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+              <span style="flex: 1">Member</span><span style="width: 150px; flex: none">Role</span><span style="width: 122px; flex: none">Last active</span><span style="width: 108px; flex: none">Status</span><span style="width: 34px; flex: none"></span>
+            </div>
+            <sc-for list="{{ members }}" as="m" hint-placeholder-count="6">
+              <div style="{{ m.rowStyle }}" style-hover="background: var(--shell)">
+                <span style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px">
+                  <span style="{{ m.avatarStyle }}">{{ m.initials }}</span>
+                  <span style="min-width: 0">
+                    <span style="display: block; font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ m.name }}</span>
+                    <span style="display: block; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ m.email }}</span>
+                  </span>
+                </span>
+                <span style="width: 150px; flex: none; position: relative">
+                  <span style="{{ m.roleStyle }}" onClick="{{ m.onRole }}">{{ m.role }}<span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); margin-left: auto">&#9662;</span></span>
+                  <sc-if value="{{ m.roleOpen }}" hint-placeholder-val="{{ false }}">
+                    <span style="position: absolute; top: 36px; left: 0; z-index: 30; width: 180px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); box-shadow: 0 16px 34px rgba(0,0,0,.16); padding: 6px; animation: rise .12s ease-out">
+                      <sc-for list="{{ m.roleOptions }}" as="o" hint-placeholder-count="4">
+                        <span style="{{ o.style }}" onClick="{{ o.onPick }}">
+                          <span style="display: block; font-size: 13.5px">{{ o.label }}</span>
+                          <span style="display: block; font-size: 11.5px; color: var(--txt-3); margin-top: 1px">{{ o.hint }}</span>
+                        </span>
+                      </sc-for>
+                    </span>
+                  </sc-if>
+                </span>
+                <span style="width: 122px; flex: none; font-family: var(--mono); font-size: 12px; color: var(--txt-2)">{{ m.active }}</span>
+                <span style="width: 108px; flex: none"><span style="{{ m.chipStyle }}"><span style="{{ m.dotStyle }}"></span>{{ m.status }}</span></span>
+                <span style="width: 34px; flex: none; display: grid; place-items: center; color: var(--txt-4); cursor: pointer; border-radius: 8px" style-hover="background: var(--card); color: var(--bad)" onClick="{{ m.onRemove }}">&#10005;</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+            <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">What each role can do</div>
+            <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">Click any cell to grant or revoke. Owner is locked, because a workspace with no full administrator is how people get locked out of their own data.</div>
+            <div style="border-radius: var(--r3); overflow: hidden; border: 1px solid var(--line)">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+                <span style="flex: 1">Capability</span>
+                <span style="width: 78px; flex: none; text-align: center">Owner</span>
+                <span style="width: 78px; flex: none; text-align: center">Admin</span>
+                <span style="width: 78px; flex: none; text-align: center">Editor</span>
+                <span style="width: 78px; flex: none; text-align: center">Viewer</span>
+              </div>
+              <sc-for list="{{ permissions }}" as="p" hint-placeholder-count="6">
+                <div style="{{ p.rowStyle }}">
+                  <span style="flex: 1; min-width: 0; font-size: 13.5px; color: var(--txt-2)">{{ p.label }}</span>
+                  <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="4">
+                    <span style="width: 78px; flex: none; display: grid; place-items: center"><span style="{{ c.style }}" onClick="{{ c.onToggle }}" title="{{ c.title }}">{{ c.mark }}</span></span>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAppearance }}" hint-placeholder-val="{{ false }}">
+          <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 24px; margin-bottom: 14px">
+            <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px">
+              <span style="width: 34px; height: 34px; border-radius: 10px; background: var(--card); display: grid; place-items: center; flex: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8h.01M11 12h1v5"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+              <div style="min-width: 0">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em">What to ask a brand for</div>
+                <p style="font-size: 13.5px; color: var(--txt-2); line-height: 1.6; margin: 6px 0 0; max-width: 720px">Six things, and only six. Everything on this page &#8212; every surface, all four text steps, the chart ramp, green, amber, red, both themes &#8212; is computed from them. Asking for a full palette produces drift, because somebody eventually picks the wrong grey.</p>
+              </div>
+            </div>
+            <div style="display: grid; {{ pair }}">
+              <sc-for list="{{ intake }}" as="i" hint-placeholder-count="5">
+                <div style="background: var(--card); border-radius: var(--r3); padding: 16px; min-width: 0; display: flex; gap: 12px">
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); flex: none">{{ i.n }}</span>
+                  <div style="min-width: 0">
+                    <div style="font-size: 14.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ i.title }}</div>
+                    <div style="font-size: 13px; color: var(--txt-2); line-height: 1.5; margin-top: 4px">{{ i.body }}</div>
+                    <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 8px">{{ i.example }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; border-top: 1px solid var(--lead-line); padding-top: 16px">
+              <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); flex: none; padding-top: 2px">Do not ask for</span>
+              <span style="font-size: 13px; color: var(--txt-2); line-height: 1.55">Hover and pressed states, disabled greys, chart palettes, tints, dark-mode equivalents, corner radii, spacing, or per-component colour. The system owns all of it, and a brand that insists on its own radius is asking for a different product.</span>
+            </div>
+          </div>
+          <div style="display: grid; {{ split }}; align-items: start">
+            <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Brand mark</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">Drops into the rail at 30px. Supply artwork that reads on both light and dark grounds, or paste a URL.</div>
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
+                  <span style="{{ logoPreviewStyle }}">
+                    <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}">
+                      <img ref="{{ logoRef }}" alt="Logo preview" style="max-height: 34px; max-width: 148px; display: block; object-fit: contain" />
+                    </sc-if>
+                    <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">No logo</span>
+                    </sc-if>
+                  </span>
+                  <label style="display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 18px; cursor: pointer">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg>
+                    Upload artwork
+                    <input type="file" accept="image/*" onChange="{{ onLogoFile }}" style="display: none" />
+                  </label>
+                  <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--bad); border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 17px; cursor: pointer" onClick="{{ clearLogo }}">Remove</span>
+                  </sc-if>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r3); padding: 11px 14px; margin-top: 14px">
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); flex: none">URL</span>
+                  <input placeholder="https://cdn.company.com/logo.svg" value="{{ logoUrl }}" onInput="{{ onLogoUrl }}" style="font-size: 13.5px; flex: 1; min-width: 0" />
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 20px; flex-wrap: wrap">
+                  <span style="{{ faviconPreviewStyle }}">
+                    <sc-if value="{{ hasFavicon }}" hint-placeholder-val="{{ false }}">
+                      <img ref="{{ faviconRef }}" alt="Favicon preview" style="width: 22px; height: 22px; display: block; object-fit: contain" />
+                    </sc-if>
+                    <sc-if value="{{ noFavicon }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--txt-4)">ico</span>
+                    </sc-if>
+                  </span>
+                  <div style="flex: 1; min-width: 160px">
+                    <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">Favicon</div>
+                    <div style="font-size: 12.5px; color: var(--txt-2); line-height: 1.5; margin-top: 3px">Square mark only. It renders at 16px, so a wordmark turns to mush.</div>
+                  </div>
+                  <label style="display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 10px 16px; cursor: pointer; flex: none">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg>
+                    Upload
+                    <input type="file" accept="image/*" onChange="{{ onFaviconFile }}" style="display: none" />
+                  </label>
+                  <sc-if value="{{ hasFavicon }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 13px; font-weight: var(--w-semi); color: var(--bad); cursor: pointer; flex: none" onClick="{{ clearFavicon }}">Remove</span>
+                  </sc-if>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Colour</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 20px">Two hues and two chroma levels. Every surface, text step, chart step, and status colour is computed from these, in both themes.</div>
+                <div style="display: flex; flex-direction: column; gap: 18px">
+                  <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="5">
+                    <div style="min-width: 0">
+                      <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px">
+                        <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); flex: 1">{{ s.label }}</span>
+                        <span style="font-family: var(--mono); font-size: 12px; color: var(--txt)">{{ s.display }}</span>
+                      </div>
+                      <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.value }}" onInput="{{ s.onInput }}" style="width: 100%; accent-color: var(--accent); cursor: pointer" />
+                      <div style="display: flex; align-items: center; gap: 6px; margin-top: 10px">
+                        <sc-for list="{{ s.swatches }}" as="w" hint-placeholder-count="6">
+                          <span style="{{ w.style }}" onClick="{{ w.onPick }}" title="{{ w.title }}">{{ w.mark }}</span>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Type</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">Sizes and tracking are fixed by the system. A brand supplies the faces and the two emphasis weights.</div>
+                <div style="display: grid; {{ pair }}">
+                  <sc-for list="{{ pickers }}" as="p" hint-placeholder-count="4">
+                    <div style="min-width: 0; position: relative">
+                      <span style="display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ p.label }}</span>
+                      <span style="{{ p.triggerStyle }}" onClick="{{ p.onToggle }}">
+                        <span style="{{ p.valueStyle }}">{{ p.value }}</span>
+                        <span style="{{ p.caretStyle }}">&#9662;</span>
+                      </span>
+                      <sc-if value="{{ p.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="position: absolute; top: 76px; left: 0; right: 0; z-index: 40; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 40px rgba(0,0,0,.16); padding: 6px; max-height: 268px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; animation: rise .12s ease-out">
+                          <sc-for list="{{ p.options }}" as="o" hint-placeholder-count="6">
+                            <div style="{{ o.style }}" style-hover="background: var(--shell)" onClick="{{ o.onPick }}">
+                              <span style="{{ o.labelStyle }}">{{ o.label }}</span>
+                              <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-left: auto"><path d="m5 13 5 5L20 7"></path></svg>
+                              </sc-if>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Shape</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">Three radii: outer panels, inner panels, controls. Changing these changes the product, not the brand &#8212; move them deliberately.</div>
+                <div style="display: grid; {{ trio }}">
+                  <sc-for list="{{ radii }}" as="r" hint-placeholder-count="3">
+                    <div style="min-width: 0">
+                      <div style="{{ r.previewStyle }}"></div>
+                      <div style="display: flex; align-items: baseline; gap: 8px; margin: 10px 0 8px">
+                        <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-2); flex: 1">{{ r.token }}</span>
+                        <span style="font-family: var(--mono); font-size: 12px">{{ r.value }}</span>
+                      </div>
+                      <input type="range" min="0" max="34" step="1" value="{{ r.raw }}" onInput="{{ r.onInput }}" style="width: 100%; accent-color: var(--accent); cursor: pointer" />
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+              <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 22px">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 16px">Live preview</div>
+                <div style="font-size: 30px; font-weight: var(--w-bold); letter-spacing: -0.04em; line-height: 1">$248,310</div>
+                <div style="display: flex; align-items: center; gap: 9px; margin-top: 12px">
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--ok); background: var(--ok-tint); border-radius: 999px; padding: 4px 9px">&#8593; 18.4%</span>
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-2)">vs $209,720</span>
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 5px; height: 56px; margin-top: 20px">
+                  <sc-for list="{{ previewBars }}" as="b" hint-placeholder-count="6">
+                    <span style="{{ b.style }}"></span>
+                  </sc-for>
+                </div>
+                <div style="display: flex; align-items: center; gap: 9px; margin-top: 20px; flex-wrap: wrap">
+                  <span style="background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 10px 18px; font-size: 13.5px; font-weight: var(--w-semi)">Primary</span>
+                  <span style="border: 1px solid var(--line-2); color: var(--txt-2); border-radius: 999px; padding: 9px 17px; font-size: 13.5px; font-weight: var(--w-semi)">Secondary</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap">
+                  <span style="display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--ok); background: var(--ok-tint); border-radius: 999px; padding: 4px 10px"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--ok-fill); display: block"></span>Settled</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--warn); background: var(--warn-tint); border-radius: 999px; padding: 4px 10px"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--warn-fill); display: block"></span>Waiting</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--bad); background: var(--bad-tint); border-radius: 999px; padding: 4px 10px"><span style="width: 5px; height: 5px; border-radius: 999px; background: var(--bad-fill); display: block"></span>Failed</span>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 14px">Presets</div>
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <sc-for list="{{ presets }}" as="p" hint-placeholder-count="5">
+                    <div style="{{ p.rowStyle }}" onClick="{{ p.onPick }}">
+                      <span style="{{ p.dotStyle }}"></span>
+                      <span style="flex: 1; min-width: 0; font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ p.label }}</span>
+                      <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ p.hint }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 6px">How the rest is derived</div>
+                <p style="font-size: 12.5px; color: var(--txt-2); line-height: 1.55; margin: 0 0 14px">Colour is built in oklch, where the first number is perceived lightness. That is what lets one rule hold for every hue instead of being eyeballed per brand.</p>
+                <div style="display: flex; flex-direction: column">
+                  <sc-for list="{{ rules }}" as="r" hint-placeholder-count="6">
+                    <div style="{{ r.rowStyle }}">
+                      <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); width: 84px; flex: none">{{ r.token }}</span>
+                      <span style="font-size: 12.5px; color: var(--txt-2); flex: 1; min-width: 0; line-height: 1.45">{{ r.rule }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">Resolved tokens</div>
+                <div style="display: flex; flex-direction: column; gap: 7px">
+                  <sc-for list="{{ resolved }}" as="t" hint-placeholder-count="6">
+                    <div style="display: flex; align-items: center; gap: 10px">
+                      <span style="{{ t.swatch }}"></span>
+                      <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-2); width: 92px; flex: none">{{ t.name }}</span>
+                      <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ t.value }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px">
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 9px 16px; cursor: pointer" onClick="{{ resetSkin }}">Reset to preset</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isIntegrations }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; {{ pair }}">
+            <sc-for list="{{ integrations }}" as="i" hint-placeholder-count="6">
+              <div style="{{ i.cardStyle }}">
+                <div style="display: flex; align-items: flex-start; gap: 14px">
+                  <span style="{{ i.tileStyle }}">{{ i.code }}</span>
+                  <div style="flex: 1; min-width: 0">
+                    <div style="display: flex; align-items: center; gap: 10px">
+                      <span style="font-size: 15.5px; font-weight: var(--w-semi); letter-spacing: -0.015em">{{ i.name }}</span>
+                      <span style="{{ i.chipStyle }}"><span style="{{ i.dotStyle }}"></span>{{ i.status }}</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--txt-2); line-height: 1.5; margin-top: 6px">{{ i.blurb }}</div>
+                    <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 10px">{{ i.meta }}</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 9px; margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px">
+                  <span style="{{ i.btnStyle }}" onClick="{{ i.onToggle }}">{{ i.btnLabel }}</span>
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-2); padding: 9px 14px; border-radius: 999px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)">Configure</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; {{ split }}; align-items: start">
+            <div style="background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 24px; min-width: 0">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 20px">
+                <div style="min-width: 0">
+                  <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 12px">Current plan</div>
+                  <div style="font-size: 28px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1">Growth</div>
+                  <div style="font-size: 13.5px; color: var(--txt-2); margin-top: 8px">Billed yearly &#183; renews 12 Jan 2027</div>
+                </div>
+                <div style="text-align: right; flex: none">
+                  <div style="font-size: 28px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1; font-family: var(--mono)">$4,800</div>
+                  <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-2); margin-top: 8px">per year</div>
+                </div>
+              </div>
+              <div style="margin-top: 22px; border-top: 1px solid var(--lead-line); padding-top: 18px">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px">
+                  <span style="font-size: 13.5px; color: var(--txt-2)">Seats used</span>
+                  <span style="font-family: var(--mono); font-size: 12.5px">6 of 10</span>
+                </div>
+                <div style="height: 8px; border-radius: 4px; background: var(--card); overflow: hidden">
+                  <span style="display: block; height: 100%; width: 60%; border-radius: 4px; background: var(--accent)"></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px">
+                  <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 18px; cursor: pointer" onClick="{{ upgrade }}">Change plan</span>
+                  <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--lead-line); border-radius: 999px; padding: 10px 17px; cursor: pointer">Buy seats</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: var(--shell); border-radius: var(--r2); padding: 24px; min-width: 0">
+              <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 16px">Payment method</div>
+              <div style="display: flex; align-items: center; gap: 14px; background: var(--card); border-radius: var(--r3); padding: 16px">
+                <span style="width: 42px; height: 30px; border-radius: 6px; background: var(--s2); display: block; flex: none"></span>
+                <div style="flex: 1; min-width: 0">
+                  <div style="font-family: var(--mono); font-size: 13px">&#8226;&#8226;&#8226;&#8226; 4417</div>
+                  <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">expires 04 / 28</div>
+                </div>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer">Replace</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px">
+                <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Billing contact<span style="color: var(--txt)">finance@attomik.co</span></div>
+                <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">VAT number<span style="font-family: var(--mono); color: var(--txt)">ESB12345678</span></div>
+                <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--txt-2)">Currency<span style="color: var(--txt)">EUR</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex: none; box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+            <div style="display: flex; align-items: center; gap: 14px; padding: 11px 18px; background: var(--shell); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+              <span style="width: 120px; flex: none">Invoice</span><span style="flex: 1">Period</span><span style="width: 108px; flex: none; text-align: right">Amount</span><span style="width: 104px; flex: none">Status</span><span style="width: 86px; flex: none; text-align: right">PDF</span>
+            </div>
+            <sc-for list="{{ invoices }}" as="v" hint-placeholder-count="5">
+              <div style="{{ v.rowStyle }}" style-hover="background: var(--shell)">
+                <span style="width: 120px; flex: none; font-family: var(--mono); font-size: 12.5px; color: var(--txt-2)">{{ v.id }}</span>
+                <span style="flex: 1; min-width: 0; font-size: 13.5px">{{ v.period }}</span>
+                <span style="width: 108px; flex: none; text-align: right; font-family: var(--mono); font-size: 13px">{{ v.amount }}</span>
+                <span style="width: 104px; flex: none"><span style="{{ v.chipStyle }}"><span style="{{ v.dotStyle }}"></span>{{ v.status }}</span></span>
+                <span style="width: 86px; flex: none; text-align: right; font-family: var(--mono); font-size: 11.5px; color: var(--accent-text); cursor: pointer" onClick="{{ v.onDownload }}">Download</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; {{ quad }}; flex: none">
+            <sc-for list="{{ actStats }}" as="s" hint-placeholder-count="4">
+              <div style="{{ s.cardStyle }}">
+                <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 12px">{{ s.label }}</div>
+                <div style="font-size: 25px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1">{{ s.value }}</div>
+                <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 8px">{{ s.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: none">
+            <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px">
+              <sc-for list="{{ actPeople }}" as="p" hint-placeholder-count="5">
+                <span style="{{ p.style }}" onClick="{{ p.onPick }}">{{ p.label }}</span>
+              </sc-for>
+            </div>
+            <div style="flex: 1"></div>
+            <div style="display: flex; align-items: center; gap: 9px; background: var(--shell); border-radius: var(--r3); padding: 10px 13px; min-width: 240px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+              <input placeholder="Filter by action or object" value="{{ actQuery }}" onInput="{{ onActQuery }}" style="font-size: 13.5px" />
+            </div>
+          </div>
+
+          <div style="flex: none; box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+            <sc-for list="{{ actGroups }}" as="g" hint-placeholder-count="3">
+              <div style="display: block">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: var(--shell); border-bottom: 1px solid var(--line)">
+                  <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); flex: 1">{{ g.label }}</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ g.count }}</span>
+                </div>
+                <sc-for list="{{ g.rows }}" as="a" hint-placeholder-count="6">
+                  <div style="{{ a.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ a.onOpen }}">
+                    <span style="width: 62px; flex: none; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ a.time }}</span>
+                    <span style="{{ a.avatarStyle }}">{{ a.initials }}</span>
+                    <span style="width: 132px; flex: none; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.who }}</span>
+                    <span style="{{ a.kindStyle }}">{{ a.kind }}</span>
+                    <span style="flex: 1; min-width: 0; font-size: 13.5px; color: var(--txt-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.what }}</span>
+                    <span style="width: 118px; flex: none; font-family: var(--mono); font-size: 11.5px; color: var(--txt-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.object }}</span>
+                    <span style="width: 96px; flex: none; text-align: right; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ a.where }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: var(--shell); border-top: 1px solid var(--line)">
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); flex: 1; min-width: 0">{{ actFooter }}</span>
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ exportAudit }}">Export</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAudit }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+            <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px">
+              <sc-for list="{{ auditFilters }}" as="f" hint-placeholder-count="4">
+                <span style="{{ f.style }}" onClick="{{ f.onClick }}">{{ f.label }}</span>
+              </sc-for>
+            </div>
+            <div style="flex: 1"></div>
+            <div style="display: flex; align-items: center; gap: 9px; background: var(--shell); border-radius: var(--r3); padding: 10px 13px; min-width: 250px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+              <input placeholder="Filter by person or object" value="{{ auditQuery }}" onInput="{{ onAuditQuery }}" style="font-size: 13.5px" />
+            </div>
+          </div>
+
+          <div style="flex: none; box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+            <div style="display: flex; align-items: center; gap: 14px; padding: 11px 18px; background: var(--shell); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3)">
+              <span style="width: 126px; flex: none">When</span><span style="width: 158px; flex: none">Who</span><span style="flex: 1">What</span><span style="width: 128px; flex: none">Object</span><span style="width: 116px; flex: none">Source</span>
+            </div>
+            <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="8">
+              <div style="{{ a.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ a.onOpen }}">
+                <span style="width: 126px; flex: none; font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ a.when }}</span>
+                <span style="width: 158px; flex: none; min-width: 0; display: flex; align-items: center; gap: 9px">
+                  <span style="{{ a.avatarStyle }}">{{ a.initials }}</span>
+                  <span style="font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.who }}</span>
+                </span>
+                <span style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px">
+                  <span style="{{ a.kindStyle }}">{{ a.kind }}</span>
+                  <span style="font-size: 13.5px; color: var(--txt-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.what }}</span>
+                </span>
+                <span style="width: 128px; flex: none; font-family: var(--mono); font-size: 11.5px; color: var(--txt-2)">{{ a.object }}</span>
+                <span style="width: 116px; flex: none; font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ a.source }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 11px; color: var(--txt-4)">
+            <span>{{ auditFooter }}</span>
+            <span style="height: 1px; background: var(--line); flex: 1; display: block"></span>
+            <span style="color: var(--accent-text); cursor: pointer" onClick="{{ exportAudit }}">Export as CSV</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; {{ split }}; align-items: start">
+            <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 18px">You</div>
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px">
+                  <span style="width: 60px; height: 60px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 22px; font-weight: var(--w-bold); flex: none">AH</span>
+                  <div style="min-width: 0">
+                    <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 8px 14px; cursor: pointer">Upload a photo</span>
+                    <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-4); margin-top: 8px">PNG or JPG &#183; at least 256px</div>
+                  </div>
+                </div>
+                <div style="display: grid; {{ pair }}">
+                  <sc-for list="{{ profileFields }}" as="f" hint-placeholder-count="4">
+                    <label style="display: block; min-width: 0">
+                      <span style="display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ f.label }}</span>
+                      <span style="{{ f.style }}">
+                        <input value="{{ f.value }}" onInput="{{ f.onInput }}" onBlur="{{ f.onBlur }}" aria-invalid="{{ f.ariaInvalid }}" style="font-size: 14.5px; flex: 1; min-width: 0" />
+                        <sc-if value="{{ f.invalid }}" hint-placeholder-val="{{ false }}">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2.2" stroke-linecap="round" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+                        </sc-if>
+                        <sc-if value="{{ f.valid }}" hint-placeholder-val="{{ false }}">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="m5 13 5 5L20 7"></path></svg>
+                        </sc-if>
+                      </span>
+                      <sc-if value="{{ f.error }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; align-items: flex-start; gap: 7px; font-size: 12.5px; color: var(--bad); margin-top: 7px">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+                          {{ f.error }}
+                        </span>
+                      </sc-if>
+                    </label>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Language and region</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 18px">Applies to the interface, dates, and how numbers and money are written.</div>
+                <div style="display: grid; {{ pair }}">
+                  <sc-for list="{{ localeFields }}" as="l" hint-placeholder-count="4">
+                    <div style="min-width: 0; position: relative">
+                      <span style="display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ l.label }}</span>
+                      <span style="{{ l.triggerStyle }}" onClick="{{ l.onToggle }}">
+                        <span style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ l.value }}</span>
+                        <span style="{{ l.caretStyle }}">&#9662;</span>
+                      </span>
+                      <sc-if value="{{ l.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="position: absolute; top: 76px; left: 0; right: 0; z-index: 40; background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 18px 40px rgba(0,0,0,.16); padding: 6px; max-height: 232px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; animation: rise .12s ease-out">
+                          <sc-for list="{{ l.options }}" as="o" hint-placeholder-count="5">
+                            <div style="{{ o.style }}" style-hover="background: var(--shell)" onClick="{{ o.onPick }}">
+                              {{ o.label }}
+                              <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-left: auto"><path d="m5 13 5 5L20 7"></path></svg>
+                              </sc-if>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px; background: var(--card); border-radius: var(--r3); padding: 13px 15px; margin-top: 16px; flex-wrap: wrap">
+                  <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); flex: none">Preview</span>
+                  <span style="font-family: var(--mono); font-size: 12px; color: var(--txt)">{{ localePreview }}</span>
+                </div>
+              </div>
+
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 4px">Notifications</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); margin-bottom: 8px">What reaches you, and where.</div>
+                <div style="display: flex; flex-direction: column">
+                  <sc-for list="{{ notifyRows }}" as="n" hint-placeholder-count="4">
+                    <div style="{{ n.rowStyle }}">
+                      <div style="flex: 1; min-width: 0">
+                        <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ n.title }}</div>
+                        <div style="font-size: 12.5px; color: var(--txt-3); margin-top: 3px">{{ n.sub }}</div>
+                      </div>
+                      <span style="{{ n.trackStyle }}" onClick="{{ n.onToggle }}"><span style="{{ n.knobStyle }}"></span></span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+              <div style="background: var(--shell); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 16px">Active sessions</div>
+                <div style="display: flex; flex-direction: column">
+                  <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="3">
+                    <div style="{{ s.rowStyle }}">
+                      <span style="{{ s.dotStyle }}"></span>
+                      <div style="flex: 1; min-width: 0">
+                        <div style="font-size: 13.5px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ s.device }}</div>
+                        <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">{{ s.meta }}</div>
+                      </div>
+                      <span style="{{ s.actionStyle }}" onClick="{{ s.onRevoke }}">{{ s.action }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border: 1px solid var(--line-2); border-radius: var(--r2); padding: 22px">
+                <div style="font-size: 15.5px; font-weight: var(--w-bold); letter-spacing: -0.02em; color: var(--bad)">Leave this workspace</div>
+                <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.55; margin-top: 6px">You are the only owner. Transfer ownership to somebody else before you can leave.</div>
+                <div style="display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-4); border: 1px solid var(--line); border-radius: 999px; padding: 10px 17px">Leave workspace</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+ </div>
+
+ <sc-if value="{{ diffOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 70; background: rgba(8,10,14,.32)" onClick="{{ closeDiff }}"></div>
+   <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 480px; max-width: calc(100% - 40px); z-index: 71; background: var(--card); border-left: 1px solid var(--line); box-shadow: -20px 0 60px rgba(0,0,0,.2); display: flex; flex-direction: column; overflow: hidden; animation: rise .18s ease-out" onClick="{{ stopClick }}">
+     <div style="padding: 22px 24px 18px; border-bottom: 1px solid var(--line); flex: none">
+       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
+         <div style="min-width: 0">
+           <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ diffWhen }}</div>
+           <div style="font-size: 20px; font-weight: var(--w-bold); letter-spacing: -0.03em; line-height: 1.15">{{ diffTitle }}</div>
+         </div>
+         <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; color: var(--txt-2); cursor: pointer; flex: none" onClick="{{ closeDiff }}">&#10005;</span>
+       </div>
+       <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap">
+         <span style="{{ diffChipStyle }}">{{ diffKind }}</span>
+         <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3)">{{ diffMeta }}</span>
+       </div>
+     </div>
+     <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px">
+       <div>
+         <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">What changed</div>
+         <div style="border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+           <sc-for list="{{ diffFields }}" as="d" hint-placeholder-count="3">
+             <div style="{{ d.rowStyle }}">
+               <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ d.field }}</div>
+               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+                 <span style="{{ d.beforeStyle }}">{{ d.before }}</span>
+                 <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-4)">&#8594;</span>
+                 <span style="{{ d.afterStyle }}">{{ d.after }}</span>
+               </div>
+             </div>
+           </sc-for>
+         </div>
+       </div>
+       <div>
+         <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Context</div>
+         <div style="display: flex; flex-direction: column">
+           <sc-for list="{{ diffContext }}" as="r" hint-placeholder-count="5">
+             <div style="{{ r.rowStyle }}">
+               <span style="font-size: 13px; color: var(--txt-2); flex: none; width: 96px">{{ r.label }}</span>
+               <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt); flex: 1; min-width: 0; text-align: right; overflow-wrap: anywhere">{{ r.value }}</span>
+             </div>
+           </sc-for>
+         </div>
+       </div>
+       <div style="background: var(--shell); border-radius: var(--r2); padding: 16px 18px">
+         <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 8px">Raw payload</div>
+         <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-2); line-height: 1.7; overflow-wrap: anywhere">{{ diffPayload }}</div>
+       </div>
+     </div>
+     <div style="padding: 16px 24px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 10px; flex: none">
+       <span style="flex: 1; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">Entries are immutable</span>
+       <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 9px 16px; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ copyDiff }}">Copy entry</span>
+       <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 10px 17px; cursor: pointer" onClick="{{ copyDiff }}">Open the record</span>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ inviteOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 80; background: rgba(8,10,14,.38); display: grid; place-items: center" onClick="{{ closeInvite }}">
+     <div style="width: 480px; background: var(--card); border-radius: var(--r); padding: 30px; box-shadow: 0 30px 70px rgba(0,0,0,.3); animation: rise .16s ease-out" onClick="{{ stopClick }}">
+       <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; margin-bottom: 8px">Invite to the workspace</div>
+       <p style="font-size: 14px; color: var(--txt-2); line-height: 1.55; margin: 0 0 22px">They get a magic link. Nothing is charged until they accept, and you have four seats left.</p>
+       <label style="display: block; margin-bottom: 16px">
+         <span style="display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">Work email</span>
+         <span style="{{ inviteFieldStyle }}">
+           <input placeholder="name@company.com" value="{{ inviteEmail }}" onInput="{{ onInviteEmail }}" style="font-size: 14.5px" />
+         </span>
+         <sc-if value="{{ inviteError }}" hint-placeholder-val="{{ false }}">
+           <span style="display: block; font-size: 12.5px; color: var(--bad); margin-top: 7px">{{ inviteError }}</span>
+         </sc-if>
+       </label>
+       <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px">
+         <sc-for list="{{ inviteRoles }}" as="r" hint-placeholder-count="3">
+           <div style="{{ r.rowStyle }}" onClick="{{ r.onPick }}">
+             <span style="{{ r.dotStyle }}"><span style="{{ r.innerStyle }}"></span></span>
+             <div style="min-width: 0">
+               <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">{{ r.label }}</div>
+               <div style="font-size: 12.5px; color: var(--txt-2); margin-top: 2px">{{ r.hint }}</div>
+             </div>
+           </div>
+         </sc-for>
+       </div>
+       <div style="display: flex; align-items: center; gap: 10px">
+         <span style="flex: 1; text-align: center; font-size: 14.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 12px 0; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ closeInvite }}">Cancel</span>
+         <span style="flex: 1; text-align: center; font-size: 14.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 13px 0; cursor: pointer" onClick="{{ sendInvite }}">Send invite</span>
+       </div>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; right: 44px; bottom: 44px; z-index: 90; display: flex; align-items: center; gap: 12px; background: var(--txt); border-radius: var(--r3); padding: 14px 18px; box-shadow: 0 18px 40px rgba(0,0,0,.24); animation: rise .16s ease-out">
+     <span style="width: 20px; height: 20px; border-radius: 999px; background: var(--ok-fill); display: grid; place-items: center; flex: none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+     <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--card)">{{ toast }}</span>
+   </div>
+ </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+
+  state = {
+    vw: 1440,
+    screen: "team", themeMode: null, toast: "",
+    roleOpen: null,
+    roles: { "sam@attomik.co": "Admin", "mara@attomik.co": "Editor", "leo@attomik.co": "Editor", "ines@attomik.co": "Viewer", "tom@attomik.co": "Editor" },
+    removed: {},
+    connected: { shopify: true, klaviyo: false, meta: false, stripe: true, slack: true, sheets: false },
+    auditFilter: "All", auditQuery: "",
+    profile: { name: "Anna Hayes", email: "anna@attomik.co", role: "Head of operations", timezone: "Europe / Madrid" },
+    notify: { decisions: true, digest: true, mentions: true, marketing: false },
+    revoked: {},
+    inviteOpen: false, inviteEmail: "", inviteRole: "Editor", inviteError: "",
+    logoData: "", logoUrl: "", pickerOpen: null, profileTouched: {}, favicon: "", diff: null, perms: {}, skinNow: null, actWho: "Everyone", actQuery: "", locale: {}, localeOpen: null
+  };
+
+  static get SKINS() {
+    return {
+      split: "grid-template-columns: " + (this.state.vw < 700 ? "minmax(0, 1fr)" : "1.3fr 1fr") + "; gap: 14px",
+      pair: "grid-template-columns: " + (this.state.vw < 520 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))") + "; gap: 14px",
+      trio: "grid-template-columns: repeat(" + (this.state.vw < 520 ? 1 : this.state.vw < 820 ? 2 : 3) + ", minmax(0, 1fr)); gap: 12px",
+      quad: this.state.vw < 560 ? "grid-template-columns: minmax(0, 1fr); gap: 12px" : "grid-template-columns: repeat(" + (this.state.vw < 900 ? 2 : 4) + ", minmax(0, 1fr)); gap: 12px",
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  resolvedTheme() {
+    const mode = this.state.themeMode || this.props.theme || "light";
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+
+    const accent = dark
+      ? { "--accent": acc(0.66), "--accent-ink": n(0.14, 1), "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(0.52), "--accent-ink": n(0.99, 0.2), "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+
+    const steps = dark ? [0.40, 0.52, 0.64, 0.76, 0.86] : [0.34, 0.46, 0.58, 0.70, 0.82];
+    const ratio = [0.81, 1, 0.88, 0.63, 0.38];
+    const series = {};
+    steps.forEach((l, i) => { series["--s" + (i + 1)] = acc(l, ratio[i]); });
+
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+
+    return Object.assign({}, surfaces, accent, series, semantics, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  logoRef = React.createRef();
+  faviconRef = React.createRef();
+
+  componentDidMount() { this.hostSync(); this.apply(); this.syncImages(); }
+
+  componentDidUpdate() { this.apply(); if (this._onResize) this._onResize(); this.syncImages(); }
+
+  // src is assigned after mount so an unresolved hole never fires a fetch
+  syncImages() {
+    [[this.logoRef, this.state.logoData], [this.faviconRef, this.state.favicon]].forEach((p) => {
+      const el = p[0].current;
+      if (el && p[1] && el.getAttribute("src") !== p[1]) el.setAttribute("src", p[1]);
+    });
+  }
+  // Embedded in the Starter Admin shell: follow its navigation, let it own the tokens.
+  // __responsive: one width in state, every breakpoint derived from it
+  watchWidth() {
+    const measure = () => {
+      const el = this.rootRef.current;
+      const w = el ? Math.round(el.getBoundingClientRect().width) : window.innerWidth;
+      if (w && Math.abs(w - this.state.vw) > 8) this.setState({ vw: w });
+    };
+    this._onResize = measure;
+    requestAnimationFrame(measure);
+    window.addEventListener("resize", this._onResize);
+    if (window.ResizeObserver && this.rootRef.current) {
+      this._ro = new ResizeObserver(measure);
+      this._ro.observe(this.rootRef.current);
+    }
+  }
+
+  // Thresholds are the width this part actually has, not the window's.
+  cols(spec) {
+    const w = this.state.vw;
+    if (w < 620) return "grid-template-columns: minmax(0, 1fr); gap: 12px";
+    if (w < 960) return "grid-template-columns: " + (spec.mid || "minmax(0, 1fr)") + "; gap: 13px";
+    return "grid-template-columns: " + spec.wide + "; gap: 14px";
+  }
+
+  hostSync() {
+    this.watchWidth();
+    const mine = ["appearance","team","integrations","billing","audit","profile","sessions"];
+    const want = window.__starterScreen;
+    if (want && mine.indexOf(want) >= 0 && want !== this.state.screen) this.setState({ screen: want });
+    this._navHandler = (e) => {
+      const s = e.detail && e.detail.screen;
+      if (s && mine.indexOf(s) >= 0 && s !== this.state.screen) this.setState({ screen: s });
+    };
+    window.addEventListener("starter:nav", this._navHandler);
+    this._skinHandler = (e) => this.setState({ skinNow: e.detail });
+    window.addEventListener("starter:skinchanged", this._skinHandler);
+  }
+
+  embedded() { return !!window.__starterHost; }
+
+  componentWillUnmount() {
+    if (this._navHandler) window.removeEventListener("starter:nav", this._navHandler);
+    if (this._skinHandler) window.removeEventListener("starter:skinchanged", this._skinHandler);
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._ro) this._ro.disconnect(); if (this._toast) clearTimeout(this._toast); }
+
+  apply() {
+    const root = document.body;
+    if (!root || this.embedded()) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  say(msg) {
+    this.setState({ toast: msg });
+    if (this._toast) clearTimeout(this._toast);
+    this._toast = setTimeout(() => this.setState({ toast: "" }), 2600);
+  }
+
+  navItem(label, icon, screen, badge) {
+    const active = this.state.screen === screen;
+    const base = "display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: var(--r3); font-size: 15px; position: relative; cursor: pointer; ";
+    return {
+      label, icon, active, badge: badge || false,
+      style: base + (active ? "font-weight: var(--w-semi); color: var(--txt); background: var(--card)" : "font-weight: 500; color: var(--txt-2)"),
+      hoverStyle: active ? "" : "background: var(--card); color: var(--txt)",
+      iconStroke: active ? "var(--accent-text)" : "var(--txt-3)",
+      badgeStyle: "margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 3px 8px",
+      onClick: () => this.setState({ screen, roleOpen: null })
+    };
+  }
+
+  track(on) {
+    return {
+      trackStyle: "width: 42px; height: 25px; border-radius: 999px; flex: none; display: flex; align-items: center; padding: 3px; box-sizing: border-box; cursor: pointer; justify-content: " +
+        (on ? "flex-end" : "flex-start") + "; background: " + (on ? "var(--accent)" : "var(--line-2)"),
+      knobStyle: "width: 19px; height: 19px; border-radius: 999px; display: block; background: " + (on ? "var(--accent-ink)" : "var(--card)")
+    };
+  }
+
+  chip(tone, label) {
+    const map = {
+      ok: ["var(--ok)", "var(--ok-tint)", "var(--ok-fill)"],
+      warn: ["var(--warn)", "var(--warn-tint)", "var(--warn-fill)"],
+      bad: ["var(--bad)", "var(--bad-tint)", "var(--bad-fill)"],
+      idle: ["var(--txt-3)", "var(--shell)", "var(--txt-3)"]
+    };
+    const c = map[tone] || map.idle;
+    return {
+      status: label,
+      chipStyle: "display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; color: " + c[0] + "; background: " + c[1] + "; border-radius: 999px; padding: 4px 10px",
+      dotStyle: "width: 5px; height: 5px; border-radius: 999px; display: block; flex: none; background: " + c[2]
+    };
+  }
+
+  // Writes the real tab icon, so the upload is verifiable rather than decorative.
+  setFavicon(src) {
+    let link = document.querySelector('link[rel="icon"]');
+    if (!src) { if (link) link.parentNode.removeChild(link); return; }
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "icon");
+      document.head.appendChild(link);
+    }
+    link.setAttribute("href", src);
+  }
+
+  fieldError(key, value, required) {
+    const v = String(value || "").trim();
+    if (required && !v) return "This one cannot be empty.";
+    if (key === "email" && v) {
+      if (v.indexOf("@") < 0) return "Missing the @ — an address looks like name@company.com.";
+      if (/\s/.test(v)) return "Addresses cannot contain spaces.";
+      if (v.split("@")[1].indexOf(".") < 0) return "The domain needs a dot, like company.com.";
+      if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v)) return "That address will bounce.";
+    }
+    if (key === "name" && v && v.length < 2) return "That is too short to be a name.";
+    return "";
+  }
+
+  vals() { return this.state.skinNow || window.__starterSkin || { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600, r: 22, r2: 16, r3: 11 }; }
+
+  patch(k, v) { const p = {}; p[k] = v; this.emitSkin(p); }
+
+  emitSkin(patch) { window.dispatchEvent(new CustomEvent("starter:skin", { detail: patch })); }
+
+  swatch(color, on, title, onPick) {
+    return {
+      title: title, mark: on ? "✓" : "",
+      style: "width: 24px; height: 24px; border-radius: 7px; cursor: pointer; display: grid; place-items: center; font-size: 11px; box-sizing: border-box; color: #fff; background: " + color + "; " + (on
+        ? "outline: 2px solid var(--txt); outline-offset: 2px; border: 1px solid rgba(255,255,255,.55)"
+        : "border: 1px solid var(--line); opacity: .78"),
+      onPick: onPick
+    };
+  }
+
+  skinSliders() {
+    const v = this.vals();
+    const hueSwatch = (key, hue) => this.swatch("oklch(.58 .17 " + hue + ")", Math.abs(v[key] - hue) < 6, "Hue " + hue, () => this.patch(key, hue));
+    return [
+      { label: "Accent hue", value: v.ah, display: String(Math.round(v.ah)), min: 0, max: 360, step: 1,
+        onInput: (e) => this.patch("ah", parseFloat(e.target.value)),
+        swatches: [250, 300, 350, 25, 78, 147].map((hu) => hueSwatch("ah", hu)) },
+      { label: "Accent chroma", value: v.ac, display: v.ac.toFixed(3), min: 0, max: 0.28, step: 0.005,
+        onInput: (e) => this.patch("ac", parseFloat(e.target.value)),
+        swatches: [0.04, 0.10, 0.16, 0.22].map((c) => this.swatch("oklch(.58 " + c + " " + v.ah + ")", Math.abs(v.ac - c) < 0.02, "Chroma " + c, () => this.patch("ac", c))) },
+      { label: "Neutral hue", value: v.nh, display: String(Math.round(v.nh)), min: 0, max: 360, step: 1,
+        onInput: (e) => this.patch("nh", parseFloat(e.target.value)),
+        swatches: [250, 285, 140, 70, 30, 0].map((hu) => {
+          const w = this.swatch("oklch(.80 .02 " + hu + ")", Math.abs(v.nh - hu) < 6, "Neutral hue " + hu, () => this.patch("nh", hu));
+          w.style = w.style.replace("color: #fff", "color: var(--txt)");
+          return w;
+        }) },
+      { label: "Neutral chroma", value: v.nc, display: v.nc.toFixed(3), min: 0, max: 0.02, step: 0.001,
+        onInput: (e) => this.patch("nc", parseFloat(e.target.value)),
+        swatches: [0, 0.006, 0.012, 0.018].map((c) => {
+          const w = this.swatch("oklch(.86 " + c + " " + v.nh + ")", Math.abs(v.nc - c) < 0.002, "Neutral chroma " + c, () => this.patch("nc", c));
+          w.style = w.style.replace("color: #fff", "color: var(--txt)");
+          return w;
+        }) },
+      { label: "Semantic chroma", value: v.sc, display: v.sc.toFixed(3), min: 0.06, max: 0.24, step: 0.005,
+        onInput: (e) => this.patch("sc", parseFloat(e.target.value)),
+        swatches: [0.10, 0.15, 0.20].map((c) => this.swatch("oklch(.60 " + c + " 147)", Math.abs(v.sc - c) < 0.02, "Semantic chroma " + c, () => this.patch("sc", c))) }
+    ];
+  }
+
+  skinPickers() {
+    const v = this.vals();
+    const open = this.state.pickerOpen;
+    const defs = [
+      ["font", "Display and body", ["Instrument Sans", "Figtree", "Plus Jakarta Sans", "DM Sans", "Manrope", "Barlow", "Space Grotesk", "Outfit", "Sora", "Work Sans"], true],
+      ["mono", "Mono", ["IBM Plex Mono", "DM Mono", "JetBrains Mono", "Space Mono", "Azeret Mono"], true],
+      ["wb", "Bold weight", [600, 700, 800, 900], false],
+      ["ws", "Semibold weight", [400, 500, 600, 700], false]
+    ];
+    return defs.map((d) => {
+      const isOpen = open === d[0];
+      const current = v[d[0]];
+      return {
+        label: d[1], value: String(current), open: isOpen,
+        triggerStyle: "display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--card); border: 1.5px solid " + (isOpen ? "var(--accent)" : "var(--line-2)") + "; border-radius: var(--r3); padding: 11.5px 13.5px; font-size: 14px; cursor: pointer; box-sizing: border-box",
+        valueStyle: "min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" + (d[3] ? "; font-family: '" + current + "', system-ui, sans-serif; font-size: 15px" : "; font-family: var(--mono); font-size: 13.5px"),
+        caretStyle: "font-family: var(--mono); font-size: 10px; color: var(--txt-4); flex: none; transform: rotate(" + (isOpen ? "180deg" : "0deg") + "); transition: transform .12s",
+        onToggle: () => this.setState({ pickerOpen: isOpen ? null : d[0] }),
+        options: d[2].map((o) => ({
+          label: String(o), on: o === current,
+          style: "display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 8px; cursor: pointer; color: " + (o === current ? "var(--txt)" : "var(--txt-2)"),
+          labelStyle: d[3]
+            ? "font-family: '" + o + "', system-ui, sans-serif; font-size: 15px; letter-spacing: -0.01em"
+            : "font-family: var(--mono); font-size: 13.5px",
+          onPick: () => { this.setState({ pickerOpen: null }); this.patch(d[0], o); }
+        }))
+      };
+    });
+  }
+
+  skinRadii() {
+    const v = this.vals();
+    return [["--r", "r", "outer panels"], ["--r2", "r2", "inner panels"], ["--r3", "r3", "controls"]].map((r) => ({
+      token: r[0], value: v[r[1]] + "px", raw: v[r[1]],
+      previewStyle: "height: 54px; background: var(--card); border: 1px solid var(--line); border-radius: " + v[r[1]] + "px",
+      onInput: (e) => this.patch(r[1], parseFloat(e.target.value))
+    }));
+  }
+
+  skinPresets() {
+    const v = this.vals();
+    return [
+      { label: "Base", hint: "cool grey, blue", patch: { ah: 250, ac: 0.16, al: 0.52, alDark: 0.66, ink: undefined, nh: 250, nc: 0.006, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 }, dot: "oklch(.52 .16 250)" },
+      { label: "Electric", hint: "near-black, bright green fill", patch: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 }, dot: "oklch(.86 .21 160)" },
+      { label: "Green", hint: "sage, warm forest neutrals", patch: { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, ink: undefined, nh: 138, nc: 0.009, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }, dot: "oklch(.58 .09 140)" }
+    ].map((p) => {
+      const on = Math.abs(v.ah - p.patch.ah) < 4 && Math.abs(v.ac - p.patch.ac) < 0.03 && (!p.patch.font || p.patch.font === v.font);
+      return {
+        label: p.label, hint: p.hint,
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r3); cursor: pointer; box-sizing: border-box; background: var(--card); border: 1.5px solid " + (on ? "var(--accent)" : "var(--line)"),
+        dotStyle: "width: 22px; height: 22px; border-radius: 7px; flex: none; display: block; background: " + p.dot,
+        onPick: () => this.emitSkin(p.patch)
+      };
+    });
+  }
+
+  resolvedTokens() {
+    const names = ["--accent", "--accent-text", "--bg", "--card", "--line-2", "--ok", "--warn", "--bad"];
+    const cs = window.getComputedStyle(document.body);
+    return names.map((n) => ({
+      name: n, value: (cs.getPropertyValue(n) || "").trim() || "—",
+      swatch: "width: 18px; height: 18px; border-radius: 5px; flex: none; display: block; border: 1px solid var(--line); background: var(" + n + ")"
+    }));
+  }
+
+  renderVals() {
+    const st = this.state;
+    const screen = st.screen;
+
+    const memberData = [
+      ["Anna Hayes", "anna@attomik.co", "Owner", "now", "ok", "Active"],
+      ["Sam Whitfield", "sam@attomik.co", st.roles["sam@attomik.co"], "12 min ago", "ok", "Active"],
+      ["Mara Iversen", "mara@attomik.co", st.roles["mara@attomik.co"], "2 hours ago", "ok", "Active"],
+      ["Leo Ferreira", "leo@attomik.co", st.roles["leo@attomik.co"], "Yesterday", "ok", "Active"],
+      ["Inés Navarro", "ines@attomik.co", st.roles["ines@attomik.co"], "3 days ago", "idle", "Idle"],
+      ["Tom Bergen", "tom@attomik.co", st.roles["tom@attomik.co"], "never", "warn", "Invited"]
+    ].filter((m) => !st.removed[m[1]]);
+
+    const roleHints = { Owner: "Everything, including billing", Admin: "Everything except billing", Editor: "Change records, no settings", Viewer: "Read and export only" };
+
+    const permData = [
+      ["View records and reports", [1, 1, 1, 1]],
+      ["Create and edit records", [1, 1, 1, 0]],
+      ["Approve refunds over threshold", [1, 1, 0, 0]],
+      ["Manage integrations", [1, 1, 0, 0]],
+      ["Invite and remove members", [1, 1, 0, 0]],
+      ["Change plan and payment", [1, 0, 0, 0]]
+    ];
+
+    const integrationData = [
+      ["shopify", "Shopify", "SH", "Orders, customers, refunds, payouts.", "last sync 4 min ago · 3,412 records"],
+      ["stripe", "Stripe", "ST", "Payments, disputes, and payout timing.", "last sync 9 min ago · 2 disputes open"],
+      ["slack", "Slack", "SL", "Posts decisions that need a person into a channel.", "#ops-alerts · 14 messages this week"],
+      ["klaviyo", "Klaviyo", "KL", "Flows, campaigns, and per-message revenue.", "needs a private API key"],
+      ["meta", "Meta Ads", "MA", "Spend and attributed revenue by campaign.", "not connected"],
+      ["sheets", "Google Sheets", "GS", "Pushes a daily snapshot into a sheet.", "not connected"]
+    ];
+
+    const auditData = [
+      ["Aug 31 · 09:41", "Anna Hayes", "approved", "Refund of $412.00", "order 40218", "web · Madrid"],
+      ["Aug 31 · 09:12", "System", "synced", "3,412 orders from Shopify", "integration", "job 8f2c"],
+      ["Aug 31 · 08:57", "Sam Whitfield", "changed", "Status to fulfilled", "order 40216", "web · London"],
+      ["Aug 30 · 18:22", "Mara Iversen", "exported", "1,284 customers as CSV", "customers", "web · Oslo"],
+      ["Aug 30 · 17:04", "Anna Hayes", "changed", "Approval threshold to $250", "settings", "web · Madrid"],
+      ["Aug 30 · 16:40", "Tom Bergen", "invited", "tom@attomik.co as editor", "members", "web · Madrid"],
+      ["Aug 30 · 11:18", "System", "failed", "Payment capture declined", "order 40211", "webhook"],
+      ["Aug 29 · 14:02", "Leo Ferreira", "deleted", "Draft order 40190", "order 40190", "web · Lisbon"]
+    ];
+    const kindTone = { approved: "ok", synced: "idle", changed: "idle", exported: "idle", invited: "idle", failed: "bad", deleted: "bad" };
+    const q = st.auditQuery.trim().toLowerCase();
+    const auditRows = auditData
+      .filter((a) => st.auditFilter === "All"
+        || (st.auditFilter === "People" && a[1] !== "System")
+        || (st.auditFilter === "System" && a[1] === "System")
+        || (st.auditFilter === "Failures" && kindTone[a[2]] === "bad"))
+      .filter((a) => !q || (a[1] + " " + a[3] + " " + a[4]).toLowerCase().indexOf(q) >= 0);
+
+    const titles = {
+      activity: ["Workspace · last 7 days", "Activity", "Every action anybody took in this workspace, newest first. Nothing is editable and nothing is hidden."],
+      appearance: ["Workspace · brand variables", "Appearance & brand", "The nine values a brand supplies. Everything else in the product is computed from them, in both themes."],
+      team: ["Workspace · 6 of 10 seats", "Team & permissions", "Who is in this workspace and what each role is allowed to do."],
+      integrations: ["Workspace · 3 connected", "Integrations", "Every source of truth this workspace reads from, and what it costs to lose one."],
+      billing: ["Workspace · Growth plan", "Billing & invoices", "Plan, seats, payment method, and every invoice we have ever issued."],
+      audit: ["Workspace · 90-day retention", "Audit log", "Every change, who made it, and where it came from. Exportable, never editable."],
+      profile: ["Personal", "Profile & account", "Your details, what reaches you, and the devices holding a session."],
+      sessions: ["Personal", "Sessions", "Every device holding a live session, and how long each has been quiet."]
+    };
+    const t = titles[screen] || titles.team;
+
+    return {
+      rootRef: this.rootRef,
+      split: "grid-template-columns: " + (st.vw < 700 ? "minmax(0, 1fr)" : "1.3fr 1fr") + "; gap: 14px",
+      pair: "grid-template-columns: " + (st.vw < 620 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))") + "; gap: 16px",
+      trio: "grid-template-columns: repeat(" + (st.vw < 620 ? 1 : st.vw < 900 ? 2 : 3) + ", minmax(0, 1fr)); gap: 12px",
+      quad: "grid-template-columns: repeat(" + (st.vw < 620 ? 1 : st.vw < 980 ? 2 : 4) + ", minmax(0, 1fr)); gap: 12px",
+      navWorkspace: [
+        this.navItem("Activity", "M4 20V9M12 20V4M20 20v-7M2 20h20", "activity"),
+        this.navItem("Appearance & brand", "M12 3a9 9 0 1 0 0 18 3 3 0 0 0 0-6 3 3 0 0 1 0-6 3 3 0 0 0 0-6M7.5 9h.01M12 7h.01M16.5 9h.01", "appearance"),
+        this.navItem("Team & permissions", "M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M22 21v-2a4 4 0 0 0-3-3.87", "team", String(memberData.length)),
+        this.navItem("Integrations", "M12 3v6M12 15v6M3 12h6M15 12h6", "integrations", "3"),
+        this.navItem("Billing", "M3 7h18v12H3zM3 11h18M7 15h4", "billing"),
+        this.navItem("Audit log", "M4 20V9M12 20V4M20 20v-7", "audit")
+      ],
+      navPersonal: [
+        this.navItem("Profile & account", "M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1", "profile"),
+        this.navItem("Sessions", "M3 5h18v11H3zM8 20h8M12 16v4", "sessions")
+      ],
+      themeModes: [
+        ["light", "Light", "Light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
+        ["system", "System", "Auto", "M3 5h18v11H3zM8 20h8M12 16v4"],
+        ["dark", "Dark", "Dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"]
+      ].map((m) => {
+        const active = (st.themeMode || this.props.theme || "light") === m[0];
+        return {
+          label: m[1], short: m[2], icon: m[3],
+          style: "flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 0; border-radius: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; " + (active ? "background: var(--shell); color: var(--txt)" : "color: var(--txt-4)"),
+          onClick: () => this.setState({ themeMode: m[0] })
+        };
+      }),
+
+      eyebrow: t[0], title: t[1], subtitle: t[2],
+      hasAction: screen === "team" || screen === "integrations",
+      actionLabel: screen === "team" ? "Invite member" : "Add integration",
+      primaryAction: () => {
+        if (screen === "team") this.setState({ inviteOpen: true });
+        else this.say("Browse the integration catalogue");
+      },
+
+      isActivity: screen === "activity",
+      isAppearance: screen === "appearance",
+      isTeam: screen === "team",
+      isIntegrations: screen === "integrations",
+      isBilling: screen === "billing",
+      isAudit: screen === "audit",
+      isProfile: screen === "profile" || screen === "sessions",
+
+      seatStats: [
+        { label: "Seats used", value: String(memberData.length) + " / 10", sub: String(10 - memberData.length) + " available", lead: true },
+        { label: "Admins", value: String(memberData.filter((m) => m[2] === "Admin" || m[2] === "Owner").length), sub: "can change settings" },
+        { label: "Pending invites", value: String(memberData.filter((m) => m[5] === "Invited").length), sub: "expire after 7 days" },
+        { label: "Idle over 30 days", value: "1", sub: "consider removing" }
+      ].map((s) => ({
+        label: s.label, value: s.value, sub: s.sub,
+        cardStyle: s.lead
+          ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 20px; min-width: 0"
+          : "background: var(--shell); border-radius: var(--r2); padding: 20px; min-width: 0"
+      })),
+
+      members: memberData.map((m, i) => {
+        const c = this.chip(m[4], m[5]);
+        const isOwner = m[2] === "Owner";
+        return {
+          name: m[0], email: m[1], role: m[2], active: m[3],
+          status: c.status, chipStyle: c.chipStyle, dotStyle: c.dotStyle,
+          initials: m[0].split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+          avatarStyle: "width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; flex: none; font-size: 11.5px; font-weight: var(--w-bold); " + (i === 0
+            ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text)"
+            : "background: var(--shell); color: var(--txt-2)"),
+          rowStyle: "display: flex; align-items: center; gap: 14px; padding: 13px 18px; background: var(--card)" + (i < memberData.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          roleStyle: "display: flex; align-items: center; gap: 8px; font-size: 13.5px; border-radius: 8px; padding: 7px 11px; box-sizing: border-box; width: 100%; " + (isOwner
+            ? "color: var(--txt-3); background: var(--shell); cursor: default"
+            : "color: var(--txt); background: var(--shell); border: 1px solid var(--line-2); cursor: pointer"),
+          roleOpen: st.roleOpen === m[1],
+          onRole: () => { if (!isOwner) this.setState({ roleOpen: st.roleOpen === m[1] ? null : m[1] }); },
+          roleOptions: ["Admin", "Editor", "Viewer"].map((r) => ({
+            label: r, hint: roleHints[r],
+            style: "display: block; padding: 8px 10px; border-radius: 8px; cursor: pointer; " + (m[2] === r ? "background: var(--shell); color: var(--txt)" : "color: var(--txt-2)"),
+            onPick: () => {
+              const roles = Object.assign({}, st.roles);
+              roles[m[1]] = r;
+              this.setState({ roles, roleOpen: null });
+              this.say(m[0].split(" ")[0] + " is now " + r.toLowerCase());
+            }
+          })),
+          onRemove: () => {
+            if (isOwner) return this.say("The owner cannot be removed");
+            const removed = Object.assign({}, st.removed);
+            removed[m[1]] = true;
+            this.setState({ removed });
+            this.say(m[0] + " removed");
+          }
+        };
+      }),
+
+      permissions: permData.map((p, i) => ({
+        label: p[0],
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 11px 16px; background: var(--shell)" + (i < permData.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        cells: p[1].map((base, col) => {
+          const key = i + ":" + col;
+          const v = Object.prototype.hasOwnProperty.call(st.perms, key) ? st.perms[key] : !!base;
+          const locked = col === 0;
+          return {
+            mark: v ? "✓" : "",
+            title: locked ? "Owners always have every capability" : (v ? "Granted — click to revoke" : "Not granted — click to allow"),
+            style: "width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; box-sizing: border-box; cursor: " + (locked ? "default" : "pointer") + "; " + (v
+              ? "background: var(--ok-tint); color: var(--ok)"
+              : "border: 1.5px dashed var(--line-2); color: transparent") + (locked ? "; opacity: .6" : ""),
+            onToggle: () => {
+              if (locked) return;
+              const perms = Object.assign({}, st.perms);
+              perms[key] = !v;
+              this.setState({ perms });
+              this.say((v ? "Revoked" : "Granted") + " · " + p[0]);
+            }
+          };
+        })
+      })),
+
+      integrations: integrationData.map((i) => {
+        const on = !!st.connected[i[0]];
+        const c = this.chip(on ? "ok" : "idle", on ? "Connected" : "Available");
+        return {
+          name: i[1], code: i[2], blurb: i[3], meta: i[4],
+          status: c.status, chipStyle: c.chipStyle, dotStyle: c.dotStyle,
+          cardStyle: "border-radius: var(--r2); padding: 20px; min-width: 0; box-sizing: border-box; background: var(--card); border: 1px solid " + (on ? "var(--lead-line)" : "var(--line)"),
+          tileStyle: "width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none; font-family: var(--mono); font-size: 12px; " + (on
+            ? "background: var(--accent-tint); color: var(--accent-text)"
+            : "background: var(--shell); color: var(--txt-3)"),
+          btnLabel: on ? "Disconnect" : "Connect",
+          btnStyle: "font-size: 13.5px; font-weight: var(--w-semi); border-radius: 999px; padding: 9px 16px; cursor: pointer; " + (on
+            ? "border: 1px solid var(--line-2); color: var(--txt-2)"
+            : "background: var(--accent); color: var(--accent-ink)"),
+          onToggle: () => {
+            const c2 = Object.assign({}, st.connected);
+            c2[i[0]] = !on;
+            this.setState({ connected: c2 });
+            this.say(i[1] + (on ? " disconnected" : " connected"));
+          }
+        };
+      }),
+
+      invoices: [
+        ["INV-2026-014", "Jan 2026 – Jan 2027", "$4,800.00", "ok", "Paid"],
+        ["INV-2026-009", "4 extra seats, Jun 2026", "$1,920.00", "ok", "Paid"],
+        ["INV-2025-031", "Jan 2025 – Jan 2026", "$3,600.00", "ok", "Paid"],
+        ["INV-2025-018", "2 extra seats, Aug 2025", "$960.00", "warn", "Refunded"],
+        ["INV-2024-027", "Jan 2024 – Jan 2025", "$2,400.00", "ok", "Paid"]
+      ].map((v, i, arr) => {
+        const c = this.chip(v[3], v[4]);
+        return {
+          id: v[0], period: v[1], amount: v[2],
+          status: c.status, chipStyle: c.chipStyle, dotStyle: c.dotStyle,
+          rowStyle: "display: flex; align-items: center; gap: 14px; padding: 13px 18px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          onDownload: () => this.say(v[0] + ".pdf downloaded")
+        };
+      }),
+      upgrade: () => this.say("Plan comparison opened"),
+
+      auditFilters: ["All", "People", "System", "Failures"].map((f) => ({
+        label: f,
+        style: "padding: 8px 15px; border-radius: 999px; font-size: 14px; cursor: pointer; " + (st.auditFilter === f
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2); font-weight: 500"),
+        onClick: () => this.setState({ auditFilter: f })
+      })),
+      auditQuery: st.auditQuery,
+      onAuditQuery: (e) => this.setState({ auditQuery: e.target.value }),
+      auditRows: auditRows.map((a, i) => {
+        const tone = kindTone[a[2]] || "idle";
+        const c = this.chip(tone, a[2]);
+        return {
+          when: a[0], who: a[1], kind: a[2], what: a[3], object: a[4], source: a[5],
+          initials: a[1] === "System" ? "SY" : a[1].split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+          avatarStyle: "width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; flex: none; font-size: 10px; font-weight: var(--w-bold); background: var(--shell); color: var(--txt-3)",
+          kindStyle: c.chipStyle + "; flex: none; text-transform: uppercase; letter-spacing: .06em",
+          rowStyle: "display: flex; align-items: center; gap: 14px; padding: 12px 18px; cursor: pointer; background: var(--card)" + (i < auditRows.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        onOpen: () => this.setState({ diff: { when: a[0], who: a[1], kind: a[2], what: a[3], object: a[4], source: a[5] } })
+        };
+      }),
+      auditFooter: "Showing " + auditRows.length + " of 12,480 entries · retained 90 days",
+      exportAudit: () => this.say("Audit export queued"),
+
+      localeFields: [
+        ["lang", "Interface language", ["English", "Español", "Português", "Français", "Deutsch"]],
+        ["region", "Region", ["Spain", "Mexico", "United States", "United Kingdom", "Germany"]],
+        ["dates", "Date format", ["31 Aug 2026", "Aug 31, 2026", "2026-08-31", "31/08/2026"]],
+        ["numbers", "Numbers", ["1.234,56 €", "€1,234.56", "1 234,56 €"]]
+      ].map((f) => {
+        const current = st.locale[f[0]] || f[2][0];
+        const open = st.localeOpen === f[0];
+        return {
+          label: f[1], value: current, open,
+          triggerStyle: "display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--card); border: 1.5px solid " + (open ? "var(--accent)" : "var(--line-2)") + "; border-radius: var(--r3); padding: 11.5px 13.5px; font-size: 14px; cursor: pointer; box-sizing: border-box",
+          caretStyle: "font-family: var(--mono); font-size: 10px; color: var(--txt-4); flex: none; transform: rotate(" + (open ? "180deg" : "0deg") + "); transition: transform .12s",
+          onToggle: () => this.setState({ localeOpen: open ? null : f[0] }),
+          options: f[2].map((o) => ({
+            label: o, on: o === current,
+            style: "display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 8px; font-size: 13.5px; cursor: pointer; color: " + (o === current ? "var(--txt)" : "var(--txt-2)"),
+            onPick: () => { const l = Object.assign({}, st.locale); l[f[0]] = o; this.setState({ locale: l, localeOpen: null }); }
+          }))
+        };
+      }),
+      localePreview: (st.locale.dates || "31 Aug 2026") + " · " + (st.locale.numbers || "1.234,56 €") + " · " + (st.locale.lang || "English"),
+      profileFields: [
+        ["name", "Full name", true], ["email", "Email", true], ["role", "Job title", false], ["timezone", "Timezone", false]
+      ].map((f) => {
+        const value = st.profile[f[0]];
+        const touched = !!st.profileTouched[f[0]];
+        const err = touched ? this.fieldError(f[0], value, f[2]) : "";
+        const filled = String(value || "").trim().length > 0;
+        return {
+          label: f[1], value, error: err, invalid: !!err,
+          valid: touched && !err && filled,
+          ariaInvalid: err ? "true" : "false",
+          style: "display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--r3); padding: 12px 14px; box-sizing: border-box; border: 1.5px solid " + (err ? "var(--bad)" : "var(--line-2)"),
+          onBlur: () => { const t = Object.assign({}, st.profileTouched); t[f[0]] = true; this.setState({ profileTouched: t }); },
+          onInput: (e) => {
+            const p = Object.assign({}, st.profile);
+            p[f[0]] = e.target.value;
+            const t = Object.assign({}, st.profileTouched); t[f[0]] = true;
+            this.setState({ profile: p, profileTouched: t });
+          }
+        };
+      }),
+      notifyRows: [
+        ["decisions", "Decisions waiting on me", "Refunds, price changes, and reorders above threshold."],
+        ["digest", "Daily digest", "One email at 08:00 with yesterday's figures."],
+        ["mentions", "Mentions in notes", "When somebody writes your name on a record."],
+        ["marketing", "Product news", "Occasional notes about what shipped."]
+      ].map((n, i, arr) => {
+        const on = !!st.notify[n[0]];
+        const tr = this.track(on);
+        return {
+          title: n[1], sub: n[2],
+          rowStyle: "display: flex; align-items: center; gap: 20px; padding: 14px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          trackStyle: tr.trackStyle, knobStyle: tr.knobStyle,
+          onToggle: () => { const g = Object.assign({}, st.notify); g[n[0]] = !on; this.setState({ notify: g }); }
+        };
+      }),
+      sessions: [
+        ["s1", "MacBook Pro · Madrid", "this device · active now", true],
+        ["s2", "iPhone 15 · Madrid", "last used 2 hours ago", false],
+        ["s3", "Chrome · Lisbon", "last used 9 days ago", false]
+      ].filter((s) => !st.revoked[s[0]]).map((s, i, arr) => ({
+        device: s[1], meta: s[2],
+        dotStyle: "width: 8px; height: 8px; border-radius: 999px; flex: none; display: block; background: " + (s[3] ? "var(--ok-fill)" : "var(--line-2)"),
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 13px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        action: s[3] ? "Current" : "Revoke",
+        actionStyle: "font-family: var(--mono); font-size: 11px; flex: none; " + (s[3] ? "color: var(--txt-4)" : "color: var(--bad); cursor: pointer"),
+        onRevoke: () => {
+          if (s[3]) return;
+          const r = Object.assign({}, st.revoked);
+          r[s[0]] = true;
+          this.setState({ revoked: r });
+          this.say("Session revoked");
+        }
+      })),
+
+      // --- appearance tab: edits go up to the host, which owns the tokens ---
+      logoRef: this.logoRef,
+      hasLogo: !!st.logoData,
+      noLogo: !st.logoData,
+      logoUrl: st.logoUrl,
+      logoPreviewStyle: "min-width: 152px; height: 56px; border-radius: var(--r3); background: var(--card); border: 1px " + (st.logoData ? "solid var(--line)" : "dashed var(--line-2)") + "; display: grid; place-items: center; padding: 0 14px; box-sizing: border-box",
+      onLogoFile: (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.setState({ logoData: reader.result });
+          this.emitSkin({ logo: reader.result });
+          this.say("Logo updated");
+        };
+        reader.readAsDataURL(file);
+      },
+      onLogoUrl: (e) => {
+        const v = e.target.value;
+        this.setState({ logoUrl: v, logoData: v.trim() ? v.trim() : "" });
+        this.emitSkin({ logo: v.trim() });
+      },
+      clearLogo: () => {
+        this.setState({ logoData: "", logoUrl: "" });
+        this.emitSkin({ logo: "" });
+      },
+      intake: [
+        ["01", "One accent colour", "Their primary, as a hex or an oklch triplet. We read its hue and chroma and place every other value from there.", "e.g. #2D5BFF → hue 262, chroma .19"],
+        ["02", "One neutral direction", "Warm, cool, or true neutral — a single grey from their palette is enough to infer it.", "e.g. #6B6560 reads warm"],
+        ["03", "Two typefaces", "A display and body face, and a mono for numerals. If they have no mono, say so and keep ours.", "e.g. Figtree + IBM Plex Mono"],
+        ["04", "Two weights", "Which weight of that face reads as bold, and which as semibold. Faces differ; the scale does not.", "e.g. 700 and 600"],
+        ["05", "Logo, two files", "One for light grounds, one for dark. SVG preferred, and it has to stay legible at 30px tall.", "e.g. logo-light.svg, logo-dark.svg"],
+        ["06", "Favicon", "A square mark, not the full wordmark — it renders at 16px in a browser tab and anything with words turns to mush. SVG plus a 512px PNG fallback.", "e.g. favicon.svg, icon-512.png"]
+      ].map((r) => ({ n: r[0], title: r[1], body: r[2], example: r[3] })),
+      faviconRef: this.faviconRef,
+      hasFavicon: !!st.favicon,
+      noFavicon: !st.favicon,
+      faviconPreviewStyle: "width: 46px; height: 46px; border-radius: 10px; background: var(--card); border: 1px " + (st.favicon ? "solid var(--line)" : "dashed var(--line-2)") + "; display: grid; place-items: center; flex: none; box-sizing: border-box",
+      onFaviconFile: (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.setState({ favicon: reader.result });
+          this.setFavicon(reader.result);
+          this.say("Favicon updated");
+        };
+        reader.readAsDataURL(file);
+      },
+      clearFavicon: () => { this.setState({ favicon: "" }); this.setFavicon(""); },
+      rules: [
+        ["surfaces", "Five steps on the neutral hue: page ground, shell, card, hairline, border. On dark they are redrawn as peers, never inverted."],
+        ["text", "Four fixed lightness steps. The gap between secondary and muted is what keeps enabled and disabled apart."],
+        ["accent-text", "The accent minus .08 lightness, because a fill-bright colour fails contrast at 13px."],
+        ["--s1…--s5", "One hue, five steps of falling lightness and chroma. Charts use them in rank order, never as categories."],
+        ["semantics", "Hues fixed at 147, 78 and 25 so green is green in every brand — only the chroma follows the accent."],
+        ["hero / lead", "The emphasised panel is a tint of the accent, not a black slab, so it holds up in a pale layout."]
+      ].map((r, i, arr) => ({
+        token: r[0], rule: r[1],
+        rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 9px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })),
+      sliders: this.skinSliders(),
+      pickers: this.skinPickers(),
+      radii: this.skinRadii(),
+      presets: this.skinPresets(),
+      resolved: this.resolvedTokens(),
+      previewBars: [46, 30, 52, 38, 56, 24].map((v, i) => ({
+        style: "flex: 1; display: block; border-radius: 3px 3px 0 0; height: " + v + "px; background: var(--s" + Math.min(5, i + 1) + ")"
+      })),
+      resetSkin: () => { this.emitSkin(null); this.setState({ logoData: "", logoUrl: "" }); this.say("Skin reset to preset"); },
+
+      actStats: [
+        ["Actions today", "148", "62 by people, 86 by the system", true],
+        ["Most active", "Sam Whitfield", "51 actions", false],
+        ["Approvals", "9", "2 still waiting", false],
+        ["Failures", "3", "all retried", false]
+      ].map((a) => ({
+        label: a[0], value: a[1], sub: a[2],
+        cardStyle: a[3]
+          ? "background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; border-radius: var(--r2); padding: 20px; min-width: 0"
+          : "background: var(--shell); border-radius: var(--r2); padding: 20px; min-width: 0"
+      })),
+      actQuery: st.actQuery,
+      onActQuery: (e) => this.setState({ actQuery: e.target.value }),
+      actPeople: ["Everyone", "Anna Hayes", "Sam Whitfield", "Mara Iversen", "System"].map((p) => ({
+        label: p,
+        style: "padding: 8px 14px; border-radius: 999px; font-size: 13.5px; cursor: pointer; " + (st.actWho === p
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2)"),
+        onPick: () => this.setState({ actWho: p })
+      })),
+      actGroups: (() => {
+        const rows = [
+          ["Today", [
+            ["09:52", "Anna Hayes", "sent", "Reply to Alicia Duarte, AI draft approved unedited", "conversation c1", "web · Madrid"],
+            ["09:44", "Anna Hayes", "approved", "Refund of $412.00", "order 40218", "web · Madrid"],
+            ["09:41", "System", "flagged", "Second approval required, over $250 threshold", "order 40218", "rule 3"],
+            ["09:12", "System", "synced", "3,412 orders from Shopify", "integration", "job 8f2c"],
+            ["08:57", "Sam Whitfield", "changed", "Status to fulfilled", "order 40216", "web · London"],
+            ["08:31", "Sam Whitfield", "edited", "AI draft before sending, 41 characters changed", "conversation c4", "web · London"],
+            ["08:04", "Mara Iversen", "viewed", "Customer record", "C-1043", "web · Oslo"]
+          ]],
+          ["Yesterday", [
+            ["18:22", "Mara Iversen", "exported", "1,284 customers as CSV", "customers", "web · Oslo"],
+            ["17:20", "Sam Whitfield", "sent", "Reply to Alicia Duarte", "conversation c1", "web · London"],
+            ["17:04", "Anna Hayes", "changed", "Approval threshold to $250.00", "settings", "web · Madrid"],
+            ["16:40", "Anna Hayes", "invited", "tom@attomik.co as editor", "members", "web · Madrid"],
+            ["11:18", "System", "failed", "Payment capture declined", "order 40211", "webhook"],
+            ["09:02", "System", "retried", "Payment capture, second attempt", "order 40211", "job 4471"]
+          ]],
+          ["Aug 29", [
+            ["14:02", "Mara Iversen", "deleted", "Draft order", "order 40190", "web · Lisbon"],
+            ["11:35", "Sam Whitfield", "connected", "Slack workspace", "integration", "web · London"],
+            ["09:20", "Anna Hayes", "signed in", "New device, magic link", "session", "web · Madrid"]
+          ]]
+        ];
+        const q = st.actQuery.trim().toLowerCase();
+        const tone = { approved: "ok", sent: "ok", connected: "ok", "signed in": "idle", synced: "idle", viewed: "idle",
+          changed: "idle", edited: "idle", exported: "idle", invited: "idle", retried: "warn", flagged: "warn", failed: "bad", deleted: "bad" };
+        return rows.map((g) => {
+          const filtered = g[1]
+            .filter((r) => st.actWho === "Everyone" || r[1] === st.actWho)
+            .filter((r) => !q || (r[1] + " " + r[2] + " " + r[3] + " " + r[4]).toLowerCase().indexOf(q) >= 0);
+          return {
+            label: g[0], count: filtered.length + (filtered.length === 1 ? " action" : " actions"),
+            rows: filtered.map((r, i, arr) => {
+              const t = tone[r[2]] || "idle";
+              const c2 = this.chip(t, r[2]);
+              return {
+                time: r[0], who: r[1], kind: r[2], what: r[3], object: r[4], where: r[5],
+                initials: r[1] === "System" ? "SY" : r[1].split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+                avatarStyle: "width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; flex: none; font-size: 10px; font-weight: var(--w-bold); background: " + (r[1] === "System" ? "var(--shell)" : "var(--lead)") + "; color: " + (r[1] === "System" ? "var(--txt-3)" : "var(--accent-text)"),
+                kindStyle: c2.chipStyle + "; flex: none; width: 96px; justify-content: center; text-transform: uppercase; letter-spacing: .06em",
+                rowStyle: "display: flex; align-items: center; gap: 12px; padding: 11px 18px; cursor: pointer; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+                onOpen: () => this.setState({ diff: { when: g[0] + " · " + r[0], who: r[1], kind: r[2], what: r[3], object: r[4], source: r[5] } })
+              };
+            })
+          };
+        }).filter((g) => g.rows.length > 0);
+      })(),
+      actFooter: "Showing " + (st.actWho === "Everyone" ? "everyone" : st.actWho) + " · 16 of 12,480 entries · retained 90 days",
+      diffOpen: !!st.diff,
+      closeDiff: () => this.setState({ diff: null }),
+      copyDiff: () => { this.setState({ diff: null }); this.say("Entry copied"); },
+      diffWhen: st.diff ? st.diff.when : "",
+      diffTitle: st.diff ? st.diff.what : "",
+      diffKind: st.diff ? st.diff.kind : "",
+      diffMeta: st.diff ? st.diff.who + " · " + st.diff.object + " · " + st.diff.source : "",
+      diffChipStyle: "font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 4px 10px; " + (st.diff && (st.diff.kind === "failed" || st.diff.kind === "deleted")
+        ? "color: var(--bad); background: var(--bad-tint)"
+        : st.diff && st.diff.kind === "approved" ? "color: var(--ok); background: var(--ok-tint)" : "color: var(--txt-2); background: var(--shell)"),
+      diffFields: (st.diff ? {
+        approved: [["status", "refund_pending", "refund_approved"], ["approver_2", "—", "Anna Hayes"], ["settles_at", "—", "2026-09-04"]],
+        changed: [["status", "unfulfilled", "fulfilled"], ["fulfilled_at", "—", "2026-08-31 08:57"], ["warehouse", "—", "MAD-01"]],
+        deleted: [["record", "draft order 40190", "deleted"], ["line_items", "3", "0"], ["recoverable_until", "—", "2026-11-29"]],
+        failed: [["capture", "pending", "declined"], ["decline_code", "—", "insufficient_funds"], ["retry_at", "—", "2026-09-01 09:00"]],
+        exported: [["rows", "—", "1,284"], ["format", "—", "csv"], ["scope", "—", "customers"]],
+        invited: [["seat", "—", "editor"], ["expires", "—", "2026-09-06"], ["invited_by", "—", "Anna Hayes"]],
+        synced: [["records", "3,264", "3,412"], ["source", "shopify", "shopify"], ["duration", "—", "41s"]]
+      }[st.diff.kind] || [["value", "before", "after"]] : []).map((d, i, arr) => ({
+        field: d[0], before: d[1], after: d[2],
+        rowStyle: "padding: 14px 16px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        beforeStyle: "font-family: var(--mono); font-size: 12px; color: var(--bad); background: var(--bad-tint); border-radius: 6px; padding: 5px 9px; text-decoration: line-through",
+        afterStyle: "font-family: var(--mono); font-size: 12px; color: var(--ok); background: var(--ok-tint); border-radius: 6px; padding: 5px 9px"
+      })),
+      diffContext: st.diff ? [
+        ["Actor", st.diff.who], ["Object", st.diff.object], ["Source", st.diff.source],
+        ["Timestamp", st.diff.when + " CET"], ["Entry id", "aud_8f2c4471be0a"], ["IP", "88.14.203.17"]
+      ].map((r, i, arr) => ({
+        label: r[0], value: r[1],
+        rowStyle: "display: flex; align-items: center; gap: 12px; padding: 9px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })) : [],
+      diffPayload: st.diff
+        ? '{ "actor": "' + st.diff.who + '", "action": "' + st.diff.kind + '", "object": "' + st.diff.object + '", "at": "' + st.diff.when + '", "source": "' + st.diff.source + '" }'
+        : "",
+      inviteOpen: st.inviteOpen,
+      inviteEmail: st.inviteEmail,
+      inviteError: st.inviteError,
+      inviteFieldStyle: "display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--r3); padding: 13px 15px; box-sizing: border-box; border: 1.5px solid " + (st.inviteError ? "var(--bad)" : "var(--line-2)"),
+      onInviteEmail: (e) => this.setState({ inviteEmail: e.target.value, inviteError: "" }),
+      inviteRoles: ["Admin", "Editor", "Viewer"].map((r) => {
+        const on = st.inviteRole === r;
+        return {
+          label: r, hint: roleHints[r],
+          rowStyle: "display: flex; align-items: center; gap: 12px; border-radius: var(--r3); padding: 14px 16px; cursor: pointer; box-sizing: border-box; background: var(--card); border: 1.5px solid " + (on ? "var(--accent)" : "var(--line)"),
+          dotStyle: "width: 18px; height: 18px; border-radius: 999px; display: grid; place-items: center; box-sizing: border-box; flex: none; border: 1.5px solid " + (on ? "var(--accent-text)" : "var(--line-2)"),
+          innerStyle: "width: 9px; height: 9px; border-radius: 999px; display: block; background: " + (on ? "var(--accent-text)" : "transparent"),
+          onPick: () => this.setState({ inviteRole: r })
+        };
+      }),
+      closeInvite: () => this.setState({ inviteOpen: false, inviteEmail: "", inviteError: "" }),
+      sendInvite: () => {
+        const email = st.inviteEmail.trim();
+        const bad = this.fieldError("email", email, true);
+        if (bad) return this.setState({ inviteError: bad });
+        this.setState({ inviteOpen: false, inviteEmail: "", inviteError: "" });
+        this.say("Invite sent to " + email);
+      },
+      stopClick: (e) => e.stopPropagation(),
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

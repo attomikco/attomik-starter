@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    --bg: #e7e8eb; --shell: #f8f9fa; --card: #ffffff;
+    --line: #e0e2e5; --line-2: #c8cbd0;
+    --txt: #0e1013; --txt-2: #4c5158; --txt-3: #7b8188; --txt-4: #a6abb1;
+    --accent: oklch(.52 .16 250); --accent-ink: #ffffff;
+    --accent-text: oklch(.44 .15 250); --accent-tint: oklch(.44 .15 250 / .10);
+    --lead: oklch(.965 .014 250); --lead-line: oklch(.90 .04 250);
+    --s1: oklch(.34 .13 250); --s2: oklch(.46 .16 250); --s3: oklch(.58 .14 250);
+    --s4: oklch(.70 .10 250); --s5: oklch(.82 .06 250);
+    --hero: oklch(.965 .014 250); --hero-hair: oklch(.90 .04 250);
+    --hero-strong: #0e1013; --hero-txt: #4c5158; --hero-fill: #ffffff; --hero-mute: #a6abb1; --hero-accent: oklch(.44 .15 250);
+    --ok: oklch(.575 .195 147); --ok-fill: oklch(.66 .203 147); --ok-tint: oklch(.66 .203 147 / .14);
+    --warn: oklch(.64 .173 78); --warn-fill: oklch(.83 .203 92); --warn-tint: oklch(.80 .195 90 / .22);
+    --bad: oklch(.575 .225 25); --bad-fill: oklch(.64 .233 25); --bad-tint: oklch(.64 .233 25 / .14);
+    --r: 22px; --r2: 16px; --r3: 11px; --w-bold: 700; --w-semi: 600;
+    --font: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--txt);
+    font-family: var(--font); -webkit-font-smoothing: antialiased; text-wrap: pretty;
+  }
+  a { color: var(--accent-text); } a:hover { color: var(--txt); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input, textarea { font: inherit; color: inherit; background: none; border: none; outline: none; }
+  input::placeholder, textarea::placeholder { color: var(--txt-4); }
+  textarea { resize: none; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes riseCenter { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes shimmer { 0% { opacity: .55; } 50% { opacity: 1; } 100% { opacity: .55; } }
+</style>
+</helmet>
+
+<div style="{{ pageStyle }}">
+ <div style="{{ shellStyle }}">
+
+  <sc-if value="{{ railOpen }}" hint-placeholder-val="{{ true }}">
+  <div style="{{ railStyle }}">
+    <div style="{{ logoRowStyle }}">
+      <sc-if value="{{ showBrand }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}">
+        <img ref="{{ logoRef }}" alt="Workspace logo" style="height: 30px; width: auto; max-width: 176px; display: block; object-fit: contain" />
+      </sc-if>
+      <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+        <span style="height: 34px; width: 100%; max-width: 176px; border: 1px dashed var(--line-2); border-radius: var(--r3); display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box">
+          <span style="width: 8px; height: 8px; border-radius: 999px; background: var(--line-2); display: block; flex: none"></span>
+          <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--txt-4)">Logo</span>
+        </span>
+      </sc-if>
+      </sc-if>
+      <span style="{{ collapseBtnStyle }}" onClick="{{ toggleCollapse }}" title="{{ collapseTitle }}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 4v16"></path></svg>
+      </span>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 40px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; margin-right: -4px; padding-right: 4px">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="2">
+        <div style="display: flex; flex-direction: column; gap: 3px; margin-bottom: 16px">
+          <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-4); padding: 0 12px 8px">{{ group.label }}</div>
+          </sc-if>
+          <sc-if value="{{ collapsed }}" hint-placeholder-val="{{ false }}">
+            <div style="height: 1px; background: var(--line); margin: 0 8px 8px; display: block"></div>
+          </sc-if>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="4">
+            <div style="display: flex; flex-direction: column; gap: 2px">
+              <div style="{{ item.style }}" style-hover="{{ item.hoverStyle }}" onClick="{{ item.onClick }}">
+                <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+                  <span style="position: absolute; left: -10px; top: 11px; bottom: 11px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); display: block"></span>
+                </sc-if>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconStroke }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ item.icon }}"></path></svg>
+                <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+                  {{ item.label }}
+                  <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+                    <span style="{{ item.badgeStyle }}">{{ item.badge }}</span>
+                  </sc-if>
+                  <sc-if value="{{ item.hasChildren }}" hint-placeholder-val="{{ false }}">
+                    <span style="{{ item.caretStyle }}" onClick="{{ item.onToggle }}">&#9662;</span>
+                  </sc-if>
+                </sc-if>
+                <sc-if value="{{ item.dotBadge }}" hint-placeholder-val="{{ false }}">
+                  <span style="position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: block"></span>
+                </sc-if>
+              </div>
+              <sc-if value="{{ item.showChildren }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; gap: 1px; padding: 2px 0 6px 30px">
+                  <sc-for list="{{ item.children }}" as="c" hint-placeholder-count="3">
+                    <div style="{{ c.style }}" style-hover="color: var(--txt)" onClick="{{ c.onClick }}">
+                      <span style="{{ c.dotStyle }}"></span>
+                      {{ c.label }}
+                      <sc-if value="{{ c.count }}" hint-placeholder-val="{{ false }}">
+                        <span style="margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ c.count }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="{{ themeRowStyle }}">
+      <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+        <span style="{{ m.style }}" onClick="{{ m.onClick }}" title="{{ m.label }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ m.icon }}"></path></svg>
+          <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">{{ m.short }}</sc-if>
+        </span>
+      </sc-for>
+    </div>
+
+    <a href="https://attomik.co" target="_blank" rel="noopener" style="{{ creditStyle }}" style-hover="color: var(--txt-3)">
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">Built by</sc-if>
+      <svg width="11" height="11" viewBox="0 0 77 77" fill="none" aria-hidden="true" style="flex: none; opacity: .85">
+        <g transform="translate(-11.56 -7)" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <path d="M59.37 17.32A34 34 0 0 1 83.98 48.81"></path>
+          <path d="M73.62 74.46A34 34 0 0 1 31.98 78.83"></path>
+          <path d="M17.01 58.23A34 34 0 0 1 34.04 19.98"></path>
+        </g>
+        <g transform="translate(-11.56 -7)" fill="currentColor">
+          <circle cx="50" cy="16" r="9"></circle>
+          <circle cx="79.44" cy="67" r="9"></circle>
+          <circle cx="20.56" cy="67" r="9"></circle>
+        </g>
+      </svg>
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">Attomik</sc-if>
+    </a>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ scrimOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; z-index: 45; background: rgba(8,10,14,.34)" onClick="{{ closeRail }}"></div>
+  </sc-if>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+
+    <sc-if value="{{ mobile }}" hint-placeholder-val="{{ false }}">
+      <div style="background: var(--card); border-radius: var(--r2); padding: 10px 12px; display: flex; align-items: center; gap: 10px; flex: none">
+        <span style="width: 38px; height: 38px; border-radius: var(--r3); background: var(--shell); display: grid; place-items: center; flex: none; cursor: pointer" onClick="{{ openRail }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </span>
+        <span style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em; flex: 1; min-width: 0">{{ screenLabel }}</span>
+        <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; flex: none; cursor: pointer" onClick="{{ openPalette }}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-2)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        </span>
+        <div style="position: relative; flex: none">
+          <span style="{{ bellBtnStyle }}" onClick="{{ toggleBell }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+            <sc-if value="{{ bellUnread }}" hint-placeholder-val="{{ true }}">
+              <span style="position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 999px; background: var(--bad-fill); border: 2px solid var(--shell)"></span>
+            </sc-if>
+          </span>
+          <sc-if value="{{ bellOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ panelStyle }}">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line)">
+                <span style="font-size: 15px; font-weight: var(--w-bold); letter-spacing: -0.02em; flex: 1">Notifications</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ readAllAlerts }}">Mark all read</span>
+              </div>
+              <div style="max-height: 320px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+                <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                  <div style="{{ a.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ a.onOpen }}">
+                    <span style="{{ a.iconStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ a.icon }}"></path></svg></span>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="display: flex; align-items: baseline; gap: 8px">
+                        <span style="{{ a.titleStyle }}">{{ a.title }}</span>
+                        <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ a.when }}</span>
+                      </div>
+                      <div style="font-size: 13px; color: var(--txt-2); line-height: 1.45; margin-top: 3px">{{ a.body }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ desktop }}" hint-placeholder-val="{{ true }}">
+      <div style="background: var(--card); border-radius: var(--r); padding: 14px 18px; display: flex; align-items: center; gap: 18px; flex: none; position: relative; z-index: 30">
+        <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 11px; background: var(--shell); border-radius: 13px; padding: 11px 14px; cursor: pointer" onClick="{{ openPalette }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+          <span style="font-size: 14.5px; color: var(--txt-3); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Search orders, customers, SKUs</span>
+          <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-4); background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px">&#8984;K</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 9px; flex: none">
+          <div style="position: relative">
+            <span style="{{ mailBtnStyle }}" onClick="{{ toggleMail }}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg>
+              <sc-if value="{{ mailUnread }}" hint-placeholder-val="{{ true }}">
+                <span style="position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 999px; background: var(--accent); border: 2px solid var(--shell)"></span>
+              </sc-if>
+            </span>
+            <sc-if value="{{ mailOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ panelStyle }}">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line)">
+                  <span style="font-size: 15px; font-weight: var(--w-bold); letter-spacing: -0.02em; flex: 1">Messages</span>
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ readAllMail }}">Mark all read</span>
+                </div>
+                <div style="max-height: 340px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+                  <sc-for list="{{ messages }}" as="m" hint-placeholder-count="4">
+                    <div style="{{ m.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ m.onOpen }}">
+                      <span style="{{ m.avatarStyle }}">{{ m.initials }}</span>
+                      <div style="flex: 1; min-width: 0">
+                        <div style="display: flex; align-items: baseline; gap: 8px">
+                          <span style="{{ m.nameStyle }}">{{ m.name }}</span>
+                          <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ m.when }}</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--txt-2); line-height: 1.45; margin-top: 3px">{{ m.body }}</div>
+                      </div>
+                      <sc-if value="{{ m.unread }}" hint-placeholder-val="{{ false }}">
+                        <span style="width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: block; flex: none; margin-top: 6px"></span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="padding: 12px 16px; border-top: 1px solid var(--line); text-align: center">
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); cursor: pointer" onClick="{{ goInbox }}">Open all messages</span>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="position: relative">
+            <span style="{{ bellBtnStyle }}" onClick="{{ toggleBell }}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+              <sc-if value="{{ bellUnread }}" hint-placeholder-val="{{ true }}">
+                <span style="position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 999px; background: var(--bad-fill); border: 2px solid var(--shell)"></span>
+              </sc-if>
+            </span>
+            <sc-if value="{{ bellOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ panelStyle }}">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line)">
+                  <span style="font-size: 15px; font-weight: var(--w-bold); letter-spacing: -0.02em; flex: 1">Notifications</span>
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--accent-text); cursor: pointer" onClick="{{ readAllAlerts }}">Mark all read</span>
+                </div>
+                <div style="max-height: 340px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+                  <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                    <div style="{{ a.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ a.onOpen }}">
+                      <span style="{{ a.iconStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ a.icon }}"></path></svg></span>
+                      <div style="flex: 1; min-width: 0">
+                        <div style="display: flex; align-items: baseline; gap: 8px">
+                          <span style="{{ a.titleStyle }}">{{ a.title }}</span>
+                          <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ a.when }}</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--txt-2); line-height: 1.45; margin-top: 3px">{{ a.body }}</div>
+                      </div>
+                      <sc-if value="{{ a.unread }}" hint-placeholder-val="{{ false }}">
+                        <span style="width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: block; flex: none; margin-top: 6px"></span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="padding: 12px 16px; border-top: 1px solid var(--line); text-align: center">
+                  <span style="font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-text); cursor: pointer" onClick="{{ goInbox }}">See everything in the inbox</span>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="width: 1px; height: 30px; background: var(--line)"></div>
+
+        <div style="position: relative">
+          <div style="{{ accountBtnStyle }}" onClick="{{ toggleAccount }}">
+            <span style="width: 38px; height: 38px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 13.5px; font-weight: var(--w-bold); flex: none">AH</span>
+            <div style="min-width: 0">
+              <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">Anna Hayes</div>
+              <div style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">anna@attomik.co</div>
+            </div>
+            <span style="{{ accountCaretStyle }}">&#9662;</span>
+          </div>
+          <sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ accountPanelStyle }}">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid var(--line)">
+                <span style="width: 42px; height: 42px; border-radius: 999px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; color: var(--accent-text); display: grid; place-items: center; font-size: 15px; font-weight: var(--w-bold); flex: none">AH</span>
+                <div style="min-width: 0; flex: 1">
+                  <div style="font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.015em">Anna Hayes</div>
+                  <div style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); margin-top: 2px">anna@attomik.co</div>
+                </div>
+                <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 4px 9px; flex: none">Owner</span>
+              </div>
+              <div style="padding: 8px">
+                <sc-for list="{{ accountItems }}" as="a" hint-placeholder-count="4">
+                  <div style="{{ a.style }}" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ a.onPick }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="{{ a.icon }}"></path></svg>
+                    {{ a.label }}
+                    <span style="margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ a.hint }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding: 10px 16px 14px; border-top: 1px solid var(--line)">
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 8px">Appearance</div>
+                <div style="display: flex; gap: 3px; background: var(--shell); border-radius: var(--r3); padding: 3px">
+                  <sc-for list="{{ themeModes }}" as="m" hint-placeholder-count="3">
+                    <span style="{{ m.style }}" onClick="{{ m.onClick }}">{{ m.short }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="padding: 10px; border-top: 1px solid var(--line)">
+                <a href="Starter Auth.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r3); font-size: 14px; font-weight: var(--w-semi); color: var(--bad); text-decoration: none" style-hover="background: var(--bad-tint)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M15 17l5-5-5-5M20 12H9M12 3H5v18h7"></path></svg>
+                  Sign out
+                </a>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ loadingArea }}" hint-placeholder-val="{{ false }}">
+      <div style="flex: 1; min-height: 0; background: var(--card); border-radius: var(--r); padding: 26px; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex: none">
+          <div style="min-width: 0; display: flex; flex-direction: column; gap: 12px">
+            <span style="width: 168px; height: 11px; border-radius: 4px; background: var(--shell); display: block; animation: shimmer 1.1s ease-in-out infinite"></span>
+            <span style="width: 232px; height: 30px; border-radius: 8px; background: var(--shell); display: block; animation: shimmer 1.1s ease-in-out infinite .08s"></span>
+            <span style="width: 344px; height: 12px; border-radius: 4px; background: var(--shell); display: block; animation: shimmer 1.1s ease-in-out infinite .16s"></span>
+          </div>
+          <div style="display: flex; gap: 9px; flex: none">
+            <span style="width: 128px; height: 42px; border-radius: 999px; background: var(--shell); display: block; animation: shimmer 1.1s ease-in-out infinite"></span>
+            <span style="width: 132px; height: 42px; border-radius: 999px; background: var(--lead); display: block; animation: shimmer 1.1s ease-in-out infinite .1s"></span>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; flex: none">
+          <sc-for list="{{ skeletonTiles }}" as="t" hint-placeholder-count="4">
+            <div style="{{ t.style }}">
+              <span style="width: 62px; height: 9px; border-radius: 3px; background: var(--line); display: block; margin-bottom: 16px"></span>
+              <span style="width: 108px; height: 26px; border-radius: 6px; background: var(--line); display: block"></span>
+              <span style="width: 78px; height: 10px; border-radius: 3px; background: var(--line); display: block; margin-top: 14px"></span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="flex: 1; min-height: 0; border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; display: flex; flex-direction: column">
+          <div style="display: flex; align-items: center; gap: 14px; padding: 13px 18px; background: var(--shell); border-bottom: 1px solid var(--line); flex: none">
+            <span style="width: 74px; height: 9px; border-radius: 3px; background: var(--line-2); display: block"></span>
+            <span style="width: 118px; height: 9px; border-radius: 3px; background: var(--line-2); display: block"></span>
+            <div style="flex: 1"></div>
+            <span style="width: 68px; height: 9px; border-radius: 3px; background: var(--line-2); display: block"></span>
+          </div>
+          <sc-for list="{{ skeletonRows }}" as="r" hint-placeholder-count="6">
+            <div style="{{ r.rowStyle }}">
+              <span style="width: 18px; height: 18px; border-radius: 5px; background: var(--shell); display: block; flex: none"></span>
+              <span style="{{ r.a }}"></span>
+              <span style="{{ r.b }}"></span>
+              <div style="flex: 1"></div>
+              <span style="width: 84px; height: 11px; border-radius: 4px; background: var(--shell); display: block"></span>
+              <span style="width: 112px; height: 22px; border-radius: 999px; background: var(--shell); display: block"></span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex: none">
+          <span style="width: 14px; height: 14px; border-radius: 999px; border: 2px solid var(--line); border-top-color: var(--accent); display: block; animation: spin .8s linear infinite"></span>
+          <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-3)">{{ loadingLabel }}</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ areaOverview }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-overview" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ areaData }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-data" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ areaRecords }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-records" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ areaQueue }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-queue" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ areaStates }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-states" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ areaChat }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-chat" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ areaSettings }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ slotStyle }}">
+        <dc-import name="part-settings" hint-size="100%,100%"></dc-import>
+      </div>
+    </sc-if>
+  </div>
+ </div>
+
+ <sc-if value="{{ bubbleOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; right: 40px; bottom: 106px; z-index: 92; width: 356px; max-width: calc(100% - 40px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 26px 60px rgba(0,0,0,.24); overflow: hidden; animation: rise .16s ease-out">
+     <div style="display: flex; align-items: center; gap: 11px; padding: 14px 16px; border-bottom: 1px solid var(--line)">
+       <span style="width: 28px; height: 28px; border-radius: 8px; background: var(--lead); border: 1px solid var(--lead-line); box-sizing: border-box; display: grid; place-items: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path></svg></span>
+       <div style="flex: 1; min-width: 0">
+         <div style="font-size: 14px; font-weight: var(--w-semi); letter-spacing: -0.01em">Assistant</div>
+         <div style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); margin-top: 1px">Reads this workspace</div>
+       </div>
+       <span style="font-family: var(--mono); font-size: 10.5px; color: var(--accent-text); cursor: pointer; flex: none" onClick="{{ expandBubble }}">Expand</span>
+       <span style="width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; color: var(--txt-3); cursor: pointer; flex: none" style-hover="background: var(--shell)" onClick="{{ closeBubble }}">&#10005;</span>
+     </div>
+     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px">
+       <div style="background: var(--shell); border-radius: 14px 14px 14px 4px; padding: 12px 14px; font-size: 14px; line-height: 1.55; color: var(--txt)">Ask me anything about this workspace. I can read orders, customers and refunds.</div>
+       <sc-for list="{{ bubblePrompts }}" as="p" hint-placeholder-count="3">
+         <span style="font-size: 13.5px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 9px 14px; cursor: pointer; align-self: flex-start" onClick="{{ p.onPick }}">{{ p.label }}</span>
+       </sc-for>
+     </div>
+     <div style="padding: 12px 16px 16px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 10px">
+       <span style="flex: 1; min-width: 0; background: var(--shell); border-radius: var(--r3); padding: 11px 13px; font-size: 13.5px; color: var(--txt-4)">Ask a question</span>
+       <span style="width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; cursor: pointer; flex: none" onClick="{{ expandBubble }}">
+         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+       </span>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ goArmed }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 97; display: flex; align-items: center; gap: 10px; background: var(--txt); border-radius: 999px; padding: 10px 18px; box-shadow: 0 18px 40px rgba(0,0,0,.24)">
+     <span style="font-family: var(--mono); font-size: 11px; color: var(--card)">G</span>
+     <span style="font-family: var(--mono); font-size: 11px; color: var(--line-2)">then</span>
+     <span style="font-family: var(--mono); font-size: 11px; color: var(--card)">O overview · R orders · P approvals · M messages · A assistant · S settings</span>
+   </div>
+ </sc-if>
+
+ <div style="{{ bubbleStyle }}" onClick="{{ toggleBubble }}">
+   <sc-if value="{{ bubbleOpen }}" hint-placeholder-val="{{ false }}">
+     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+   </sc-if>
+   <sc-if value="{{ bubbleClosed }}" hint-placeholder-val="{{ true }}">
+     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"></path></svg>
+   </sc-if>
+ </div>
+
+ <sc-if value="{{ keysOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 97; background: rgba(8,10,14,.34); display: grid; place-items: center" onClick="{{ closeKeys }}">
+     <div style="width: 660px; max-width: calc(100% - 32px); max-height: 82%; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 30px 70px rgba(0,0,0,.3); display: flex; flex-direction: column; overflow: hidden; animation: rise .14s ease-out" onClick="{{ stopClick }}">
+       <div style="display: flex; align-items: center; gap: 12px; padding: 18px 24px; border-bottom: 1px solid var(--line); flex: none">
+         <span style="font-size: 18px; font-weight: var(--w-bold); letter-spacing: -0.025em; flex: 1">Keyboard shortcuts</span>
+         <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px">ESC</span>
+       </div>
+       <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 18px 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+         <sc-for list="{{ keyGroups }}" as="g" hint-placeholder-count="4">
+           <div style="min-width: 0">
+             <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">{{ g.label }}</div>
+             <div style="display: flex; flex-direction: column">
+               <sc-for list="{{ g.rows }}" as="k" hint-placeholder-count="4">
+                 <div style="{{ k.rowStyle }}">
+                   <span style="font-size: 13.5px; color: var(--txt-2); flex: 1; min-width: 0">{{ k.label }}</span>
+                   <span style="{{ k.keyStyle }}">{{ k.keys }}</span>
+                 </div>
+               </sc-for>
+             </div>
+           </div>
+         </sc-for>
+       </div>
+       <div style="padding: 14px 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); flex: none">Shortcuts are off while a text field has focus, except Escape.</div>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; inset: 0; z-index: 95; background: rgba(8,10,14,.22)" onClick="{{ closePalette }}">
+     <div style="{{ palettePanelStyle }}" onClick="{{ stopClick }}">
+       <div style="display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line)">
+         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2" stroke-linecap="round" style="flex: none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+         <input placeholder="Search screens and actions" value="{{ paletteQuery }}" onInput="{{ onPaletteQuery }}" style="flex: 1; min-width: 0; font-size: 15.5px" />
+         <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; flex: none">ESC</span>
+       </div>
+       <div style="max-height: 380px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 10px">
+         <sc-for list="{{ paletteGroups }}" as="g" hint-placeholder-count="2">
+           <div style="margin-bottom: 8px">
+             <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); padding: 8px 12px 6px">{{ g.label }}</div>
+             <sc-for list="{{ g.items }}" as="i" hint-placeholder-count="4">
+               <div style="{{ i.style }}" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ i.onPick }}">
+                 {{ i.label }}
+                 <span style="margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--txt-4)">{{ i.hint }}</span>
+               </div>
+             </sc-for>
+           </div>
+         </sc-for>
+       </div>
+     </div>
+   </div>
+ </sc-if>
+
+ <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+   <div style="position: absolute; right: 40px; bottom: 108px; z-index: 96; display: flex; align-items: center; gap: 12px; background: var(--txt); border-radius: var(--r3); padding: 14px 18px; box-shadow: 0 18px 40px rgba(0,0,0,.24); animation: rise .16s ease-out">
+     <span style="width: 20px; height: 20px; border-radius: 999px; background: var(--ok-fill); display: grid; place-items: center; flex: none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+     <span style="font-size: 14px; font-weight: var(--w-semi); color: var(--card)">{{ toast }}</span>
+   </div>
+ </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;chrome&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;inset&quot;,&quot;full&quot;],&quot;default&quot;:&quot;inset&quot;,&quot;tsType&quot;:&quot;'inset' | 'full'&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  state = {
+    area: "overview", childScreen: "overview", themeMode: null,
+    open: { or: true }, railOpen: false, panel: null, vw: 1440,
+    loaded: {}, loading: "overview", bubbleOpen: false, collapsed: false, keysOpen: false, goArmed: false,
+    skin: null, logo: "",
+    paletteOpen: false, paletteQuery: "", toast: "", readMail: {}, readAlerts: {}
+  };
+
+  logoRef = React.createRef();
+
+  static get SKINS() {
+    return {
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  themeMode() { return this.state.themeMode || this.props.theme || "light"; }
+
+  resolvedTheme() {
+    const mode = this.themeMode();
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  // one stable callback identity, so the mounted child is not re-created per render
+  onSkin = (patch) => {
+    if (patch === null) { this._skinCache = null; return this.setState({ skin: null, logo: "" }); }
+    if (Object.prototype.hasOwnProperty.call(patch, "logo")) this.setState({ logo: patch.logo });
+    const next = Object.assign({}, this.skinOf(), patch);
+    delete next.logo;
+    this._skinCache = null;
+    this.setState({ skin: next });
+  };
+
+  skinVals() {
+    const s = this.skinOf();
+    const key = JSON.stringify(s);
+    if (!this._skinCache || this._skinKey !== key) { this._skinCache = s; this._skinKey = key; }
+    return this._skinCache;
+  }
+
+  skinOf() {
+    const preset = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    return Object.assign({ r: 22, r2: 16, r3: 11 }, preset, this.state.skin || {});
+  }
+
+  tokens() {
+    const s = this.skinOf();
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+
+    // A brand whose accent is a bright fill (Attomik's green) states its own lightness
+    // and the ink that sits on it; the readable text value is still derived.
+    const fillL = dark ? (s.alDark || 0.66) : (s.al || 0.52);
+    const inkOnFill = s.ink !== undefined ? n(s.ink, 1) : (dark ? n(0.14, 1) : n(0.99, 0.2));
+    const accent = dark
+      ? { "--accent": acc(fillL), "--accent-ink": inkOnFill, "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(fillL), "--accent-ink": inkOnFill, "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+
+    const steps = dark ? [0.40, 0.52, 0.64, 0.76, 0.86] : [0.34, 0.46, 0.58, 0.70, 0.82];
+    const ratio = [0.81, 1, 0.88, 0.63, 0.38];
+    const series = {};
+    steps.forEach((l, i) => { series["--s" + (i + 1)] = acc(l, ratio[i]); });
+
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+
+    const hero = {
+      "--hero": accent["--lead"], "--hero-hair": accent["--lead-line"],
+      "--hero-strong": surfaces["--txt"], "--hero-txt": surfaces["--txt-2"],
+      "--hero-fill": dark ? surfaces["--line"] : surfaces["--card"],
+      "--hero-mute": surfaces["--txt-4"], "--hero-accent": accent["--accent-text"]
+    };
+
+    return Object.assign({}, surfaces, accent, series, semantics, hero, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws),
+      "--r": s.r + "px", "--r2": s.r2 + "px", "--r3": s.r3 + "px"
+    });
+  }
+
+  componentDidMount() {
+    this.apply();
+    this._bootT = setTimeout(() => this.setState({ loaded: { overview: true }, loading: null }), 480);
+    this._onResize = () => {
+      const vw = window.innerWidth;
+      if (Math.abs(vw - this.state.vw) > 8) this.setState({ vw });
+    };
+    this._onResize();
+    window.addEventListener("resize", this._onResize);
+    this._onKey = (e) => {
+      const tag = (e.target && e.target.tagName) || "";
+      const typing = tag === "INPUT" || tag === "TEXTAREA" || (e.target && e.target.isContentEditable);
+      const k = String(e.key).toLowerCase();
+      if (e.key === "Escape") { this.setState({ paletteOpen: false, keysOpen: false, panel: null, railOpen: false, goArmed: false }); return; }
+      if (e.metaKey || e.ctrlKey) {
+        if (k === "k") { e.preventDefault(); this.setState({ paletteOpen: !this.state.paletteOpen, paletteQuery: "", keysOpen: false }); }
+        if (k === "/") { e.preventDefault(); this.setState({ keysOpen: !this.state.keysOpen, paletteOpen: false }); }
+        if (k === "b") { e.preventDefault(); this.setState({ collapsed: !this.state.collapsed }); }
+        return;
+      }
+      if (typing) return;
+      // "g" arms a jump: g then o, r, m, a, s
+      if (this.state.goArmed) {
+        const map = { o: ["overview", "overview"], r: ["data", "orders"], m: ["chat", "messages"], a: ["chat", "assistant"], s: ["settings", "team"], q: ["settings", "activity"], p: ["queue", "queue"] };
+        const dest = map[k];
+        this.setState({ goArmed: false });
+        if (dest) { e.preventDefault(); this.goto(dest[0], dest[1])(); }
+        return;
+      }
+      if (k === "g") { this.setState({ goArmed: true }); if (this._goT) clearTimeout(this._goT); this._goT = setTimeout(() => this.setState({ goArmed: false }), 1400); return; }
+      if (k === "?") { e.preventDefault(); this.setState({ keysOpen: true }); }
+    };
+    window.addEventListener("keydown", this._onKey);
+    window.__starterHost = true;
+    window.__starterScreen = this.state.childScreen;
+    window.__starterSkin = this.skinOf();
+    // the settings tab edits the skin and sends it back up here
+    this._onSkinEvent = (e) => {
+      const patch = e.detail;
+      if (patch === null || patch === "reset") { this._skinCache = null; return this.setState({ skin: null, logo: "" }); }
+      if (Object.prototype.hasOwnProperty.call(patch, "logo")) this.setState({ logo: patch.logo });
+      const next = Object.assign({}, this.skinOf(), patch);
+      delete next.logo;
+      this._skinCache = null;
+      this.setState({ skin: next });
+    };
+    window.addEventListener("starter:skin", this._onSkinEvent);
+    this._onToast = (e) => this.say(e.detail);
+    window.addEventListener("starter:toast", this._onToast);
+    this._mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    if (this._mq && this._mq.addEventListener) {
+      this._onMq = () => { if (this.themeMode() === "system") this.forceUpdate(); };
+      this._mq.addEventListener("change", this._onMq);
+    }
+  }
+
+  componentDidUpdate() {
+    this.apply();
+    this.applyLogo();
+    const skin = this.skinOf();
+    window.__starterSkin = skin;
+    const key = JSON.stringify(skin);
+    if (this._skinBroadcast !== key) {
+      this._skinBroadcast = key;
+      window.dispatchEvent(new CustomEvent("starter:skinchanged", { detail: skin }));
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._onKey) window.removeEventListener("keydown", this._onKey);
+    if (this._onSkinEvent) window.removeEventListener("starter:skin", this._onSkinEvent);
+    if (this._onToast) window.removeEventListener("starter:toast", this._onToast);
+    if (this._mq && this._onMq) this._mq.removeEventListener("change", this._onMq);
+    if (this._toastT) clearTimeout(this._toastT);
+    if (this._loadT) clearTimeout(this._loadT);
+    if (this._bootT) clearTimeout(this._bootT);
+    if (this._goT) clearTimeout(this._goT);
+  }
+
+  // src is assigned after mount so an unresolved hole never fires a fetch
+  applyLogo() {
+    const el = this.logoRef.current;
+    if (!el) return;
+    const src = this.state.logo || "";
+    if (src && el.getAttribute("src") !== src) el.setAttribute("src", src);
+  }
+
+  apply() {
+    const root = document.body;
+    if (!root) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  say(msg) {
+    this.setState({ toast: msg });
+    if (this._toastT) clearTimeout(this._toastT);
+    this._toastT = setTimeout(() => this.setState({ toast: "" }), 2600);
+  }
+
+  // An area's component is fetched on first visit, so the first switch gets a
+  // skeleton of the shape that is coming rather than an empty panel.
+  broadcast(screen) {
+    window.__starterHost = true;
+    window.__starterScreen = screen;
+    window.__starterSkin = this.skinOf();
+    window.dispatchEvent(new CustomEvent("starter:nav", { detail: { screen: screen, skin: this.skinOf() } }));
+  }
+
+  goto(area, screen) {
+    return () => {
+      const fresh = !this.state.loaded[area];
+      this.broadcast(screen);
+      this.setState({ area, childScreen: screen, railOpen: false, panel: null, paletteOpen: false, loading: fresh ? area : null });
+      if (fresh) {
+        if (this._loadT) clearTimeout(this._loadT);
+        this._loadT = setTimeout(() => {
+          const loaded = Object.assign({}, this.state.loaded);
+          loaded[area] = true;
+          this.setState({ loaded, loading: null });
+        }, 620);
+      }
+    };
+  }
+
+  navItem(id, label, icon, area, screen, badge, children) {
+    const active = this.state.area === area && (!screen || this.state.childScreen === screen);
+    const tight = this.state.collapsed && this.state.vw >= 900;
+    const base = "display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: var(--r3); font-size: 15px; position: relative; cursor: pointer; ";
+    const hasKids = !!(children && children.length);
+    const expanded = hasKids && !!this.state.open[id];
+    return {
+      label, icon, active, badge: badge || false, hasChildren: hasKids, expanded,
+      dotBadge: tight && !!badge,
+      showChildren: expanded && !tight,
+      style: (tight ? "display: flex; align-items: center; justify-content: center; padding: 11px 0; border-radius: var(--r3); position: relative; cursor: pointer; " : base) + (active
+        ? "font-weight: var(--w-semi); color: var(--txt); background: var(--card)"
+        : "font-weight: 500; color: var(--txt-2)"),
+      hoverStyle: active ? "" : "background: var(--card); color: var(--txt)",
+      iconStroke: active ? "var(--accent-text)" : "var(--txt-3)",
+      badgeStyle: "margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--accent-text); background: var(--accent-tint); border-radius: 999px; padding: 3px 8px",
+      caretStyle: "margin-left: auto; font-family: var(--mono); font-size: 9px; color: var(--txt-4); cursor: pointer; transform: rotate(" + (expanded ? "0deg" : "-90deg") + "); transition: transform .12s",
+      onToggle: (e) => { e.stopPropagation(); const o = Object.assign({}, this.state.open); o[id] = !expanded; this.setState({ open: o }); },
+      children: (children || []).map((c) => {
+        const on = this.state.area === c[2] && this.state.childScreen === c[3];
+        return {
+          label: c[0], count: c[1] || false,
+          style: "display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 8px; font-size: 13.5px; cursor: pointer; color: " + (on ? "var(--txt)" : "var(--txt-3)") + (on ? "; font-weight: var(--w-semi)" : ""),
+          dotStyle: "width: 4px; height: 4px; border-radius: 999px; display: block; flex: none; background: " + (on ? "var(--accent)" : "var(--line-2)"),
+          onClick: this.goto(c[2], c[3])
+        };
+      }),
+      onClick: hasKids
+        ? () => { const o = Object.assign({}, this.state.open); o[id] = !expanded; this.setState({ open: o }); }
+        : this.goto(area, screen)
+    };
+  }
+
+  messages() {
+    const rows = [
+      ["Alicia Duarte", "AD", "Any update on the refund for order 40218?", "12m", true],
+      ["Sam Whitfield", "SW", "Approved the Meta budget shift, over to you.", "1h", true],
+      ["Finance", "FI", "August payout reconciled, $18,240 settled.", "3h", false],
+      ["Diego Ortiz", "DO", "Sending next wholesale PO on Monday.", "Yesterday", false]
+    ];
+    return rows.map((m, i) => {
+      const unread = m[4] && !this.state.readMail[i];
+      return {
+        name: m[0], initials: m[1], body: m[2], when: m[3], unread,
+        rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; cursor: pointer" + (i < rows.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        avatarStyle: "width: 32px; height: 32px; border-radius: 999px; background: var(--shell); display: grid; place-items: center; flex: none; font-size: 11.5px; font-weight: var(--w-bold); color: var(--txt-2)",
+        nameStyle: "font-size: 14px; letter-spacing: -0.01em; color: var(--txt); font-weight: " + (unread ? "var(--w-semi)" : "500"),
+        onOpen: () => { const r = Object.assign({}, this.state.readMail); r[i] = true; this.setState({ readMail: r }); }
+      };
+    });
+  }
+
+  alerts() {
+    const tone = { bad: ["var(--bad)", "var(--bad-tint)"], warn: ["var(--warn)", "var(--warn-tint)"], ok: ["var(--ok)", "var(--ok-tint)"] };
+    const rows = [
+      ["Payment failed", "Order 40211 could not capture $1,584.00.", "4m", true, "bad", "M12 8v5M12 17h.01"],
+      ["Refund needs approval", "Alicia Duarte requested $412.00 back.", "22m", true, "warn", "M12 7.5v5l3 2"],
+      ["Sync completed", "Shopify brought in 148 new orders.", "1h", true, "ok", "m5 13 5 5L20 7"],
+      ["Stock low", "Cold Brew 12pk has 9 days of cover left.", "3h", false, "warn", "M12 7.5v5l3 2"]
+    ];
+    return rows.map((a, i) => {
+      const unread = a[3] && !this.state.readAlerts[i];
+      const t = tone[a[4]];
+      return {
+        title: a[0], body: a[1], when: a[2], unread, icon: a[5],
+        rowStyle: "display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; cursor: pointer" + (i < rows.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+        iconStyle: "width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; color: " + t[0] + "; background: " + t[1],
+        titleStyle: "font-size: 14px; letter-spacing: -0.01em; color: var(--txt); font-weight: " + (unread ? "var(--w-semi)" : "500"),
+        onOpen: () => { const r = Object.assign({}, this.state.readAlerts); r[i] = true; this.setState({ readAlerts: r }); }
+      };
+    });
+  }
+
+  paletteGroups() {
+    const q = (this.state.paletteQuery || "").trim().toLowerCase();
+    const defs = [
+      ["Go to", [
+        ["Overview", this.goto("overview", "overview")],
+        ["Analytics", this.goto("overview", "analytics")],
+        ["Orders table", this.goto("data", "orders")],
+        ["Customers", this.goto("data", "customers")],
+        ["Search results", this.goto("data", "search")],
+        ["Approvals", this.goto("queue", "queue")],
+        ["Schedule", this.goto("queue", "schedule")],
+        ["Inbox", this.goto("data", "inbox")],
+        ["Messages", this.goto("chat", "messages")],
+        ["Assistant", this.goto("chat", "assistant")],
+        ["Record detail", this.goto("records", "record")],
+        ["Create or edit", this.goto("records", "form")],
+        ["Setup wizard", this.goto("records", "wizard")],
+        ["Import a CSV", this.goto("records", "import")],
+        ["Appearance and brand", this.goto("settings", "appearance")],
+        ["Team and permissions", this.goto("settings", "team")],
+        ["Integrations", this.goto("settings", "integrations")],
+        ["Billing", this.goto("settings", "billing")],
+        ["Audit log", this.goto("settings", "audit")],
+        ["Media library", this.goto("states", "media")],
+        ["Export centre", this.goto("states", "exports")],
+        ["System states", this.goto("states", "states")]
+      ]],
+      ["Actions", [
+        ["Collapse the sidebar", () => this.setState({ collapsed: !this.state.collapsed, paletteOpen: false })],
+        ["Keyboard shortcuts", () => this.setState({ keysOpen: true, paletteOpen: false })],
+        ["Switch to dark", () => this.setState({ themeMode: "dark", paletteOpen: false })],
+        ["Switch to light", () => this.setState({ themeMode: "light", paletteOpen: false })],
+        ["Follow the system theme", () => this.setState({ themeMode: "system", paletteOpen: false })],
+        ["Sign out", () => { window.location.href = "Starter Auth.dc.html"; }]
+      ]]
+    ];
+    return defs.map((g) => ({
+      label: g[0],
+      items: g[1].filter((i) => !q || i[0].toLowerCase().indexOf(q) >= 0).map((i) => ({
+        label: i[0], hint: "",
+        style: "display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--r3); font-size: 14.5px; color: var(--txt-2); cursor: pointer",
+        onPick: i[1]
+      }))
+    })).filter((g) => g.items.length > 0);
+  }
+
+  renderVals() {
+    const st = this.state;
+    const mobile = st.vw < 900;
+    const tight = st.collapsed && !mobile;
+    const full = this.props.chrome === "full";
+    const labels = {
+      overview: "Overview", analytics: "Analytics", orders: "Orders", customers: "Customers",
+      search: "Search results", inbox: "Inbox", record: "Record detail", form: "Create or edit",
+      wizard: "Setup wizard", team: "Team", integrations: "Integrations", billing: "Billing",
+      audit: "Audit log", profile: "Profile", appearance: "Appearance", assistant: "Assistant", messages: "Messages", states: "System states", media: "Media library", exports: "Export centre", queue: "Approvals", schedule: "Schedule", import: "Import"
+    };
+
+    return {
+      skin: this.props.skin || "base",
+      theme: this.resolvedTheme(),
+      skinVals: this.skinVals(),
+      logoRef: this.logoRef,
+      hasLogo: !!this.state.logo,
+      noLogo: !this.state.logo,
+      onSkin: this.onSkin,
+      childScreen: st.childScreen,
+      areaOverview: st.area === "overview",
+      areaData: st.area === "data",
+      areaRecords: st.area === "records",
+      areaSettings: st.area === "settings",
+      areaChat: st.area === "chat",
+      areaStates: st.area === "states",
+      areaQueue: st.area === "queue",
+
+      mobile, desktop: !mobile,
+      railOpen: !mobile || st.railOpen,
+      scrimOn: mobile && st.railOpen,
+      openRail: () => this.setState({ railOpen: true }),
+      closeRail: () => this.setState({ railOpen: false }),
+      screenLabel: labels[st.childScreen] || "Overview",
+      pageStyle: "width: 100%; " + (full ? "" : "max-width: 1440px; ") + "margin: 0 auto; height: 100vh; padding: " + (full ? "0" : mobile ? "10px" : "26px") + "; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; position: relative",
+      shellStyle: "background: var(--shell); border-radius: " + (full ? "0" : mobile ? "20px" : "30px") + "; padding: " + (full ? "0 0 0 0" : mobile ? "10px" : "16px") + "; display: flex; gap: " + (full ? "0" : "16px") + "; flex: 1; min-height: 0; box-sizing: border-box; overflow: hidden; position: relative",
+      railStyle: mobile
+        ? "position: absolute; z-index: 50; top: 10px; left: 10px; bottom: 10px; width: 252px; background: var(--card); border-radius: var(--r); box-shadow: 0 24px 60px rgba(0,0,0,.26); display: flex; flex-direction: column; padding: 14px 10px 8px 14px; box-sizing: border-box"
+        : "width: " + (tight ? "76px" : "244px") + "; flex: none; align-self: stretch; display: flex; flex-direction: column; padding: " + (tight ? "10px 10px 4px" : (full ? "14px 16px 8px 14px" : "10px 16px 4px 10px")) + "; " + (full ? "" : "margin-right: -4px; ") + "box-sizing: border-box; border-right: 1px solid var(--line); transition: width .16s ease",
+      collapsed: tight,
+      expanded: !tight,
+      showBrand: !tight,
+      logoRowStyle: "display: flex; align-items: center; " + (tight ? "justify-content: center" : "justify-content: center") + "; gap: 8px; padding: 4px 4px 18px; flex: none",
+      collapseBtnStyle: "width: 30px; height: 30px; border-radius: 9px; display: " + (mobile ? "none" : "grid") + "; place-items: center; cursor: pointer; flex: none; color: var(--txt-3); background: " + (tight ? "var(--card)" : "transparent"),
+      collapseTitle: tight ? "Expand the sidebar" : "Collapse the sidebar",
+      toggleCollapse: () => this.setState({ collapsed: !st.collapsed }),
+      themeRowStyle: "flex: none; display: flex; gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r3); padding: 3px; margin: 8px 0 8px 0; box-sizing: border-box; flex-direction: " + (tight ? "column" : "row"),
+      creditStyle: "font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); text-decoration: none; padding: 4px 12px 2px; flex: none; display: flex; align-items: center; justify-content: " + (tight ? "center" : "flex-start") + "; gap: 7px",
+
+      navGroups: [
+        { label: "Operate", items: [
+          this.navItem("ov", "Overview", "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z", "overview", "overview"),
+          this.navItem("an", "Analytics", "M4 21v-7M12 21V10M20 21v-5M1 14h6M9 10h6M17 16h6", "overview", "analytics"),
+          this.navItem("or", "Orders", "M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM9 13h6M9 17h4", "data", "orders", "14", [
+            ["All orders", "3,412", "data", "orders"],
+            ["Record detail", false, "records", "record"],
+            ["Create or edit", false, "records", "form"]
+          ]),
+          this.navItem("cu", "Customers", "M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8", "data", "customers", false, [
+            ["Everyone", "1,284", "data", "customers"],
+            ["Search results", false, "data", "search"]
+          ]),
+          this.navItem("ap", "Approvals", "m5 13 5 5L20 7", "queue", "queue", "5"),
+          this.navItem("sc", "Schedule", "M3 4h18v18H3zM3 10h18M8 2v4M16 2v4", "queue", "schedule"),
+          this.navItem("in", "Inbox", "M3 5h18v14H3zM3 5l9 7 9-7", "data", "inbox", "3"),
+          this.navItem("ms", "Messages", "M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z", "chat", "messages", "2"),
+          this.navItem("ai", "Assistant", "M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2", "chat", "assistant")
+        ] },
+        { label: "Configure", items: [
+          this.navItem("wz", "Setup wizard", "M4 6h16M4 12h10M4 18h7", "records", "wizard"),
+          this.navItem("im", "Import a file", "M12 16V4M7 9l5-5 5 5M4 20h16", "records", "import"),
+          this.navItem("md", "Media library", "M3 4h18v16H3zM8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4M3 16l5-4 4 3 3-2 6 5", "states", "media"),
+          this.navItem("sy", "System states", "M12 3a9 9 0 1 0 9 9M12 8v5M12 16h.01", "states", "states"),
+          this.navItem("se", "Settings", "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z", "settings", "team", false, [
+            ["Appearance and brand", false, "settings", "appearance"],
+            ["Team and permissions", "6", "settings", "team"],
+            ["Integrations", "3", "settings", "integrations"],
+            ["Billing", false, "settings", "billing"],
+            ["Audit log", false, "settings", "audit"],
+            ["Profile", false, "settings", "profile"]
+          ])
+        ] }
+      ],
+
+      themeModes: [
+        ["light", "Light", "Light", "M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9"],
+        ["system", "System", "Auto", "M3 5h18v11H3zM8 20h8M12 16v4"],
+        ["dark", "Dark", "Dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"]
+      ].map((m) => {
+        const active = this.themeMode() === m[0];
+        return {
+          label: m[1], short: m[2], icon: m[3],
+          style: "flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 0; border-radius: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; " + (active ? "background: var(--shell); color: var(--txt)" : "color: var(--txt-4)"),
+          onClick: () => this.setState({ themeMode: m[0] })
+        };
+      }),
+
+      mailOpen: st.panel === "mail",
+      bellOpen: st.panel === "bell",
+      accountOpen: st.panel === "account",
+      toggleMail: () => this.setState({ panel: st.panel === "mail" ? null : "mail" }),
+      toggleBell: () => this.setState({ panel: st.panel === "bell" ? null : "bell" }),
+      toggleAccount: () => this.setState({ panel: st.panel === "account" ? null : "account" }),
+      mailBtnStyle: "width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; position: relative; cursor: pointer; " + (st.panel === "mail"
+        ? "background: var(--accent-tint); color: var(--accent-text)" : "background: var(--shell); color: var(--txt-2)"),
+      bellBtnStyle: "width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; position: relative; cursor: pointer; " + (st.panel === "bell"
+        ? "background: var(--accent-tint); color: var(--accent-text)" : "background: var(--shell); color: var(--txt-2)"),
+      accountBtnStyle: "display: flex; align-items: center; gap: 11px; padding: 4px 10px 4px 4px; border-radius: 999px; cursor: pointer; background: " + (st.panel === "account" ? "var(--shell)" : "transparent"),
+      accountCaretStyle: "color: var(--txt-4); font-size: 11px; font-family: var(--mono); transform: rotate(" + (st.panel === "account" ? "180deg" : "0deg") + "); transition: transform .12s",
+      panelStyle: "position: absolute; top: 48px; right: 0; z-index: 60; width: 380px; max-width: calc(100vw - 40px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 22px 50px rgba(0,0,0,.18); overflow: hidden; animation: rise .14s ease-out",
+      accountPanelStyle: "position: absolute; top: 52px; right: 0; z-index: 60; width: 316px; max-width: calc(100vw - 40px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 22px 50px rgba(0,0,0,.18); overflow: hidden; animation: rise .14s ease-out",
+      accountItems: [
+        ["Profile and account", "M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1", "", this.goto("settings", "profile")],
+        ["Workspace settings", "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M20 12h1M3 12h1M12 3v1M12 20v1", "", this.goto("settings", "team")],
+        ["Command palette", "M9 3h6v6H9zM3 9h6v6H3zM15 9h6v6h-6zM9 15h6v6H9z", "⌘K", () => this.setState({ panel: null, paletteOpen: true })],
+        ["Keyboard shortcuts", "M3 6h18v12H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10", "⌘/", () => this.setState({ panel: null, keysOpen: true })],
+        ["Audit log", "M4 20V9M12 20V4M20 20v-7", "", this.goto("settings", "audit")]
+      ].map((a) => ({
+        label: a[0], icon: a[1], hint: a[2],
+        style: "display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r3); font-size: 14px; color: var(--txt-2); cursor: pointer",
+        onPick: a[3]
+      })),
+      messages: this.messages(),
+      alerts: this.alerts(),
+      mailUnread: this.messages().some((m) => m.unread),
+      bellUnread: this.alerts().some((a) => a.unread),
+      readAllMail: () => { const r = {}; [0, 1, 2, 3].forEach((i) => { r[i] = true; }); this.setState({ readMail: r }); this.say("Messages marked read"); },
+      readAllAlerts: () => { const r = {}; [0, 1, 2, 3].forEach((i) => { r[i] = true; }); this.setState({ readAlerts: r }); this.say("Notifications cleared"); },
+      goInbox: this.goto("data", "inbox"),
+
+      loadingArea: !!st.loading,
+      loadingLabel: "Loading " + (labels[st.childScreen] || "screen").toLowerCase() + "…",
+      slotStyle: "flex: 1; min-height: 0; position: relative; background: var(--card); border-radius: " + (full ? "0" : "var(--r)") + "; overflow: hidden" + (st.loading ? "; visibility: hidden" : ""),
+      skeletonTiles: [0, 1, 2, 3].map((i) => ({
+        style: "background: " + (i === 0 ? "var(--lead)" : "var(--shell)") + "; border-radius: var(--r2); padding: 20px; min-width: 0; animation: shimmer 1.1s ease-in-out infinite " + (i * 0.07).toFixed(2) + "s"
+      })),
+      skeletonRows: [0, 1, 2, 3, 4, 5].map((i) => ({
+        rowStyle: "display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-bottom: 1px solid var(--line); animation: shimmer 1.1s ease-in-out infinite " + (i * 0.06).toFixed(2) + "s",
+        a: "width: " + (74 + (i % 3) * 16) + "px; height: 11px; border-radius: 4px; background: var(--shell); display: block",
+        b: "width: " + (150 + (i % 4) * 26) + "px; height: 11px; border-radius: 4px; background: var(--shell); display: block"
+      })),
+
+      goArmed: st.goArmed,
+      bubbleOpen: st.bubbleOpen,
+      bubbleClosed: !st.bubbleOpen,
+      bubbleStyle: "position: absolute; right: 40px; bottom: 40px; z-index: 91; width: 52px; height: 52px; border-radius: 999px; display: grid; place-items: center; cursor: pointer; box-shadow: 0 14px 32px rgba(0,0,0,.22); background: " + (st.bubbleOpen ? "var(--txt)" : "var(--accent)") + "; color: " + (st.bubbleOpen ? "var(--card)" : "var(--accent-ink)"),
+      toggleBubble: () => this.setState({ bubbleOpen: !st.bubbleOpen }),
+      closeBubble: () => this.setState({ bubbleOpen: false }),
+      expandBubble: () => { this.setState({ bubbleOpen: false }); this.goto("chat", "assistant")(); },
+      bubblePrompts: [
+        ["What needs a decision today?"], ["Why did refunds jump?"], ["Draft a reply to a customer"]
+      ].map((p) => ({ label: p[0], onPick: () => { this.setState({ bubbleOpen: false }); this.goto("chat", "assistant")(); } })),
+      keysOpen: st.keysOpen,
+      closeKeys: () => this.setState({ keysOpen: false }),
+      keyGroups: [
+        ["Anywhere", [["Command palette", "⌘ K"], ["Shortcuts", "⌘ /"], ["Collapse the sidebar", "⌘ B"], ["Close anything", "Esc"]]],
+        ["Move", [["Overview", "G then O"], ["Orders", "G then R"], ["Messages", "G then M"], ["Assistant", "G then A"], ["Settings", "G then S"]]],
+        ["Table", [["Move down / up", "J / K"], ["Select the row", "X"], ["Open the row", "Enter"], ["Select everything", "⌘ A"]]],
+        ["Decide", [["Approve", "A"], ["Reject", "R"], ["Skip for now", "S"], ["Draft a reply", "⌘ ⏎"]]]
+      ].map((g) => ({
+        label: g[0],
+        rows: g[1].map((k, i, arr) => ({
+          label: k[0], keys: k[1],
+          rowStyle: "display: flex; align-items: center; gap: 14px; padding: 9px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          keyStyle: "font-family: var(--mono); font-size: 11px; color: var(--txt); background: var(--shell); border: 1px solid var(--line); border-radius: 6px; padding: 4px 9px; flex: none"
+        }))
+      })),
+      paletteOpen: st.paletteOpen,
+      paletteQuery: st.paletteQuery,
+      onPaletteQuery: (e) => this.setState({ paletteQuery: e.target.value }),
+      openPalette: () => this.setState({ paletteOpen: true, paletteQuery: "", panel: null }),
+      closePalette: () => this.setState({ paletteOpen: false, paletteQuery: "" }),
+      paletteGroups: this.paletteGroups(),
+      toast: st.toast,
+      // The palette drops out of the search field it replaces, not from the middle of the screen.
+      palettePanelStyle: "position: absolute; top: " + (mobile ? "72px" : "14vh") + "; left: 50%; transform: translateX(-50%); width: " + (mobile ? "calc(100% - 32px)" : "580px") + "; max-width: calc(100% - 32px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: 0 30px 70px rgba(0,0,0,.3); overflow: hidden; animation: riseCenter .14s ease-out",
+      stopClick: (e) => e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>

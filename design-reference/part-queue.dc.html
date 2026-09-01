@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Barlow:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; }
+  input, textarea { font: inherit; color: inherit; background: none; border: none; outline: none; width: 100%; }
+  textarea { resize: none; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position: absolute; inset: 0; min-height: 0; display: flex; flex-direction: column">
+ <div style="flex: 1; min-height: 0; display: flex; position: relative">
+  <div style="display: none"></div>
+
+  <div style="flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 14px">
+
+    <sc-if value="{{ isSchedule }}" hint-placeholder-val="{{ false }}">
+      <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 24px; flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap">
+        <div style="min-width: 0">
+          <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">Week of Aug 24 &#183; 42 services</div>
+          <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; line-height: 1.1">Schedule</div>
+          <p style="font-size: 14px; color: var(--txt-2); line-height: 1.5; margin: 8px 0 0; max-width: 620px">What is booked, who is on it, and where the day is already full. Click a slot to see the job.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex: none; flex-wrap: wrap">
+          <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px">
+            <sc-for list="{{ scheduleViews }}" as="v" hint-placeholder-count="2">
+              <span style="{{ v.style }}" onClick="{{ v.onPick }}">{{ v.label }}</span>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span style="width: 32px; height: 32px; border-radius: 9px; background: var(--shell); display: grid; place-items: center; cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--txt-2)" onClick="{{ prevWeek }}">&#8249;</span>
+            <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt-2); min-width: 116px; text-align: center">{{ weekLabel }}</span>
+            <span style="width: 32px; height: 32px; border-radius: 9px; background: var(--shell); display: grid; place-items: center; cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--txt-2)" onClick="{{ nextWeek }}">&#8250;</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; display: flex; gap: 14px; overflow: hidden">
+        <div style="flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden">
+          <div style="display: flex; align-items: stretch; border-bottom: 1px solid var(--line); flex: none">
+            <span style="width: 56px; flex: none; border-right: 1px solid var(--line)"></span>
+            <sc-for list="{{ days }}" as="d" hint-placeholder-count="6">
+              <div style="{{ d.headStyle }}">
+                <span style="font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4)">{{ d.dow }}</span>
+                <span style="{{ d.dateStyle }}">{{ d.date }}</span>
+                <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-3)">{{ d.count }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+            <sc-for list="{{ slots }}" as="row" hint-placeholder-count="6">
+              <div style="display: flex; align-items: stretch; border-bottom: 1px solid var(--line); min-height: 62px">
+                <span style="width: 56px; flex: none; border-right: 1px solid var(--line); display: flex; justify-content: center; padding-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ row.hour }}</span>
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="6">
+                  <div style="{{ cell.cellStyle }}">
+                    <sc-for list="{{ cell.jobs }}" as="job" hint-placeholder-count="1">
+                      <div style="{{ job.style }}" onClick="{{ job.onPick }}">
+                        <span style="{{ job.titleStyle }}">{{ job.title }}</span>
+                        <span style="{{ job.metaStyle }}">{{ job.meta }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--shell); border-top: 1px solid var(--line); flex: none; flex-wrap: wrap">
+            <sc-for list="{{ scheduleLegend }}" as="l" hint-placeholder-count="4">
+              <span style="display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 10.5px; color: var(--txt-3)"><span style="{{ l.dotStyle }}"></span>{{ l.label }}</span>
+            </sc-for>
+            <div style="flex: 1"></div>
+            <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ capacityNote }}</span>
+          </div>
+        </div>
+
+        <div style="width: 296px; flex: none; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box">
+          <div style="padding: 16px 18px; border-bottom: 1px solid var(--line); flex: none">
+            <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 8px">{{ jobEyebrow }}</div>
+            <div style="font-size: 17px; font-weight: var(--w-bold); letter-spacing: -0.025em; line-height: 1.2">{{ jobTitle }}</div>
+          </div>
+          <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 16px 18px; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; flex-direction: column">
+              <sc-for list="{{ jobFacts }}" as="f" hint-placeholder-count="5">
+                <div style="{{ f.rowStyle }}">
+                  <span style="font-size: 12.5px; color: var(--txt-2); flex: none; width: 84px">{{ f.label }}</span>
+                  <span style="font-family: var(--mono); font-size: 11.5px; color: var(--txt); flex: 1; min-width: 0; text-align: right">{{ f.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Move it</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                <sc-for list="{{ moveOptions }}" as="m" hint-placeholder-count="4">
+                  <span style="{{ m.style }}" onClick="{{ m.onPick }}">{{ m.label }}</span>
+                </sc-for>
+              </div>
+              <div style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3); line-height: 1.6; margin-top: 12px">{{ moveNote }}</div>
+            </div>
+          </div>
+          <div style="padding: 14px 18px; border-top: 1px solid var(--line); flex: none; display: flex; gap: 9px">
+            <span style="flex: 1; text-align: center; font-size: 13.5px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 0; cursor: pointer" style-hover="background: var(--shell); color: var(--txt)" onClick="{{ cancelJob }}">Cancel</span>
+            <span style="flex: 1; text-align: center; font-size: 13.5px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 0; cursor: pointer" onClick="{{ confirmJob }}">Confirm</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isQueue }}" hint-placeholder-val="{{ true }}">
+    <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 24px; flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap">
+      <div style="min-width: 0">
+        <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); margin-bottom: 8px">{{ eyebrow }}</div>
+        <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; line-height: 1.1">Approvals</div>
+        <p style="font-size: 14px; color: var(--txt-2); line-height: 1.5; margin: 8px 0 0; max-width: 620px">Everything waiting on a person, in the order it will breach. Approve with A, reject with R, skip with S.</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 3px; background: var(--shell); border-radius: 999px; padding: 4px; flex: none">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+          <span style="{{ f.style }}" onClick="{{ f.onPick }}">{{ f.label }}<span style="{{ f.countStyle }}">{{ f.count }}</span></span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="{{ queueSplitStyle }}">
+
+      <div style="{{ listStyle }}">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line); flex: none">
+          <span style="font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-3); flex: 1">Queue</span>
+          <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ queueCount }}</span>
+        </div>
+        <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin">
+          <sc-for list="{{ items }}" as="i" hint-placeholder-count="6">
+            <div style="{{ i.rowStyle }}" style-hover="background: var(--shell)" onClick="{{ i.onPick }}">
+              <span style="{{ i.barStyle }}"></span>
+              <div style="flex: 1; min-width: 0">
+                <div style="display: flex; align-items: baseline; gap: 8px">
+                  <span style="{{ i.titleStyle }}">{{ i.title }}</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4); margin-left: auto; flex: none">{{ i.age }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px">
+                  <span style="{{ i.chipStyle }}">{{ i.kind }}</span>
+                  <span style="font-family: var(--mono); font-size: 11px; color: var(--txt-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ i.meta }}</span>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 48px 24px; text-align: center">
+              <div style="font-size: 16px; font-weight: var(--w-bold); letter-spacing: -0.02em; margin-bottom: 8px">Queue is clear</div>
+              <div style="font-size: 13.5px; color: var(--txt-2); line-height: 1.55">Nine decisions handled today, average four minutes each.</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ hasCurrent }}" hint-placeholder-val="{{ true }}">
+        <div style="{{ decisionStyle }}">
+          <div style="padding: 22px 24px 18px; border-bottom: 1px solid var(--line); flex: none">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+              <div style="min-width: 0">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px">
+                  <span style="{{ currentChipStyle }}">{{ currentKind }}</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-3)">{{ currentMeta }}</span>
+                </div>
+                <div style="font-size: 24px; font-weight: var(--w-bold); letter-spacing: -0.035em; line-height: 1.15">{{ currentTitle }}</div>
+              </div>
+              <div style="{{ slaStyle }}">
+                <span style="font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; opacity: .75">Breaches in</span>
+                <span style="font-family: var(--mono); font-size: 15px; font-weight: var(--w-semi)">{{ currentSla }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding: 18px 24px 22px; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; flex: none">
+              <sc-for list="{{ currentStats }}" as="s" hint-placeholder-count="3">
+                <div style="background: var(--shell); border-radius: var(--r3); padding: 14px; min-width: 0">
+                  <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 8px">{{ s.label }}</div>
+                  <div style="font-size: 17px; font-weight: var(--w-semi); letter-spacing: -0.02em">{{ s.value }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Why it is here</div>
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden">
+                <sc-for list="{{ currentEvidence }}" as="e" hint-placeholder-count="4">
+                  <div style="{{ e.rowStyle }}">
+                    <span style="{{ e.tagStyle }}">{{ e.source }}</span>
+                    <span style="flex: 1; min-width: 0; font-size: 13px; color: var(--txt)">{{ e.claim }}</span>
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--txt-4); flex: none">{{ e.weight }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="{{ bottomGrid }}">
+              <div style="min-width: 0">
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">What happens on approval</div>
+                <div style="display: flex; flex-direction: column; gap: 7px">
+                  <sc-for list="{{ currentEffects }}" as="x" hint-placeholder-count="3">
+                    <div style="display: flex; align-items: flex-start; gap: 10px">
+                      <span style="width: 5px; height: 5px; border-radius: 999px; background: var(--accent); display: block; flex: none; margin-top: 7px"></span>
+                      <span style="font-size: 13px; color: var(--txt-2); line-height: 1.5">{{ x }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="min-width: 0">
+                <div style="font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--txt-4); margin-bottom: 10px">Note for the log</div>
+                <div style="background: var(--shell); border: 1px solid var(--line-2); border-radius: var(--r3); padding: 11px 13px">
+                  <textarea rows="3" placeholder="Optional. Whoever reads this in three months will thank you." value="{{ note }}" onInput="{{ onNote }}" style="font-size: 13px; line-height: 1.5"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding: 16px 24px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 10px; flex: none; flex-wrap: wrap">
+            <span style="{{ approveStyle }}" onClick="{{ approve }}">Approve<span style="{{ kbdStyle }}">A</span></span>
+            <span style="{{ rejectStyle }}" onClick="{{ reject }}">Reject<span style="{{ kbdStyle }}">R</span></span>
+            <span style="{{ skipStyle }}" onClick="{{ skip }}">Skip<span style="{{ kbdStyle }}">S</span></span>
+            <div style="flex: 1"></div>
+            <span style="font-family: var(--mono); font-size: 10.5px; color: var(--txt-4)">{{ progress }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ noCurrent }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; min-width: 380px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: grid; place-items: center; padding: 40px">
+          <div style="text-align: center; max-width: 380px">
+            <span style="width: 52px; height: 52px; border-radius: 15px; background: var(--ok-tint); display: grid; place-items: center; margin: 0 auto 18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"></path></svg></span>
+            <div style="font-size: 22px; font-weight: var(--w-bold); letter-spacing: -0.03em; margin-bottom: 10px">Nothing waiting</div>
+            <p style="font-size: 14px; color: var(--txt-2); line-height: 1.6; margin: 0">{{ clearedLine }}</p>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+  </div>
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;base&quot;,&quot;electric&quot;,&quot;green&quot;],&quot;default&quot;:&quot;base&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Skin&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;system&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'system' | 'dark'&quot;,&quot;section&quot;:&quot;Skin&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+
+  state = { screen: "queue", vw: 1440, filter: "All", index: 0, done: {}, note: "", calView: "Week", job: null };
+
+  static get SKINS() {
+    return {
+      base:     { ah: 250, ac: 0.16, nh: 250, nc: 0.006, sc: 0.15, font: "Instrument Sans", mono: "IBM Plex Mono", wb: 700, ws: 600 },
+      electric: { ah: 160, ac: 0.21, al: 0.86, alDark: 0.88, ink: 0.16, nh: 160, nc: 0.004, sc: 0.15, font: "Barlow", mono: "DM Mono", wb: 800, ws: 600 },
+      green:    { ah: 140, ac: 0.09, al: 0.58, alDark: 0.72, nh: 138, nc: 0.010, sc: 0.13, font: "Poppins", mono: "IBM Plex Mono", wb: 600, ws: 500 }
+    };
+  }
+
+  ok3(l, c, h, a) { return "oklch(" + l + " " + c.toFixed(3) + " " + h + (a ? " / " + a : "") + ")"; }
+
+  resolvedTheme() {
+    const mode = this.props.theme || "light";
+    if (mode !== "system") return mode;
+    const mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    return mq && mq.matches ? "dark" : "light";
+  }
+
+  tokens() {
+    const s = Component.SKINS[this.props.skin] || Component.SKINS.base;
+    const dark = this.resolvedTheme() === "dark";
+    const n = (l, m) => this.ok3(l, s.nc * (m || 1), s.nh);
+    const acc = (l, m, a) => this.ok3(l, s.ac * (m || 1), s.ah, a);
+    const sem = (l, m, h, a) => this.ok3(l, s.sc * (m || 1), h, a);
+    const surfaces = dark
+      ? { "--bg": n(0.155, 1.2), "--shell": n(0.19, 1.2), "--card": n(0.225, 1.3), "--line": n(0.285, 1.6), "--line-2": n(0.35, 1.8),
+          "--txt": n(0.96, 0.4), "--txt-2": n(0.74, 1.2), "--txt-3": n(0.60, 1.2), "--txt-4": n(0.48, 1.2) }
+      : { "--bg": n(0.918, 1), "--shell": n(0.977, 0.8), "--card": n(0.998, 0.3), "--line": n(0.895, 1.2), "--line-2": n(0.82, 1.4),
+          "--txt": n(0.17, 1.6), "--txt-2": n(0.43, 1.4), "--txt-3": n(0.59, 1.2), "--txt-4": n(0.71, 1) };
+    const fillL = dark ? (s.alDark || 0.66) : (s.al || 0.52);
+    const inkOnFill = s.ink !== undefined ? n(s.ink, 1) : (dark ? n(0.14, 1) : n(0.99, 0.2));
+    const accent = dark
+      ? { "--accent": acc(fillL), "--accent-ink": inkOnFill, "--accent-text": acc(0.80, 0.8), "--accent-tint": acc(0.80, 0.8, ".16"),
+          "--lead": acc(0.34, 0.55), "--lead-line": acc(0.45, 0.7) }
+      : { "--accent": acc(fillL), "--accent-ink": inkOnFill, "--accent-text": acc(0.44, 0.94), "--accent-tint": acc(0.44, 0.94, ".10"),
+          "--lead": acc(0.965, 0.09), "--lead-line": acc(0.90, 0.26) };
+    const semantics = dark
+      ? { "--ok": sem(0.80, 1.15, 147), "--ok-fill": sem(0.70, 1.35, 147), "--ok-tint": sem(0.70, 1.35, 147, ".20"),
+          "--warn": sem(0.86, 1.25, 88), "--warn-fill": sem(0.83, 1.35, 90), "--warn-tint": sem(0.83, 1.35, 90, ".20"),
+          "--bad": sem(0.75, 1.3, 25), "--bad-fill": sem(0.66, 1.5, 25), "--bad-tint": sem(0.66, 1.5, 25, ".20") }
+      : { "--ok": sem(0.575, 1.3, 147), "--ok-fill": sem(0.66, 1.35, 147), "--ok-tint": sem(0.66, 1.35, 147, ".14"),
+          "--warn": sem(0.64, 1.15, 78), "--warn-fill": sem(0.83, 1.35, 92), "--warn-tint": sem(0.80, 1.3, 90, ".22"),
+          "--bad": sem(0.575, 1.5, 25), "--bad-fill": sem(0.64, 1.55, 25), "--bad-tint": sem(0.64, 1.55, 25, ".14") };
+    return Object.assign({}, surfaces, accent, semantics, {
+      "--font": "'" + s.font + "', system-ui, sans-serif",
+      "--mono": "'" + s.mono + "', ui-monospace, monospace",
+      "--w-bold": String(s.wb), "--w-semi": String(s.ws)
+    });
+  }
+
+  componentDidMount() { this.hostSync(); this.apply(); }
+  componentDidUpdate() { this.apply(); if (this._onResize) this._onResize(); }
+
+  hostSync() {
+    const mine = ["queue", "schedule"];
+    const want = window.__starterScreen;
+    if (mine.indexOf(want) >= 0) this.setState({ screen: want });
+    this._navHandler = (e) => {
+      const s = e.detail && e.detail.screen;
+      if (mine.indexOf(s) >= 0) this.setState({ screen: s });
+    };
+    window.addEventListener("starter:nav", this._navHandler);
+    this._onResize = () => {
+      const el = this.rootRef.current;
+      const w = el ? Math.round(el.getBoundingClientRect().width) : window.innerWidth;
+      if (w && Math.abs(w - this.state.vw) > 8) this.setState({ vw: w });
+    };
+    requestAnimationFrame(this._onResize);
+    window.addEventListener("resize", this._onResize);
+    // A, R and S only fire while this screen owns the view and nothing is being typed into.
+    this._keys = (e) => {
+      if (this.state.screen !== "queue") return;
+      if (window.__starterScreen && window.__starterScreen !== "queue") return;
+      const tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA" || e.metaKey || e.ctrlKey) return;
+      const k = String(e.key).toLowerCase();
+      if (k === "a") { e.preventDefault(); this.decide("approved"); }
+      if (k === "r") { e.preventDefault(); this.decide("rejected"); }
+      if (k === "s") { e.preventDefault(); this.skip(); }
+      if (k === "j") { e.preventDefault(); this.move(1); }
+      if (k === "k") { e.preventDefault(); this.move(-1); }
+    };
+    window.addEventListener("keydown", this._keys);
+  }
+
+  embedded() { return !!window.__starterHost; }
+
+  componentWillUnmount() {
+    if (this._navHandler) window.removeEventListener("starter:nav", this._navHandler);
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+    if (this._keys) window.removeEventListener("keydown", this._keys);
+  }
+
+  apply() {
+    const root = document.body;
+    if (!root || this.embedded()) return;
+    const t = this.tokens();
+    Object.keys(t).forEach((k) => root.style.setProperty(k, t[k]));
+  }
+
+  static get SCHEDULE() {
+    return {
+      "08:00": [["Northwind Retail", "Bin swap · 2 units", "done"], null, ["Harbor Foods", "Compactor · weekly", "done"], null, ["Meridian Hotels", "Bin swap · 4 units", "booked"], null],
+      "10:00": [null, ["Copper & Oak", "Recycling · 1 unit", "done"], ["Lakeside Clinics", "Clinical waste", "late"], ["Ferro Logistics", "Compactor", "booked"], null, ["Atlas Studios", "Recycling", "booked"]],
+      "12:00": [["Vista Group", "Bin swap · 3 units", "done"], ["Meridian Hotels", "Compactor", "booked"], null, null, ["Harbor Foods", "Bin swap · 2 units", "booked"], null],
+      "14:00": [["Lakeside Clinics", "Clinical waste", "booked"], null, ["Atlas Studios", "Bin swap", "missed"], ["Northwind Retail", "Recycling", "booked"], null, null],
+      "16:00": [null, ["Ferro Logistics", "Bin swap · 6 units", "booked"], null, ["Copper & Oak", "Compactor", "booked"], ["Vista Group", "Recycling", "booked"], ["Harbor Foods", "Overflow run", "booked"]],
+      "18:00": [null, null, ["Meridian Hotels", "Late collection", "booked"], null, null, null]
+    };
+  }
+
+  static get ITEMS() {
+    return [
+      { id: "q1", kind: "refund", tone: "warn", title: "Refund of $412.00 over threshold", meta: "order 40218 · Alicia Duarte", age: "2h", sla: "22h",
+        stats: [["Amount", "$412.00"], ["Order total", "$486.00"], ["Prior refunds", "1"]],
+        evidence: [
+          ["policy", "Refunds over $250 need a second approver", "rule"],
+          ["order", "Delivered Aug 30, damage reported the same day", "high"],
+          ["customer", "21 orders, $3,180 lifetime, no abuse pattern", "medium"],
+          ["carrier", "11 damage reports on the same Madrid lane", "medium"]
+        ],
+        effects: ["$412.00 goes back to the card ending 4417", "Alicia is emailed the confirmation", "The carrier lane is flagged for the weekly review"] },
+      { id: "q2", kind: "reorder", tone: "warn", title: "Reorder Cold Brew 12pk, 400 units", meta: "inventory · 9 days of cover", age: "5h", sla: "19h",
+        stats: [["Cover left", "9 days"], ["Lead time", "12 days"], ["Cost", "$14,800"]],
+        evidence: [
+          ["stock", "Cover falls below lead time in three days", "high"],
+          ["demand", "Sales up 22% month on month", "high"],
+          ["supplier", "Last two orders arrived two days late", "medium"]
+        ],
+        effects: ["A purchase order is sent to the roaster", "$14,800 is committed against September", "Finance is notified because it is over $10,000"] },
+      { id: "q3", kind: "price", tone: "idle", title: "Price change, Single Origin $18.00 → $19.50", meta: "catalogue · 4 channels", age: "1d", sla: "2d",
+        stats: [["Change", "+8.3%"], ["Channels", "4"], ["Units / month", "1,240"]],
+        evidence: [
+          ["cost", "Green coffee up 11% since June", "high"],
+          ["margin", "Current margin 46%, target 52%", "high"],
+          ["market", "Two competitors moved first", "low"]
+        ],
+        effects: ["The price updates on all four channels within an hour", "Open carts keep the old price for 24 hours", "Wholesale contracts are unaffected"] },
+      { id: "q4", kind: "budget", tone: "idle", title: "Shift $1,800 from Amazon to Meta", meta: "advertising · this week", age: "1d", sla: "3d",
+        stats: [["Amount", "$1,800"], ["From", "Amazon"], ["To", "Meta"]],
+        evidence: [
+          ["performance", "Meta returning 3.9x against Amazon at 2.1x", "high"],
+          ["pacing", "Amazon underspent by $2,400 this month", "medium"]
+        ],
+        effects: ["Daily caps change tomorrow at 00:00", "Amazon keeps its floor of $400 a day"] },
+      { id: "q5", kind: "access", tone: "bad", title: "Grant Tom Bergen admin", meta: "members · requested by Sam", age: "3d", sla: "overdue",
+        stats: [["Current", "Editor"], ["Requested", "Admin"], ["Sponsor", "Sam Whitfield"]],
+        evidence: [
+          ["policy", "Admin grants access to every customer record", "rule"],
+          ["history", "Joined eleven days ago", "medium"],
+          ["need", "Covers refunds while Anna is away next week", "medium"]
+        ],
+        effects: ["Tom can change settings and approve refunds", "The grant is logged and expires in 30 days unless renewed"] }
+    ];
+  }
+
+  visible() {
+    const done = this.state.done;
+    return Component.ITEMS.filter((i) => !done[i.id]).filter((i) => {
+      if (this.state.filter === "All") return true;
+      if (this.state.filter === "Money") return i.kind === "refund" || i.kind === "reorder" || i.kind === "budget";
+      return i.kind === "access" || i.kind === "price";
+    });
+  }
+
+  move(delta) {
+    const list = this.visible();
+    if (!list.length) return;
+    const next = Math.max(0, Math.min(list.length - 1, this.state.index + delta));
+    this.setState({ index: next });
+  }
+
+  decide(what) {
+    const list = this.visible();
+    const item = list[this.state.index];
+    if (!item) return;
+    const done = Object.assign({}, this.state.done);
+    done[item.id] = what;
+    const remaining = list.length - 1;
+    this.setState({ done, note: "", index: Math.min(this.state.index, Math.max(0, remaining - 1)) });
+    window.dispatchEvent(new CustomEvent("starter:toast", { detail: item.title.split(",")[0] + " " + what }));
+  }
+
+  skip() {
+    const list = this.visible();
+    if (list.length < 2) return;
+    this.setState({ index: (this.state.index + 1) % list.length, note: "" });
+  }
+
+  renderVals() {
+    const st = this.state;
+    const list = this.visible();
+    const current = list[st.index] || list[0];
+    const tone = {
+      warn: ["var(--warn)", "var(--warn-tint)", "var(--warn-fill)"],
+      bad: ["var(--bad)", "var(--bad-tint)", "var(--bad-fill)"],
+      idle: ["var(--txt-2)", "var(--shell)", "var(--line-2)"]
+    };
+    const counts = { All: Component.ITEMS.filter((i) => !st.done[i.id]).length };
+    counts.Money = Component.ITEMS.filter((i) => !st.done[i.id] && (i.kind === "refund" || i.kind === "reorder" || i.kind === "budget")).length;
+    counts.Policy = Component.ITEMS.filter((i) => !st.done[i.id] && (i.kind === "access" || i.kind === "price")).length;
+    const handled = Object.keys(st.done).length;
+
+    const sched = Component.SCHEDULE;
+    const hours = Object.keys(sched);
+    const dayNames = [["Mon", "24"], ["Tue", "25"], ["Wed", "26"], ["Thu", "27"], ["Fri", "28"], ["Sat", "29"]];
+    const jobTone = { done: ["var(--ok)", "var(--ok-tint)"], booked: ["var(--accent-text)", "var(--accent-tint)"], late: ["var(--warn)", "var(--warn-tint)"], missed: ["var(--bad)", "var(--bad-tint)"] };
+    const sel = st.job || { hour: "10:00", col: 2 };
+    const selJob = (sched[sel.hour] || [])[sel.col];
+
+    return {
+      rootRef: this.rootRef,
+      isQueue: st.screen !== "schedule",
+      isSchedule: st.screen === "schedule",
+      scheduleViews: ["Week", "Month"].map((v) => ({
+        label: v,
+        style: "padding: 7px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; " + (st.calView === v ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)" : "color: var(--txt-2)"),
+        onPick: () => this.setState({ calView: v })
+      })),
+      weekLabel: "Aug 24 – 29",
+      prevWeek: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Week of Aug 17" })),
+      nextWeek: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Week of Aug 31" })),
+      days: dayNames.map((d, i) => {
+        const count = hours.filter((h) => (sched[h] || [])[i]).length;
+        const full = count >= 4;
+        return {
+          dow: d[0], date: d[1], count: count + " jobs",
+          headStyle: "flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 6px; border-right: 1px solid var(--line); background: " + (full ? "var(--warn-tint)" : "transparent"),
+          dateStyle: "font-size: 15px; font-weight: var(--w-semi); letter-spacing: -0.02em; color: " + (full ? "var(--warn)" : "var(--txt)")
+        };
+      }),
+      slots: hours.map((h) => ({
+        hour: h,
+        cells: (sched[h] || []).map((job, col) => ({
+          cellStyle: "flex: 1; min-width: 0; border-right: 1px solid var(--line); padding: 5px; box-sizing: border-box",
+          jobs: job ? [{
+            title: job[0], meta: job[1],
+            style: "border-radius: 8px; padding: 7px 9px; cursor: pointer; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; gap: 3px; background: " + jobTone[job[2]][1] + "; border: 1.5px solid " + (sel.hour === h && sel.col === col ? jobTone[job[2]][0] : "transparent"),
+            titleStyle: "font-size: 12px; font-weight: var(--w-semi); letter-spacing: -0.01em; color: " + jobTone[job[2]][0] + "; overflow: hidden; text-overflow: ellipsis; white-space: nowrap",
+            metaStyle: "font-family: var(--mono); font-size: 9.5px; color: var(--txt-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap",
+            onPick: () => this.setState({ job: { hour: h, col: col } })
+          }] : []
+        }))
+      })),
+      scheduleLegend: [["Done", "var(--ok-fill)"], ["Booked", "var(--accent)"], ["Late", "var(--warn-fill)"], ["Missed", "var(--bad-fill)"]].map((l) => ({
+        label: l[0], dotStyle: "width: 8px; height: 8px; border-radius: 3px; display: block; background: " + l[1]
+      })),
+      capacityNote: "Thursday is at capacity · two crews out",
+      jobEyebrow: selJob ? sel.hour + " · " + (dayNames[sel.col] ? dayNames[sel.col][0] + " " + dayNames[sel.col][1] : "") : "No job selected",
+      jobTitle: selJob ? selJob[0] : "Pick a slot",
+      jobFacts: selJob ? [
+        ["Service", selJob[1]], ["Crew", "Team B · 2 people"], ["Vehicle", "MAD-07"],
+        ["Window", sel.hour + " – " + (parseInt(sel.hour, 10) + 2) + ":00"], ["Status", selJob[2]]
+      ].map((f, i, arr) => ({
+        label: f[0], value: f[1],
+        rowStyle: "display: flex; align-items: center; gap: 10px; padding: 9px 0" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : "")
+      })) : [],
+      moveOptions: ["Next slot", "Tomorrow", "Same day next week", "Unassign"].map((m) => ({
+        label: m,
+        style: "font-family: var(--mono); font-size: 10.5px; color: var(--txt-2); background: var(--shell); border-radius: 999px; padding: 7px 12px; cursor: pointer",
+        onPick: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Moved · " + m.toLowerCase() }))
+      })),
+      moveNote: "Moving a job re-checks the crew's hours and the vehicle, and tells the client only if the window changes by more than an hour.",
+      cancelJob: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Service cancelled" })),
+      confirmJob: () => window.dispatchEvent(new CustomEvent("starter:toast", { detail: "Service confirmed" })),
+      eyebrow: "Waiting on a person · " + list.length + " open",
+      filters: ["All", "Money", "Policy"].map((f) => ({
+        label: f, count: String(counts[f]),
+        style: "display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 999px; font-size: 13.5px; cursor: pointer; " + (st.filter === f
+          ? "background: var(--card); color: var(--txt); font-weight: var(--w-semi)"
+          : "color: var(--txt-2)"),
+        countStyle: "font-family: var(--mono); font-size: 10.5px; color: " + (st.filter === f ? "var(--accent-text)" : "var(--txt-4)"),
+        onPick: () => this.setState({ filter: f, index: 0 })
+      })),
+      queueSplitStyle: "flex: 1; min-height: 0; display: flex; gap: 14px; " + (st.vw < 820 ? "flex-direction: column; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin" : ""),
+      listStyle: (st.vw < 820 ? "width: 100%; max-height: 240px; flex: none; " : "width: " + (st.vw < 1040 ? "260px" : "320px") + "; flex: none; ") + "background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box",
+      queueCount: list.length + " open · " + handled + " handled",
+      isEmpty: list.length === 0,
+      items: list.map((i, idx) => {
+        const t = tone[i.tone] || tone.idle;
+        const on = idx === st.index;
+        return {
+          title: i.title, meta: i.meta, age: i.age, kind: i.kind,
+          rowStyle: "display: flex; align-items: stretch; gap: 12px; padding: 13px 14px; cursor: pointer; border-bottom: 1px solid var(--line); background: " + (on ? "var(--shell)" : "transparent"),
+          barStyle: "width: 3px; border-radius: 2px; flex: none; display: block; background: " + (on ? "var(--accent)" : t[2]),
+          titleStyle: "font-size: 13.5px; letter-spacing: -0.01em; color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: " + (on ? "var(--w-semi)" : "500"),
+          chipStyle: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; flex: none; color: " + t[0] + "; background: " + t[1],
+          onPick: () => this.setState({ index: idx, note: "" })
+        };
+      }),
+
+      hasCurrent: !!current,
+      noCurrent: !current,
+      clearedLine: handled ? handled + " decisions handled in this session. The next one arrives when a rule fires." : "Nothing has tripped a threshold today.",
+      currentTitle: current ? current.title : "",
+      currentKind: current ? current.kind : "",
+      currentMeta: current ? current.meta : "",
+      currentChipStyle: current
+        ? "font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 4px 10px; color: " + tone[current.tone][0] + "; background: " + tone[current.tone][1]
+        : "",
+      currentSla: current ? current.sla : "",
+      slaStyle: "display: flex; flex-direction: column; gap: 2px; align-items: flex-end; border-radius: var(--r3); padding: 9px 14px; flex: none; " + (current && current.sla === "overdue"
+        ? "background: var(--bad-tint); color: var(--bad)"
+        : "background: var(--shell); color: var(--txt-2)"),
+      currentStats: current ? current.stats.map((s) => ({ label: s[0], value: s[1] })) : [],
+      decisionStyle: (st.vw < 820 ? "flex: none; min-width: 0; " : "flex: 1 1 auto; min-width: 380px; ") + "background: var(--card); border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden",
+      bottomGrid: "display: grid; grid-template-columns: " + (st.vw < 820 ? "minmax(0, 1fr)" : "1.1fr 1fr") + "; gap: 18px; align-items: start",
+      currentEvidence: current ? current.evidence.map((e, i, arr) => {
+        const w = e[2] === "rule" ? ["var(--accent-text)", "var(--accent-tint)"] : e[2] === "high" ? ["var(--ok)", "var(--ok-tint)"] : ["var(--txt-3)", "var(--shell)"];
+        return {
+          source: e[0], claim: e[1], weight: e[2],
+          rowStyle: "display: flex; align-items: center; gap: 11px; padding: 10px 14px; background: var(--card)" + (i < arr.length - 1 ? "; border-bottom: 1px solid var(--line)" : ""),
+          tagStyle: "font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; border-radius: 999px; padding: 4px 9px; flex: none; color: " + w[0] + "; background: " + w[1]
+        };
+      }) : [],
+      currentEffects: current ? current.effects : [],
+      note: st.note,
+      onNote: (e) => this.setState({ note: e.target.value }),
+      approveStyle: "display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: var(--w-semi); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 11px 18px; cursor: pointer",
+      rejectStyle: "display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: var(--w-semi); color: var(--bad); border: 1px solid var(--bad); border-radius: 999px; padding: 10px 17px; cursor: pointer",
+      skipStyle: "display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: var(--w-semi); color: var(--txt-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 17px; cursor: pointer",
+      kbdStyle: "font-family: var(--mono); font-size: 10px; opacity: .7; border: 1px solid currentColor; border-radius: 5px; padding: 1px 5px",
+      approve: () => this.decide("approved"),
+      reject: () => this.decide("rejected"),
+      skip: () => this.skip(),
+      progress: (st.index + 1) + " of " + list.length + " · J and K move"
+    };
+  }
+}
+</script>
+</body>
+</html>
