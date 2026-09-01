@@ -16,6 +16,21 @@ delete module code because a project doesn't use it.
 - `/design-reference` is READ-ONLY reference material. Never modify, rename,
   move, or delete anything inside it.
 
+## Branding / theme rules
+
+- The skin derivation engine (`src/core/branding`) is canonical.
+- Never hardcode brand colors in components; consume CSS custom properties.
+- Never create module-specific themes.
+- Never duplicate the OKLCH derivation logic.
+- Light and dark are independent peer palettes, never an inversion.
+- Semantic hues are fixed (147 green, 78 amber, 25 red); only chroma follows
+  the brand.
+- Red is reserved for errors/destructive/broken states — a metric that fell
+  is neutral, not red.
+- Product geometry (radii, spacing, sizes) is not client branding.
+- /design-reference remains the source of truth for visual behavior.
+- Contract: docs/BRANDING.md.
+
 ## Supabase rules
 
 - Use `src/core/supabase/client.ts` in Client Components.
