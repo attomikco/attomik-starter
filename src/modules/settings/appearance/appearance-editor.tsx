@@ -405,7 +405,9 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
     scoped to this panel, with the ground's own logo where it will appear. */
 function PreviewPanel({ label, tokens, logoUrl }: { label: string; tokens: CSSProperties; logoUrl: string | null }) {
   return (
-    <div style={{ ...tokens, colorScheme: label === "Dark" ? "dark" : "light", background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
+    // Ground is the theme's neutral shell — the preview shows the app on
+    // its own dark/light ground, never the accent-tinted lead color.
+    <div style={{ ...tokens, colorScheme: label === "Dark" ? "dark" : "light", background: "var(--shell)", border: "1px solid var(--line-2)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
         <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>Live preview · {label}</span>
         {logoUrl && (
