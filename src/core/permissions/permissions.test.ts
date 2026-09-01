@@ -1,6 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { assignableRoles, canInvite, canManageTarget, isAdminLike, isValidRole, normalizeEmail } from "./index.ts"
+import { assignableRoles, canInvite, canManageTarget, canRecordActivity, hasRank, isAdminLike, isValidRole, normalizeEmail } from "./index.ts"
 
 test("assignable roles per actor — owner is never assignable", () => {
   assert.deepEqual(assignableRoles("owner"), ["admin", "member", "viewer"])
@@ -38,4 +38,13 @@ test("invite capability and role validation", () => {
 
 test("email normalization", () => {
   assert.equal(normalizeEmail("  Pablo@Attomik.CO "), "pablo@attomik.co")
+})
+
+test("viewers never author activity events; member rank and above do", () => {
+  assert.equal(canRecordActivity("owner"), true)
+  assert.equal(canRecordActivity("admin"), true)
+  assert.equal(canRecordActivity("member"), true)
+  assert.equal(canRecordActivity("viewer"), false)
+  assert.equal(hasRank("member", "admin"), false)
+  assert.equal(hasRank("admin", "admin"), true)
 })

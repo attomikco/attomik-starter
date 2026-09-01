@@ -7,9 +7,10 @@ import { createClient } from "@/core/supabase/server"
  *    into activity_events directly.
  *  - Future module events call recordActivity(), which wraps the
  *    constrained record_activity RPC (actor forced to the verified caller,
- *    workspace membership enforced, action name validated). Best-effort by
- *    default: a failure is logged, not thrown — pass { required: true }
- *    when a module decides its mutation must not proceed unaudited.
+ *    member rank or above enforced — viewers are read-only and never
+ *    author events — action name validated). Best-effort by default: a
+ *    failure is logged, not thrown — pass { required: true } when a module
+ *    decides its mutation must not proceed unaudited.
  * Reads are RLS-scoped to workspace members and paginated server-side.
  */
 
@@ -89,7 +90,12 @@ export async function listActivity(workspaceId: string, query: ActivityQuery): P
   return { events, total: count ?? events.length, actorEmails }
 }
 
-/** Custom event recorder for future modules — see the write model above. */
+/**
+ * Custom event recorder for future modules — see the write model above.
+ * Callers with a viewer actor get a logged failure (or a thrown error with
+ * `required`); check canRecordActivity() first when the UI should not even
+ * offer the mutation. The database is the boundary either way.
+ */
 export async function recordActivity(input: {
   workspaceId: string
   action: string

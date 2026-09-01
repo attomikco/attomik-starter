@@ -12,6 +12,9 @@ by RLS — UI visibility is convenience, the database is the boundary.
 | member | Normal product user | — | — |
 | viewer | Read-only baseline | — | — |
 
+Viewers also never author activity events: `record_activity()` rejects
+them in the database and `canRecordActivity()` mirrors it (docs/AUDIT.md).
+
 **Owner invariant**: owner rows have no matching UPDATE/DELETE policy path —
 nobody (including the owner) can demote or remove an owner through the API,
 so a workspace can never end up ownerless. Ownership transfer is documented

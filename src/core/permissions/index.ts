@@ -39,6 +39,23 @@ export function canInvite(actor: Role): boolean {
   return assignableRoles(actor).length > 0
 }
 
+/** Rank order used for "at least this role" checks. */
+const RANK: Record<Role, number> = { viewer: 0, member: 1, admin: 2, owner: 3 }
+
+export function hasRank(actor: Role, atLeast: Role): boolean {
+  return RANK[actor] >= RANK[atLeast]
+}
+
+/**
+ * May the actor author custom activity events (recordActivity)? Viewers are
+ * read-only and never mutate, so they never audit — the database enforces
+ * the same rule inside record_activity(). Trigger-written events are not
+ * affected: a viewer cannot perform the mutations those triggers audit.
+ */
+export function canRecordActivity(actor: Role): boolean {
+  return hasRank(actor, "member")
+}
+
 export function isValidRole(value: string): value is Role {
   return value === "owner" || value === "admin" || value === "member" || value === "viewer"
 }
