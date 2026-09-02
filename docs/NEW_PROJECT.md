@@ -44,7 +44,8 @@ Follow in order; each step ends with a check.
    ✓ Grep for "Attomik Starter" outside docs if the project must not show it.
    Set `locale` in the same file (`en` or `es-MX`) — the project default
    that seeds new workspaces and is the last fallback behind each user's
-   own choice and the workspace default (docs/I18N.md). ✓ The sign-in
+   own choice (account menu) and the workspace default (Settings →
+   General) — docs/I18N.md. ✓ The sign-in
    screen renders in that language on a fresh deployment.
    Optionally set `skin`: the starter ships the generic `base` preset; a
    project with its own brand adds a preset to `src/core/branding/skins.ts`

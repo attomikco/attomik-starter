@@ -69,6 +69,13 @@ export interface ShellCopy {
     commandPalette: string
     keyboardShortcuts: string
     appearance: string
+    /** Personal interface language (profiles.locale). */
+    language: string
+    /** The "inherit" option, naming the resolved workspace language. */
+    workspaceDefault: (name: string) => string
+    languageSaved: string
+    languageFailed: string
+    languageInvalid: string
     signOut: string
   }
 

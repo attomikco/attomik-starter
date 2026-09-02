@@ -40,7 +40,6 @@ const rules = (t: Translator): [string, string][] => [
 ]
 
 export interface AppearanceInitial {
-  displayName: string
   defaultAppearance: DefaultAppearance
   skin: SkinInput
   geometry: ProductGeometry
@@ -54,7 +53,6 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   const router = useRouter()
   const { say } = useToast()
   const t = useT(settingsCopy)
-  const [displayName, setDisplayName] = useState(initial.displayName)
   const [appearance, setAppearance] = useState<DefaultAppearance>(initial.defaultAppearance)
   const [skin, setSkin] = useState<SkinInput>(initial.skin)
   const [geometry, setGeometry] = useState<ProductGeometry>(initial.geometry)
@@ -108,8 +106,8 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   type SaveStatus = "idle" | "saving" | "saved" | "error"
   const [status, setStatus] = useState<SaveStatus>("idle")
   const [statusMsg, setStatusMsg] = useState("")
-  const draftRef = useRef({ displayName, appearance, skin, geometry })
-  draftRef.current = { displayName, appearance, skin, geometry }
+  const draftRef = useRef({ appearance, skin, geometry })
+  draftRef.current = { appearance, skin, geometry }
   const savedRef = useRef(JSON.stringify(draftRef.current))
   const inFlight = useRef(false)
   const pending = useRef(false)
@@ -128,7 +126,6 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
       if (key === savedRef.current) break
       setStatus("saving")
       const result = await saveAppearance({
-        displayName: snapshot.displayName,
         defaultAppearance: snapshot.appearance,
         skin: snapshot.skin,
         geometry: snapshot.geometry,
@@ -155,7 +152,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
     const t = setTimeout(runSave, 700)
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayName, appearance, skin, geometry, canEdit])
+  }, [appearance, skin, geometry, canEdit])
 
   const upload = async (kind: BrandingAssetKind, file: File | null) => {
     if (!file || !canEdit) return
@@ -235,17 +232,10 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))", gap: 14, alignItems: "start" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
-          {/* Workspace identity + default appearance */}
+          {/* Default appearance: the mode new sessions start in */}
           <div style={card}>
-            <div style={cardTitle}>{t("settings.appearance.workspace.title")}</div>
-            <div style={cardSub}>{t("settings.appearance.workspace.body")}</div>
-            <label style={{ display: "block", marginBottom: 16 }}>
-              <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>{t("settings.appearance.workspace.name")}</span>
-              <span className="ui-field" style={{ display: "flex", alignItems: "center", background: "var(--card)", border: "1.5px solid var(--line-2)", borderRadius: "var(--r3)", padding: "11px 14px" }}>
-                <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} disabled={!canEdit} style={{ fontSize: 14.5, width: "100%" }} />
-              </span>
-            </label>
-            <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>{t("settings.appearance.workspace.defaultAppearance")}</span>
+            <div style={cardTitle}>{t("settings.appearance.mode.title")}</div>
+            <div style={cardSub}>{t("settings.appearance.mode.body")}</div>
             <div style={{ display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, maxWidth: 340 }}>
               {(["light", "dark", "system"] as const).map((a) => (
                 <span key={a} onClick={() => canEdit && setAppearance(a)}
@@ -403,7 +393,6 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
                 onClick={() => {
                   if (!canEdit) return
                   const saved = JSON.parse(savedRef.current) as typeof draftRef.current
-                  setDisplayName(saved.displayName)
                   setAppearance(saved.appearance)
                   setSkin(saved.skin)
                   setGeometry(saved.geometry)

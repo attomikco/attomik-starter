@@ -23,7 +23,6 @@ import { FONT_OPTIONS, MONO_OPTIONS, WEIGHT_BOLD_OPTIONS, WEIGHT_SEMI_OPTIONS } 
  */
 
 export interface SaveAppearanceInput {
-  displayName: string
   defaultAppearance: DefaultAppearance
   skin: SkinInput
   /** Interface geometry (radii) — ProductGeometry, persisted alongside brand. */
@@ -49,9 +48,6 @@ export async function saveAppearance(input: SaveAppearanceInput): Promise<Action
   const { ctx, error } = await requireAdminWorkspace()
   if (error) return { ok: false, message: error }
 
-  const displayName = input.displayName.trim()
-  if (!displayName) return { ok: false, message: t("settings.appearance.error.nameRequired") }
-  if (displayName.length > 80) return { ok: false, message: t("settings.appearance.error.nameTooLong") }
   if (!["light", "dark", "system"].includes(input.defaultAppearance)) {
     return { ok: false, message: t("settings.appearance.error.appearance") }
   }
@@ -77,7 +73,6 @@ export async function saveAppearance(input: SaveAppearanceInput): Promise<Action
   const { error: dbError } = await supabase
     .from("workspace_settings")
     .update({
-      display_name: displayName,
       default_appearance: input.defaultAppearance,
       ...skinInputToRow(clampSkinInput(s)),
       ...geometryToRow(g),

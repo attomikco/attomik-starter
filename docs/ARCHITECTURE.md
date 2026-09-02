@@ -45,3 +45,19 @@ supabase/               config.toml (auth as code) + migrations
 
 Detailed docs: MODULES, SUPABASE, AUTH, WORKSPACES, BRANDING, DATA, TEAM,
 AUDIT, NEW_PROJECT, DEPLOYMENT.
+
+## Settings map
+
+Settings is a core-adjacent module registered like any other:
+
+| Route | Owns | Who edits |
+| --- | --- | --- |
+| `/settings/general` | workspace name, default language | owner, admin |
+| `/settings/appearance` | logos, favicon, colours, type, shape, default appearance | owner, admin |
+| `/settings/team` | members, roles, invitations | owner, admin (viewers read) |
+| `/settings/activity` | audit log | members |
+
+Personal preferences (interface language, theme) live in the account menu,
+not under Settings — every role sets their own. Project defaults
+(`src/config/project.ts`: locale, bootstrap skin, modules) are developer
+configuration, never editable in the app.

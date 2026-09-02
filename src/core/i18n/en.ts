@@ -13,8 +13,8 @@ export const en: ShellCopy = {
       media: { label: "Media", description: "File grid with usage tracking and orphan flagging." },
       settings: {
         label: "Settings",
-        description: "Workspace settings: appearance & brand, team, activity, language.",
-        children: { appearance: "Appearance & brand", team: "Team & permissions", activity: "Activity", language: "Language" },
+        description: "Workspace settings: general, appearance & brand, team, activity.",
+        children: { general: "General", appearance: "Appearance & brand", team: "Team & permissions", activity: "Activity" },
       },
     },
     expandSidebar: "Expand the sidebar",
@@ -65,6 +65,11 @@ export const en: ShellCopy = {
     commandPalette: "Command palette",
     keyboardShortcuts: "Keyboard shortcuts",
     appearance: "Appearance",
+    language: "Language",
+    workspaceDefault: (name) => `Workspace default (${name})`,
+    languageSaved: "Language updated",
+    languageFailed: "Could not save the language — try again.",
+    languageInvalid: "That language is not available.",
     signOut: "Sign out",
   },
 

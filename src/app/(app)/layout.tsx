@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 import { rowToGeometry, rowToSkinInput, skinStylesheetWithDefault, themedDeclarations } from "@/core/branding"
+import { isLocale, pickLocale } from "@/core/i18n"
+import { getLocaleSources } from "@/core/i18n/server"
 import { brandingPublicUrl, requireWorkspace } from "@/core/workspace"
 import { AppShell } from "@/ui/shell/app-shell"
 
@@ -22,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const { user, workspace, settings } = await requireWorkspace()
+  const [{ user, workspace, settings }, localeSources] = await Promise.all([requireWorkspace(), getLocaleSources()])
 
   const skin = rowToSkinInput(settings)
   const geometry = rowToGeometry(settings)
@@ -51,7 +53,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <script dangerouslySetInnerHTML={{ __html: resolver }} />
       <AppShell
-        account={{ email: user.email }}
+        account={{
+          email: user.email,
+          locale: isLocale(localeSources.profile) ? localeSources.profile : null,
+          workspaceLocale: pickLocale(settings.default_locale),
+        }}
         workspace={{
           name: settings.display_name || workspace.name,
           logoLightUrl: brandingPublicUrl(settings.logo_light_path),

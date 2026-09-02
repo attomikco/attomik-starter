@@ -80,6 +80,11 @@ delete module code because a project doesn't use it.
 - Authorization roles come from workspace_members, never user_metadata.
 - Modules use the canonical workspace access layer (src/core/workspace) —
   never their own queries against workspace tables.
+- Locale has three owners: project default in `src/config/project.ts`
+  (developer configuration), workspace default on Settings → General
+  (owner/admin), personal language in the account menu (`profiles.locale`,
+  own row only). Resolution is personal → workspace → project; never add a
+  second place to edit any of them.
 
 ## Brand persistence rules
 

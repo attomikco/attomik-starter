@@ -86,13 +86,13 @@ export const moduleRegistry = {
     navigation: {
       group: "settings",
       icon: "settings",
-      href: "/settings/appearance",
+      href: "/settings/general",
       order: 0,
       children: [
+        { key: "general", href: "/settings/general" },
         { key: "appearance", href: "/settings/appearance" },
         { key: "team", href: "/settings/team" },
         { key: "activity", href: "/settings/activity" },
-        { key: "language", href: "/settings/language" },
       ],
     },
     permissions: ["settings.view", "settings.manage"],

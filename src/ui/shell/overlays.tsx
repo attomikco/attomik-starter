@@ -2,7 +2,12 @@
 
 import type { CSSProperties } from "react"
 import { signOut } from "@/core/auth/actions"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { LOCALES, LOCALE_NAMES, type Locale } from "@/core/i18n"
+import { saveUserLocale } from "@/core/i18n/actions"
 import { useCopy } from "@/core/i18n/client"
+import { Listbox } from "@/ui/forms/select"
 import { emailInitials } from "@/core/auth/email-validation"
 import type { ShellAccount } from "./app-shell"
 import { THEME_MODES, useTheme } from "./theme"
@@ -36,6 +41,26 @@ export function AccountPanel({ account, openPalette, openKeys }: { account: Shel
   const { mode, setMode } = useTheme()
   const { say } = useToast()
   const notWired = () => say(copy.account.profileUnavailable)
+  const router = useRouter()
+  const [locale, setLocale] = useState<Locale | null>(account.locale)
+  const [savingLocale, setSavingLocale] = useState(false)
+  // Personal language: applies at once and persists on the profile. The
+  // server re-renders the whole layout in the new language on refresh.
+  const pickLocale = async (value: string) => {
+    const next = value === "default" ? null : (value as Locale)
+    if (savingLocale || next === locale) return
+    const previous = locale
+    setLocale(next)
+    setSavingLocale(true)
+    const result = await saveUserLocale(next)
+    setSavingLocale(false)
+    if (!result.ok) {
+      setLocale(previous)
+      return say(result.message ?? copy.account.languageFailed)
+    }
+    say(copy.account.languageSaved)
+    router.refresh()
+  }
   const initials = emailInitials(account.email)
   const localPart = account.email.split("@")[0] || account.email
 
@@ -63,6 +88,20 @@ export function AccountPanel({ account, openPalette, openKeys }: { account: Shel
             </span>
           ))}
         </div>
+      </div>
+      <div style={{ padding: "10px 16px 14px", borderTop: "1px solid var(--line)" }}>
+        <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 8 }}>{copy.account.language}</div>
+        <Listbox
+          ariaLabel={copy.account.language}
+          value={locale ?? "default"}
+          disabled={savingLocale}
+          fullWidth
+          options={[
+            { value: "default", label: copy.account.workspaceDefault(LOCALE_NAMES[account.workspaceLocale]) },
+            ...LOCALES.map((l) => ({ value: l, label: LOCALE_NAMES[l] })),
+          ]}
+          onChange={pickLocale}
+        />
       </div>
       <div style={{ padding: 10, borderTop: "1px solid var(--line)" }}>
         <span className="sh-signout" onClick={() => void signOut()}

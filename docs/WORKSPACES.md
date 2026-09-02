@@ -36,6 +36,17 @@ deferred; the EARLIEST membership is the current workspace (`/invite/*`
 lives outside the app group so invitees never trigger the bootstrap).
 Team, roles, and invitations: docs/TEAM.md. Activity/audit: docs/AUDIT.md.
 
+## General settings and locale
+
+`workspace_settings` carries the workspace's identity and regional
+defaults next to its brand: `display_name` and `default_locale` are edited
+on Settings → General (owner/admin; `saveGeneral` in
+`src/modules/settings/general/actions.ts`, RLS re-checks). The bootstrap
+seeds `default_locale` from `projectConfig.locale`. Each user's own
+language lives on `profiles.locale` (own row only, set from the account
+menu). Resolution — personal → workspace default → project default — is
+documented in docs/I18N.md.
+
 ## RLS model
 
 RLS is enabled on every table. Membership predicates come from

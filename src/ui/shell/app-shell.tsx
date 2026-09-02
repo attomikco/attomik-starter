@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import type { Locale } from "@/core/i18n"
 import { getLocale } from "@/core/i18n/server"
 import { getEnabledNavigation } from "@/core/navigation"
 import { AppShellClient } from "./app-shell-client"
@@ -11,6 +12,10 @@ import { AppShellClient } from "./app-shell-client"
  */
 export interface ShellAccount {
   email: string
+  /** The user's saved interface language; null follows the workspace default. */
+  locale: Locale | null
+  /** The workspace default, named in the "inherit" option. */
+  workspaceLocale: Locale
 }
 
 export interface ShellWorkspace {

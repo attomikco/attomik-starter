@@ -13,8 +13,8 @@ export const esMX: ShellCopy = {
       media: { label: "Medios", description: "Biblioteca de archivos con seguimiento de uso y detección de huérfanos." },
       settings: {
         label: "Configuración",
-        description: "Configuración del espacio: apariencia y marca, equipo, actividad, idioma.",
-        children: { appearance: "Apariencia y marca", team: "Equipo y permisos", activity: "Actividad", language: "Idioma" },
+        description: "Configuración del espacio: general, apariencia y marca, equipo, actividad.",
+        children: { general: "General", appearance: "Apariencia y marca", team: "Equipo y permisos", activity: "Actividad" },
       },
     },
     expandSidebar: "Expandir la barra lateral",
@@ -65,6 +65,11 @@ export const esMX: ShellCopy = {
     commandPalette: "Paleta de comandos",
     keyboardShortcuts: "Atajos de teclado",
     appearance: "Apariencia",
+    language: "Idioma",
+    workspaceDefault: (name) => `Predeterminado del espacio (${name})`,
+    languageSaved: "Idioma actualizado",
+    languageFailed: "No se pudo guardar el idioma; inténtalo de nuevo.",
+    languageInvalid: "Ese idioma no está disponible.",
     signOut: "Cerrar sesión",
   },
 

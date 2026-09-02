@@ -3,5 +3,5 @@ import { requireModule } from "@/core/modules"
 
 export default function SettingsPage() {
   requireModule("settings")
-  redirect("/settings/appearance")
+  redirect("/settings/general")
 }

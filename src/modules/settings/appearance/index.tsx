@@ -9,7 +9,6 @@ export default async function AppearanceModule() {
   return (
     <AppearanceEditor
       initial={{
-        displayName: settings.display_name,
         defaultAppearance: settings.default_appearance,
         skin: rowToSkinInput(settings),
         geometry: rowToGeometry(settings),
