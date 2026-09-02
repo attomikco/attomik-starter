@@ -31,11 +31,41 @@ project, never per client.
   deterministic, OKLCH. Light and dark are independent peer palettes, never
   an inversion. Inputs are clamped to the documented ranges.
 - `skins` in `skins.ts` — shipped presets (`base`, `electric`, `green`),
-  values extracted verbatim from the reference.
+  values extracted verbatim from the reference. `defaultSkin` is
+  `skins[projectConfig.skin]` — the per-project choice in
+  `src/config/project.ts` that drives first paint, the auth fallback, and
+  every new workspace's bootstrap row. The canonical starter ships `base`;
+  a real project may add its own preset (seeded like the others) and point
+  `skin` at it, so new workspaces start branded.
 - `skinStylesheet(input)` — serializes both themes into one stylesheet:
   light on `:root`, dark under `prefers-color-scheme` and
   `:root[data-theme="dark"]`. The root layout renders it server-side, so
   first paint is already correct — no theme flash.
+
+## Seeding a skin from hex
+
+A skin takes **two colour seeds** plus type: accent hue/chroma (`ah`/`ac`),
+neutral hue/chroma (`nh`/`nc`), and semantic chroma (`sc`). There is no
+dark-ground seed, no secondary colour, and no lightness scale — surfaces
+and text steps sit at fixed lightness on the neutral hue, in both themes.
+The one optional lightness input is the accent **fill** (`al`/`alDark`,
+with `ink` for what sits on it), used when a brand's primary is not a mid
+fill: `electric` states a bright fill; a dark primary states a dark one.
+
+`seedsToSkinInput({ accent, neutral }, current)` in `seeds.ts` is the
+canonical hex intake: accent → `ah`, `ac`, `al` (and `alDark`/`ink` only
+when the fill is bright); neutral → `nh`, `nc`. `skinToSeeds` reverses it
+for editing. `brandContrastIssues(skin)` checks the accent text pairs seeds
+can break (ink on fill, accent text on card) against WCAG AA in both
+themes; the Appearance screen shows its result as an amber warning.
+`color.ts` holds `hexToOklch`, `normalizeHex`, and `contrastRatio`.
+
+A preset added from a brand palette should be seeded through the same
+rules and verified against the brand's supporting tones — never patched
+with hardcoded overrides for individual tokens. Expect the derived accent
+text and page ground to land close to a brand's secondary and light greys;
+a brand's mid grey sits wherever the engine's fixed text steps put it and
+is not reproduced.
 
 ## Components
 
@@ -62,7 +92,9 @@ flash). `default_appearance` (light default for new workspaces) is the
 no-explicit-choice baseline; the user's theme toggle (`data-theme`) always
 wins. Auth stays light independently. The Appearance screen edits input
 values through `src/modules/settings/appearance/actions.ts` — it never
-writes resolved CSS variables. Radii (`radius_large/medium/small` →
+writes resolved CSS variables. Its **Custom** option takes the two hex
+seeds and applies `seedsToSkinInput` to the draft; the result persists as
+ordinary SkinInput columns, so a custom skin needs no extra storage. Radii (`radius_large/medium/small` →
 `r/r2/r3` → `--r/--r2/--r3`, defaults 22/16/11) persist alongside brand as
 **interface geometry** — editable per workspace in the Shape card, but
 never part of SkinInput or the OKLCH derivation.

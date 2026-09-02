@@ -2,6 +2,8 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import { resolveSkin, clampSkinInput } from "./derive.ts"
 import { skins } from "./skins.ts"
+import { contrastRatio } from "./color.ts"
+import { seedsToSkinInput } from "./seeds.ts"
 import type { SkinInput } from "./types.ts"
 
 const REQUIRED_VARS = [
@@ -52,6 +54,33 @@ test("electric preset uses bright-fill lightness and stated ink", () => {
   const dark = resolveSkin(skins.electric, "dark")
   assert.equal(dark["--accent"], "oklch(0.88 0.210 160)")
   assert.equal(dark["--accent-ink"], "oklch(0.16 0.004 160)")
+})
+
+test("a dark-fill seeded skin keeps WCAG contrast on the pairs the seeds can break", () => {
+  const seeded = seedsToSkinInput({ accent: "#14532D", neutral: "#6B7280" }, skins.base)
+  const opaque = (t: string) => t.replace(/ \/ [.\d]+\)$/, ")")
+  const light = resolveSkin(seeded, "light")
+  const dark = resolveSkin(seeded, "dark")
+  // The light fill IS the seed's lightness; the dark fill lifts to the engine default
+  assert.match(light["--accent"], /^oklch\(0\.3\d /)
+  assert.match(dark["--accent"], /^oklch\(0\.66 /)
+  // Semantic hues untouched by the accent
+  assert.match(light["--ok"], / 147\)$/)
+  assert.match(light["--bad"], / 25\)$/)
+  for (const mode of ["light", "dark"] as const) {
+    const t = resolveSkin(seeded, mode)
+    assert.ok(contrastRatio(t["--accent-ink"], t["--accent"]) >= 4.5, `${mode}: ink on accent`)
+    assert.ok(contrastRatio(t["--accent-text"], t["--card"]) >= 4.5, `${mode}: accent text on card`)
+    assert.ok(contrastRatio(t["--accent-text"], t["--bg"]) >= 4.5, `${mode}: accent text on bg`)
+    assert.ok(contrastRatio(t["--txt"], t["--bg"]) >= 7, `${mode}: body text`)
+    for (const v of ["--ok", "--warn", "--bad"]) {
+      assert.ok(contrastRatio(t[v], t["--card"]) >= 3.3, `${mode}: ${v} on card`)
+    }
+    assert.ok(contrastRatio(t["--bad"], t["--card"]) >= 4.5, `${mode}: red text on card`)
+  }
+  // Semantic fills sit on cards, never on the accent; the only status the
+  // reference places against a fill is amber, which must stay readable
+  assert.ok(contrastRatio(opaque(light["--warn-fill"]), light["--accent"]) >= 3, "amber fill on the dark accent")
 })
 
 test("semantic hues stay fixed regardless of brand accent", () => {

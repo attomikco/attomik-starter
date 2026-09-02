@@ -1,3 +1,4 @@
+import type { SkinPresetId } from "@/core/branding/skins"
 import type { Locale } from "@/core/i18n/locales"
 
 /**
@@ -14,6 +15,15 @@ export const projectConfig = {
    * Dictionaries live in `src/core/i18n`; module copy is the module's own.
    */
   locale: "en",
+
+  /**
+   * Bootstrap skin: first paint, auth screens, and the branding every new
+   * workspace starts with. Presets live in `src/core/branding/skins.ts`;
+   * the starter ships the generic `base`. A real project may add its own
+   * preset there and point this at it. Workspaces re-brand from
+   * Settings → Appearance either way.
+   */
+  skin: "base",
 
   modules: {
     overview: true,
@@ -43,6 +53,7 @@ export type FeatureId = keyof typeof projectConfig.features
 interface ProjectConfig {
   name: string
   locale: Locale
+  skin: SkinPresetId
   modules: Record<string, boolean>
   features: Record<string, boolean>
 }

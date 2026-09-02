@@ -1,9 +1,16 @@
+// Relative .ts import keeps this module runnable under `node --test`.
+import { projectConfig } from "../../config/project.ts"
 import type { SkinInput } from "./types"
 
 /**
  * Shipped starter skins — values extracted verbatim from `SKINS` in
  * design-reference/Starter Admin.dc.html (identical copies live in each
- * part-*.dc.html file).
+ * part-*.dc.html file). The canonical starter ships only these generic
+ * presets. A project that wants its own bootstrap brand adds a preset
+ * here seeded the same way (hue + chroma from the brand's primary and
+ * grey, fill lightness only when the accent is not a mid fill, the whole
+ * ramp derived by the engine — see `seedsToSkinInput`) and points
+ * `projectConfig.skin` at it.
  */
 export const skins = {
   base: {
@@ -22,5 +29,15 @@ export const skins = {
 
 export type SkinPresetId = keyof typeof skins
 
-/** The project's default skin until persisted workspace branding exists. */
-export const defaultSkin: SkinInput = skins.base
+export const skinNames: Record<SkinPresetId, string> = {
+  base: "Base",
+  electric: "Electric",
+  green: "Green",
+}
+
+/**
+ * The project's default skin: the root layout's first paint, the auth
+ * screens' fallback, and the branding every new workspace bootstraps with.
+ * Chosen per project in `src/config/project.ts`; the starter ships `base`.
+ */
+export const defaultSkin: SkinInput = skins[projectConfig.skin]
