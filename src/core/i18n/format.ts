@@ -23,6 +23,22 @@ export interface Formatters {
 
 const cache = new Map<string, Formatters>()
 
+/** Every IANA zone this runtime knows, for pickers. */
+export function listTimeZones(): string[] {
+  return Intl.supportedValuesOf("timeZone")
+}
+
+/** True when Intl accepts the zone (canonical IANA id). */
+export function isTimeZone(value: unknown): value is string {
+  if (typeof value !== "string" || !value) return false
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: value })
+    return true
+  } catch {
+    return false
+  }
+}
+
 export function createFormatters(locale: Locale, timeZone?: string): Formatters {
   const key = `${locale}|${timeZone ?? ""}`
   const hit = cache.get(key)

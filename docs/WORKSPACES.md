@@ -38,10 +38,14 @@ Team, roles, and invitations: docs/TEAM.md. Activity/audit: docs/AUDIT.md.
 
 ## General settings and locale
 
-`workspace_settings` carries the workspace's identity and regional
-defaults next to its brand: `display_name` and `default_locale` are edited
-on Settings → General (owner/admin; `saveGeneral` in
-`src/modules/settings/general/actions.ts`, RLS re-checks). The bootstrap
+`workspace_settings` carries the workspace's identity, regional, and
+membership defaults next to its brand: `display_name`, `default_locale`,
+`time_zone` (IANA; dates, "today", and period boundaries follow it for
+everyone), and `default_member_role` (what an invitation starts on) are
+edited on Settings → General (owner/admin; `saveGeneral` in
+`src/modules/settings/general/actions.ts`, RLS re-checks). The General
+screen also shows the workspace's id, slug, creation date, owner, and
+member count. The bootstrap
 seeds `default_locale` from `projectConfig.locale`. Each user's own
 language lives on `profiles.locale` (own row only, set from the account
 menu). Resolution — personal → workspace default → project default — is

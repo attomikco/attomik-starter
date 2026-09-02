@@ -31,11 +31,14 @@ export function TeamScreen({
   actorId,
   members,
   invitations,
+  defaultRole,
 }: {
   actorRole: Role
   actorId: string
   members: TeamMember[]
   invitations: PendingInvitation[]
+  /** The workspace's default for new invitations (Settings → General). */
+  defaultRole?: string
 }) {
   const router = useRouter()
   const { say } = useToast()
@@ -191,6 +194,7 @@ export function TeamScreen({
       {inviteOpen && (
         <InviteDialog
           roles={assignableRoles(actorRole)}
+          defaultRole={defaultRole}
           existingEmails={members.map((m) => m.email)}
           invitedEmails={invitations.map((i) => i.email)}
           onClose={() => setInviteOpen(false)}
@@ -204,12 +208,14 @@ export function TeamScreen({
 
 function InviteDialog({
   roles,
+  defaultRole,
   existingEmails,
   invitedEmails,
   onClose,
   onDone,
 }: {
   roles: Role[]
+  defaultRole?: string
   existingEmails: string[]
   invitedEmails: string[]
   onClose: () => void
@@ -218,7 +224,7 @@ function InviteDialog({
   const copy = useCopy()
   const t = useT(settingsCopy)
   const [email, setEmail] = useState("")
-  const [role, setRole] = useState<Role>(roles.includes("member") ? "member" : roles[0])
+  const [role, setRole] = useState<Role>(roles.includes(defaultRole as Role) ? (defaultRole as Role) : roles.includes("member") ? "member" : roles[0])
   const [error, setError] = useState("")
   const [sending, setSending] = useState(false)
 

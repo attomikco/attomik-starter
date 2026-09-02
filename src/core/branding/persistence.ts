@@ -32,6 +32,10 @@ export interface WorkspaceBrandRow {
   default_appearance: DefaultAppearance
   /** Workspace default locale: new members and pre-auth screens. */
   default_locale: string
+  /** IANA time zone the workspace's dates and periods follow. */
+  time_zone: string
+  /** Role an invitation starts on (admin | member | viewer). */
+  default_member_role: string
 }
 
 export function rowToSkinInput(row: WorkspaceBrandRow): SkinInput {
@@ -70,7 +74,7 @@ export function geometryToRow(g: ProductGeometry): Pick<WorkspaceBrandRow, "radi
 export function skinInputToRow(input: SkinInput): Omit<
   WorkspaceBrandRow,
   | "display_name" | "logo_light_path" | "logo_dark_path" | "favicon_path"
-  | "default_appearance" | "default_locale" | "radius_large" | "radius_medium" | "radius_small"
+  | "default_appearance" | "default_locale" | "time_zone" | "default_member_role" | "radius_large" | "radius_medium" | "radius_small"
 > {
   return {
     accent_hue: input.ah,

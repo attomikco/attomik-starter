@@ -114,6 +114,8 @@ async function ensureWorkspaceForUser(user: AuthUser): Promise<void> {
           display_name: name,
           default_appearance: "light",
           default_locale: projectConfig.locale,
+          time_zone: projectConfig.timeZone,
+          default_member_role: "member",
           ...skinInputToRow(defaultSkin),
         })
         if (error && error.code !== "23505") {

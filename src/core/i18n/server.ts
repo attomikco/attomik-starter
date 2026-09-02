@@ -4,7 +4,7 @@ import { hasSupabaseEnv } from "@/core/env"
 import { createClient } from "@/core/supabase/server"
 import { getAuthBranding } from "@/core/workspace"
 import { createFormatters, type Formatters } from "./format"
-import { pickLocale, resolveCopy, type Locale, type ShellCopy } from "./index"
+import { defaultTimeZone, isTimeZone, pickLocale, resolveCopy, type Locale, type ShellCopy } from "./index"
 import type { ModuleCopy, Translator } from "./t"
 
 /**
@@ -23,25 +23,28 @@ export interface LocaleSources {
   profile: string | null
   /** The member workspace's default, or the deployment's for visitors. */
   workspace: string | null
+  /** The member workspace's IANA zone; null before sign-in. */
+  timeZone: string | null
 }
 
 export const getLocaleSources = cache(async (): Promise<LocaleSources> => {
-  const none: LocaleSources = { profile: null, workspace: null }
+  const none: LocaleSources = { profile: null, workspace: null, timeZone: null }
   if (!hasSupabaseEnv()) return none
   try {
     const user = await getCurrentUser()
-    if (!user) return { profile: null, workspace: (await getAuthBranding()).locale }
+    if (!user) return { profile: null, workspace: (await getAuthBranding()).locale, timeZone: null }
 
     const supabase = await createClient()
     const [profile, workspace] = await Promise.all([
       supabase.from("profiles").select("locale").eq("id", user.id).maybeSingle(),
-      supabase.from("workspace_settings").select("default_locale").order("created_at", { ascending: true }).limit(1).maybeSingle(),
+      supabase.from("workspace_settings").select("default_locale, time_zone").order("created_at", { ascending: true }).limit(1).maybeSingle(),
     ])
     const fromProfile = (profile.data as { locale?: string | null } | null)?.locale ?? null
-    const fromWorkspace = (workspace.data as { default_locale?: string | null } | null)?.default_locale ?? null
+    const row = workspace.data as { default_locale?: string | null; time_zone?: string | null } | null
+    const fromWorkspace = row?.default_locale ?? null
     // A member of no workspace yet (an invitee mid-acceptance) still gets
     // the deployment's workspace default, like the sign-in screens.
-    return { profile: fromProfile, workspace: fromWorkspace ?? (await getAuthBranding()).locale }
+    return { profile: fromProfile, workspace: fromWorkspace ?? (await getAuthBranding()).locale, timeZone: row?.time_zone ?? null }
   } catch {
     return none
   }
@@ -60,6 +63,13 @@ export async function getT(copy: ModuleCopy): Promise<Translator> {
   return copy.for(await getLocale())
 }
 
+/** The workspace zone, or the project default before sign-in. */
+export async function getTimeZone(): Promise<string> {
+  const { timeZone } = await getLocaleSources()
+  return isTimeZone(timeZone) ? timeZone : defaultTimeZone
+}
+
 export async function getFormat(timeZone?: string): Promise<Formatters> {
-  return createFormatters(await getLocale(), timeZone)
+  const [locale, zone] = await Promise.all([getLocale(), timeZone ?? getTimeZone()])
+  return createFormatters(locale, zone)
 }

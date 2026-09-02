@@ -47,6 +47,8 @@ Follow in order; each step ends with a check.
    own choice (account menu) and the workspace default (Settings →
    General) — docs/I18N.md. ✓ The sign-in
    screen renders in that language on a fresh deployment.
+   Set `timeZone` (IANA) — the default zone new workspaces start on;
+   admins change it on Settings → General.
    Optionally set `skin`: the starter ships the generic `base` preset; a
    project with its own brand adds a preset to `src/core/branding/skins.ts`
    (seeded from two brand hexes, docs/BRANDING.md) and points `skin` at it

@@ -17,6 +17,13 @@ export const projectConfig = {
   locale: "en",
 
   /**
+   * Default time zone (IANA) for new workspaces; each workspace changes
+   * its own on Settings → General. Dates, "today", and period boundaries
+   * follow the workspace zone, never the server's.
+   */
+  timeZone: "UTC",
+
+  /**
    * Bootstrap skin: first paint, auth screens, and the branding every new
    * workspace starts with. Presets live in `src/core/branding/skins.ts`;
    * the starter ships the generic `base`. A real project may add its own
@@ -53,6 +60,7 @@ export type FeatureId = keyof typeof projectConfig.features
 interface ProjectConfig {
   name: string
   locale: Locale
+  timeZone: string
   skin: SkinPresetId
   modules: Record<string, boolean>
   features: Record<string, boolean>

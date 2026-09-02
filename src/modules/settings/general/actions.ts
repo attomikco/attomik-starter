@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { isLocale } from "@/core/i18n"
+import { isLocale, isTimeZone } from "@/core/i18n"
 import { getT } from "@/core/i18n/server"
 import { logDbFailure } from "@/core/supabase/diagnostics"
 import { createClient } from "@/core/supabase/server"
@@ -17,7 +17,11 @@ import { settingsCopy } from "../copy"
 export interface SaveGeneralInput {
   displayName?: string
   defaultLocale?: string
+  timeZone?: string
+  defaultMemberRole?: string
 }
+
+const DEFAULT_ROLES = ["admin", "member", "viewer"] as const
 
 export interface GeneralActionResult {
   ok: boolean
@@ -41,6 +45,14 @@ export async function saveGeneral(input: SaveGeneralInput): Promise<GeneralActio
   if (input.defaultLocale !== undefined) {
     if (!isLocale(input.defaultLocale)) return { ok: false, message: t("settings.general.error.invalidLocale") }
     patch.default_locale = input.defaultLocale
+  }
+  if (input.timeZone !== undefined) {
+    if (!isTimeZone(input.timeZone)) return { ok: false, message: t("settings.general.error.invalidTimeZone") }
+    patch.time_zone = input.timeZone
+  }
+  if (input.defaultMemberRole !== undefined) {
+    if (!(DEFAULT_ROLES as readonly string[]).includes(input.defaultMemberRole)) return { ok: false, message: t("settings.general.error.invalidRole") }
+    patch.default_member_role = input.defaultMemberRole
   }
   if (Object.keys(patch).length === 0) return { ok: true }
 

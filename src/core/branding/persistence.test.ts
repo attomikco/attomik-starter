@@ -26,6 +26,8 @@ const baseRow: WorkspaceBrandRow = {
   accent_ink_lightness: null,
   default_appearance: "light",
   default_locale: "en",
+  time_zone: "UTC",
+  default_member_role: "member",
 }
 
 test("workspace_settings row maps to the canonical base SkinInput", () => {
