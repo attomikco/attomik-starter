@@ -54,28 +54,28 @@ textarea { resize: none; }
    - Buttons/links: STRONG accent ring on :focus-visible only — browsers
      apply that to keyboard navigation, never to mouse clicks, so nothing
      looks "active" after a click.
-   - Text fields: any focus (click, autofocus, tab) counts as focus-visible
-     in browsers, so they get a deliberately SUBTLE token treatment — the
-     field is usable immediately without masquerading as selected. Their
-     styled frames (validation, open pickers) carry the strong borders.
-   - Framed fields (.ui-field): the FRAME is the field visually, so it also
-     carries the focus treatment via :focus-within; the inner input never
-     draws its own rectangle (no second box inside the frame).
+   - Text fields: borderless focus. Browsers count ANY focus on a text
+     field (click, autofocus, tab) as :focus-visible, so a ring cannot be
+     reserved for keyboard users — it would light up on every click. The
+     caret and the field's own frame are the focus indication; no outline,
+     no ring, no ground shift. Styled frames (validation, open pickers)
+     carry the strong borders.
+   - Framed fields (.ui-field): the FRAME is the field visually and stays
+     as drawn on focus; the inner input never draws its own rectangle.
    - Open/selected states come from aria-driven component styling, never
      from focus itself. */
 .ui-btn:focus-visible, a:focus-visible {
   outline: 2px solid var(--accent); outline-offset: 2px;
 }
-input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: 2px solid var(--accent-tint); outline-offset: 1px;
-}
-.ui-field:focus-within { outline: 2px solid var(--accent-tint); outline-offset: 1px; }
-.ui-field input:focus-visible, .ui-field textarea:focus-visible { outline: none; }
+input:focus, input:focus-visible,
+textarea:focus, textarea:focus-visible,
+select:focus, select:focus-visible,
+.ui-field:focus-within { outline: none; }
 
-/* Command palette search: the row is the frame, but it sits flush against
-   the panel edges (overflow hidden would clip an outline), so focus-within
-   accents the row's own hairline instead — same container-owned principle
-   as .ui-field, palette-shaped. */
+/* Command palette search: the row is the frame and sits flush against the
+   panel edges. Its accented bottom hairline is the palette's OPEN signal
+   (the input is autofocused for the whole time the palette is open), not
+   a text-field focus ring — the input itself stays borderless. */
 .sh-palette-search { border-bottom: 1px solid var(--line); }
 .sh-palette-search:focus-within { border-bottom-color: var(--accent); }
 .sh-palette-search input:focus-visible { outline: none; }
