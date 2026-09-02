@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import { deserializeView, serializeView } from "@/core/data/query"
 import type { SavedView } from "@/core/data/types"
 
@@ -50,6 +50,7 @@ export function SavedViewsBar({
   onSaveCurrent?: () => void
   onRemove?: (id: string) => void
 }) {
+  const copy = useCopy()
   const chip = (on: boolean) => ({
     display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: "var(--r3)", fontSize: 13.5,
     ...(on ? { background: "var(--card)", color: "var(--txt)", fontWeight: "var(--w-semi)" as never, border: "1px solid var(--line)" } : { color: "var(--txt-2)" }),

@@ -69,7 +69,10 @@ test("pagination calculations stay consistent", () => {
   assert.equal(clampPage(9, { total: 12, pageSize: 8 }), 2)
   assert.equal(clampPage(0, { total: 12, pageSize: 8 }), 1)
   assert.deepEqual(pageSlice([1, 2, 3, 4, 5], { page: 2, pageSize: 2 }), [3, 4])
-  assert.equal(pageSummary({ page: 2, pageSize: 2, total: 5 }, 2), "Showing 3–4 of 5")
+  const words = { pageEmpty: "Showing 0 records", pageRange: (a: number, b: number, total: string) => `Showing ${a}–${b} of ${total}` }
+  assert.equal(pageSummary({ page: 2, pageSize: 2, total: 5 }, 2, words), "Showing 3–4 of 5")
+  assert.equal(pageSummary({ page: 1, pageSize: 2, total: 0 }, 0, words), "Showing 0 records")
+  assert.equal(pageSummary({ page: 1, pageSize: 25, total: 1204 }, 25, words, (n) => n.toLocaleString("en-US")), "Showing 1–25 of 1,204")
 })
 
 test("saved views serialize and survive malformed input", () => {

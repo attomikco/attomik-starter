@@ -3,7 +3,8 @@ import assert from "node:assert/strict"
 import { en } from "./en.ts"
 import { esMX } from "./es-MX.ts"
 import { LOCALES, isLocale } from "./locales.ts"
-import { copy, locale, resolveCopy } from "./index.ts"
+import { defaultLocale, pickLocale, resolveCopy } from "./index.ts"
+import { moduleRegistry, type ModuleDefinition } from "../modules/registry.ts"
 
 /** Every key present in en with the same type — no silent English fallback. */
 function shape(value: unknown, path = ""): string[] {
@@ -28,8 +29,25 @@ test("every registered locale resolves and declares its own lang tag", () => {
   assert.equal(isLocale("fr"), false)
 })
 
-test("the active copy follows the project config", () => {
-  assert.equal(copy, resolveCopy(locale))
+test("the locale chain: first valid candidate wins, else the project default", () => {
+  assert.equal(pickLocale(null, undefined, "es-MX", "en"), "es-MX")
+  assert.equal(pickLocale("fr", "klingon"), defaultLocale)
+  assert.equal(pickLocale(), defaultLocale)
+  assert.equal(isLocale(null), false)
+})
+
+test("every registry module with navigation has a name in every locale", () => {
+  for (const l of LOCALES) {
+    const names = resolveCopy(l).nav.modules
+    for (const mod of Object.values(moduleRegistry) as ModuleDefinition[]) {
+      if (!mod.navigation) continue
+      const entry = names[mod.id]
+      assert.ok(entry?.label, `${l}: no label for module "${mod.id}"`)
+      for (const child of mod.navigation.children ?? []) {
+        assert.ok(entry.children?.[child.key], `${l}: no label for ${mod.id} child "${child.key}"`)
+      }
+    }
+  }
 })
 
 test("interpolated strings keep their own word order and plurals", () => {

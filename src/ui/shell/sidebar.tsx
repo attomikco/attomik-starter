@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import type { CSSProperties } from "react"
 import type { NavigationGroup } from "@/core/navigation"
 import type { ShellWorkspace } from "./app-shell"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import { NavItem } from "./nav-item"
 import { THEME_MODES, useTheme } from "./theme"
 
@@ -30,6 +30,7 @@ export function Sidebar({
   onToggleCollapse: () => void
   onNavigate?: () => void
 }) {
+  const copy = useCopy()
   const pathname = usePathname()
   const { mode, setMode } = useTheme()
 
@@ -135,6 +136,7 @@ export function Sidebar({
 
 /** Workspace mark: uploaded logo for the active ground, else placeholder. */
 function WorkspaceMark({ workspace }: { workspace: ShellWorkspace }) {
+  const copy = useCopy()
   const { logoLightUrl, logoDarkUrl, name } = workspace
   const img = (src: string, cls?: string) => (
     // eslint-disable-next-line @next/next/no-img-element

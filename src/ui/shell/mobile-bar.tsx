@@ -1,6 +1,6 @@
 "use client"
 
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import type { ShellPanel } from "./command-bar"
 
 /**
@@ -18,6 +18,7 @@ export function MobileBar({
   openRail: () => void
   openPalette: () => void
 }) {
+  const copy = useCopy()
   return (
     <div style={{ background: "var(--card)", borderRadius: "var(--r2)", padding: "10px 12px", display: "flex", alignItems: "center", gap: 10, flex: "none" }}>
       <button className="ui-btn" aria-label={copy.nav.openNavigation} onClick={openRail}

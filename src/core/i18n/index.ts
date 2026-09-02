@@ -4,18 +4,28 @@ import { projectConfig } from "../../config/project.ts"
 import type { ShellCopy } from "./copy.ts"
 import { en } from "./en.ts"
 import { esMX } from "./es-MX.ts"
-import type { Locale } from "./locales.ts"
+import { isLocale, type Locale } from "./locales.ts"
 
 /**
- * Shell chrome copy, keyed by the project locale. ONE source of truth:
- * `projectConfig.locale` → `copy`. Shell, data primitives, app-level
- * error states and the audit summarizer read from here; nothing in those
- * layers hardcodes a user-facing string. The config is static per project,
- * so `copy` is safe to import from server and client components alike.
+ * The i18n core. ONE system, three layers:
+ *
+ * - The shell dictionary (`ShellCopy`, typed, nested): chrome, data
+ *   primitives, auth, errors, audit summaries, email. `resolveCopy(locale)`.
+ * - Module copy (`defineCopy`, flat dotted keys) in each module's copy.ts.
+ * - Formatters (`createFormatters`) for dates and numbers.
+ *
+ * The ACTIVE locale is per user: resolved server-side once per request
+ * (`getLocale()` in ./server) — profile → workspace default → project
+ * default — rendered on <html lang>, and handed to client components
+ * through `LocaleProvider` (./client). Components read copy through
+ * `useCopy()` / `useT()` / `useFormat()` on the client and `getCopy()` /
+ * `getT()` / `getFormat()` on the server. Nothing imports a fixed locale.
  */
 
 export type { AuditCopy, ShellCopy } from "./copy.ts"
-export { LOCALES, isLocale, type Locale } from "./locales.ts"
+export { LOCALES, LOCALE_NAMES, isLocale, type Locale } from "./locales.ts"
+export { createTranslator, defineCopy, interpolate, type CopyParams, type Dictionaries, type Dictionary, type ModuleCopy, type Translator } from "./t.ts"
+export { createFormatters, type Formatters } from "./format.ts"
 
 const DICTIONARIES: Record<Locale, ShellCopy> = {
   en,
@@ -26,8 +36,11 @@ export function resolveCopy(locale: Locale): ShellCopy {
   return DICTIONARIES[locale]
 }
 
-/** The active project locale. */
-export const locale: Locale = projectConfig.locale
+/** The project's default locale: the last fallback in the chain. */
+export const defaultLocale: Locale = projectConfig.locale
 
-/** The active dictionary. */
-export const copy: ShellCopy = resolveCopy(locale)
+/** The chain: the first valid candidate wins, else the project default. */
+export function pickLocale(...candidates: (string | null | undefined)[]): Locale {
+  for (const c of candidates) if (isLocale(c)) return c
+  return defaultLocale
+}

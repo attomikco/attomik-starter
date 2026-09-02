@@ -42,9 +42,14 @@ Follow in order; each step ends with a check.
 1. **Rename the app**: `src/config/project.ts` → `name`. This is the
    workspace name and browser title until Appearance is configured.
    ✓ Grep for "Attomik Starter" outside docs if the project must not show it.
-   Set `locale` in the same file (`en` or `es-MX`) — it drives `<html lang>`
-   and every fixed shell string (docs/SHELL.md §Locale). ✓ The rail group
-   headings and the search placeholder render in that language.
+   Set `locale` in the same file (`en` or `es-MX`) — the project default
+   that seeds new workspaces and is the last fallback behind each user's
+   own choice and the workspace default (docs/I18N.md). ✓ The sign-in
+   screen renders in that language on a fresh deployment.
+   Optionally set `skin`: the starter ships the generic `base` preset; a
+   project with its own brand adds a preset to `src/core/branding/skins.ts`
+   (seeded from two brand hexes, docs/BRANDING.md) and points `skin` at it
+   so first paint and every new workspace start branded.
 
 2. **Create the Supabase project** (dashboard or MCP). Note the project
    ref (the subdomain of the project URL).

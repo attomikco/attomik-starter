@@ -1,5 +1,6 @@
 "use client"
 
+import { useCopy, useFormat } from "@/core/i18n/client"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import {
@@ -50,7 +51,7 @@ const FILTER_FIELDS: FilterFieldDef[] = [
   { key: "amount", label: "Amount", kind: "number" },
 ]
 
-const money = (v: number) => "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2 })
+const money = (fmt: { number: (n: number, o?: Intl.NumberFormatOptions) => string }, v: number) => "$" + fmt.number(v, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const STATUS_TONE: Record<Item["status"], "ok" | "warn" | "bad" | "neutral"> = {
   Active: "ok", Pending: "warn", Failed: "bad", Archived: "neutral",
 }
@@ -58,6 +59,8 @@ const STATUS_TONE: Record<Item["status"], "ok" | "warn" | "bad" | "neutral"> = {
 const PAGE_SIZE = 8
 
 export function ItemsDemo() {
+  const copy = useCopy()
+  const fmt = useFormat()
   const { say } = useToast()
   const [demoState, setDemoState] = useState<DataState>("ready")
   const [query, setQuery] = useState("")
@@ -96,7 +99,7 @@ export function ItemsDemo() {
     { key: "id", label: "Item", pinned: true, sortable: true, width: 96, mono: true, text: (r: Item) => r.id },
     { key: "name", label: "Name", pinned: true, sortable: true, flex: true, render: (r: Item) => <PersonCell name={r.name} sub={r.owner} /> },
     { key: "status", label: "Status", sortable: true, width: 130, render: (r: Item) => <ToneChip tone={STATUS_TONE[r.status]} label={r.status} /> },
-    { key: "amount", label: "Amount", sortable: true, width: 104, align: "right" as const, mono: true, text: (r: Item) => money(r.amount) },
+    { key: "amount", label: "Amount", sortable: true, width: 104, align: "right" as const, mono: true, text: (r: Item) => money(fmt, r.amount) },
     { key: "createdAt", label: "Created", sortable: true, width: 108, align: "right" as const, mono: true, text: (r: Item) => r.createdAt },
   ]
 
@@ -194,7 +197,7 @@ export function ItemsDemo() {
           onRetry: () => { setDemoState("loading"); window.setTimeout(() => { setDemoState("ready"); say("Items reloaded") }, 1200) },
           traceId: "8f2c-4471-be0a",
         }}
-        footerText={selectedIds.length ? `${selectedIds.length} selected · ${pageSummary(pageState, visibleRows.length)}` : pageSummary(pageState, visibleRows.length)}
+        footerText={selectedIds.length ? `${selectedIds.length} selected · ${pageSummary(pageState, visibleRows.length, copy.data, fmt.number)}` : pageSummary(pageState, visibleRows.length, copy.data, fmt.number)}
         pagination={{ page: pageState.page, pageCount: pageCount(pageState), onPage: setPage }}
       />
 

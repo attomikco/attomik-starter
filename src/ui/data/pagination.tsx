@@ -1,6 +1,6 @@
 "use client"
 
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /** Reference pagination: ‹ numbered pages ›, 32px squares, mono digits. */
 export interface PaginationProps {
@@ -10,6 +10,7 @@ export interface PaginationProps {
 }
 
 export function Pagination({ page, pageCount, onPage }: PaginationProps) {
+  const copy = useCopy()
   const numbers: number[] = []
   const span = 5
   let start = Math.max(1, Math.min(page - 2, pageCount - span + 1))

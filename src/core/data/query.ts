@@ -102,10 +102,16 @@ export function pageSlice<T>(rows: T[], state: Pick<PageState, "page" | "pageSiz
   return rows.slice(start, start + state.pageSize)
 }
 
-export function pageSummary(state: PageState, shown: number): string {
-  if (state.total === 0) return "Showing 0 records"
+/** Footer line. Words and number shape come from the active locale. */
+export function pageSummary(
+  state: PageState,
+  shown: number,
+  copy: { pageEmpty: string; pageRange: (start: number, end: number, total: string) => string },
+  formatNumber: (n: number) => string = String,
+): string {
+  if (state.total === 0) return copy.pageEmpty
   const start = (state.page - 1) * state.pageSize + 1
-  return `Showing ${start}–${start + shown - 1} of ${state.total.toLocaleString("en-US")}`
+  return copy.pageRange(start, start + shown - 1, formatNumber(state.total))
 }
 
 // ------------------------------------------------------------ saved views

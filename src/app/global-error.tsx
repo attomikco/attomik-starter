@@ -1,12 +1,13 @@
 "use client"
 
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * Last-resort boundary (replaces the root layout when it crashes).
  * Deliberately self-contained: no tokens are guaranteed here.
  */
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const copy = useCopy()
   return (
     <html lang={copy.lang}>
       <body style={{ margin: 0, minHeight: "100vh", display: "grid", placeItems: "center", background: "#f8f9fa", color: "#0e1013", fontFamily: "system-ui, sans-serif" }}>

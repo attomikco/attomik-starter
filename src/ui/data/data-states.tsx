@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * The four canonical data states, ported from part-data.dc.html. Every
@@ -9,6 +9,7 @@ import { copy } from "@/core/i18n"
  */
 
 export function TableLoading({ rowCount = 7 }: { rowCount?: number }) {
+  const copy = useCopy()
   return (
     <div aria-busy="true" aria-label={copy.data.loading}>
       {Array.from({ length: rowCount }, (_, i) => (
@@ -57,7 +58,7 @@ export function TableError({
   title,
   body,
   onRetry,
-  retryLabel = copy.data.retry,
+  retryLabel: retryLabelProp,
   secondary,
   traceId,
 }: {
@@ -68,6 +69,8 @@ export function TableError({
   secondary?: ReactNode
   traceId?: string
 }) {
+  const copy = useCopy()
+  const retryLabel = retryLabelProp ?? copy.data.retry
   return (
     <div style={stateWrap}>
       <span style={{ width: 48, height: 48, borderRadius: 14, background: "var(--bad-tint)", display: "grid", placeItems: "center", marginBottom: 8 }}>

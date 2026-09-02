@@ -1,11 +1,12 @@
 import Link from "next/link"
-import { copy } from "@/core/i18n"
+import { getCopy } from "@/core/i18n/server"
 
 /**
  * In-app 404 — rendered inside the shell (disabled modules and unknown
  * app routes land here via requireModule/notFound).
  */
-export default function AppNotFound() {
+export default async function AppNotFound() {
+  const copy = await getCopy()
   return (
     <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", padding: 40 }}>
       <div style={{ textAlign: "center", maxWidth: 420 }}>

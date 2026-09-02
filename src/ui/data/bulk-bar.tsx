@@ -1,6 +1,6 @@
 "use client"
 
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * Floating bulk action bar, ported from the reference: inverted pill
@@ -15,7 +15,7 @@ export interface BulkAction {
 
 export function BulkBar({
   count,
-  noun = copy.data.recordNoun,
+  noun: nounProp,
   actions,
   onClear,
 }: {
@@ -24,6 +24,8 @@ export function BulkBar({
   actions: BulkAction[]
   onClear: () => void
 }) {
+  const copy = useCopy()
+  const noun = nounProp ?? copy.data.recordNoun
   if (count === 0) return null
   return (
     <div role="toolbar" aria-label={copy.data.bulkActions}

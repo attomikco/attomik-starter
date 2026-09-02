@@ -123,11 +123,19 @@ delete module code because a project doesn't use it.
 - Do not create module-specific toast systems; use `useToast()`.
 - Shell colors consume canonical theme tokens only.
 - Route state determines active navigation — no selected-screen state.
-- Shell chrome copy (html lang, search placeholder, group headings,
-  shortcuts sheet, data/empty/error states, form defaults, audit
-  summaries) comes from `src/core/i18n` keyed by `projectConfig.locale`;
-  never hardcode a user-facing string in shell or canonical UI primitives,
-  and never add a second i18n mechanism. Module copy is the module's own.
+- Every user-facing string comes from `src/core/i18n`: the shell
+  dictionary (chrome, data primitives, auth, errors, audit summaries,
+  emails, navigation names under `nav.modules`) and each module's own
+  `copy.ts` (`defineCopy`, English dotted keys). The active locale is
+  per USER (profile → workspace default → `projectConfig.locale`),
+  resolved server-side once per request and applied server-first; read
+  it through `useCopy()`/`useT()`/`useFormat()` on the client and
+  `getCopy()`/`getT()`/`getFormat()` on the server. Never hardcode a
+  user-facing string, never import a fixed locale, never add a second
+  i18n mechanism, never call `toLocaleString` directly. English is the
+  source locale; es-MX values follow sentence case. Details: docs/I18N.md.
+- The registry holds identifiers only; on-screen module names live in
+  the dictionary and resolve at navigation-build time.
 - /design-reference is the visual/behavioral source of truth.
 - Details: docs/SHELL.md.
 

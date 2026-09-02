@@ -30,6 +30,8 @@ export interface WorkspaceBrandRow {
   accent_lightness_dark: number | null
   accent_ink_lightness: number | null
   default_appearance: DefaultAppearance
+  /** Workspace default locale: new members and pre-auth screens. */
+  default_locale: string
 }
 
 export function rowToSkinInput(row: WorkspaceBrandRow): SkinInput {
@@ -68,7 +70,7 @@ export function geometryToRow(g: ProductGeometry): Pick<WorkspaceBrandRow, "radi
 export function skinInputToRow(input: SkinInput): Omit<
   WorkspaceBrandRow,
   | "display_name" | "logo_light_path" | "logo_dark_path" | "favicon_path"
-  | "default_appearance" | "radius_large" | "radius_medium" | "radius_small"
+  | "default_appearance" | "default_locale" | "radius_large" | "radius_medium" | "radius_small"
 > {
   return {
     accent_hue: input.ah,

@@ -8,12 +8,9 @@
 
 export type Role = "owner" | "admin" | "member" | "viewer"
 
-export const ROLE_MEANINGS: Record<Role, string> = {
-  owner: "Full workspace control, including admins",
-  admin: "Invites and manages members and viewers",
-  member: "Normal product access",
-  viewer: "Read-only access",
-}
+/** Every role, in rank order. On-screen names and meanings live in the
+    dictionary (`copy.roles`) — render those, never the identifier. */
+export const ROLES: readonly Role[] = ["owner", "admin", "member", "viewer"]
 
 export function isAdminLike(role: Role): boolean {
   return role === "owner" || role === "admin"

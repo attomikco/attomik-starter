@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * Canonical confirmation dialog, ported from part-data.dc.html `ask()`.
@@ -22,6 +22,7 @@ export interface ConfirmOptions {
 }
 
 export function ConfirmDialog({ options, onClose }: { options: ConfirmOptions | null; onClose: () => void }) {
+  const copy = useCopy()
   const [typed, setTyped] = useState("")
   const panelRef = useRef<HTMLDivElement>(null)
   const restoreRef = useRef<HTMLElement | null>(null)

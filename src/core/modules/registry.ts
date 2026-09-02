@@ -12,21 +12,24 @@ import type { ModuleId } from "@/config/project"
 
 export type NavGroup = "operate" | "configure" | "settings"
 
+/**
+ * On-screen names are NOT here: `copy.nav.modules[id]` (core/i18n) holds
+ * the label and description per module in every locale, and
+ * `children[].key` indexes that module's child labels. The registry stays
+ * identifiers and structure, resolved at navigation-build time.
+ */
 export interface ModuleNavigation {
   group: NavGroup
-  label: string
   href: string
   order: number
   /** Icon key, mapped to the reference SVG path in src/ui/shell/icons.tsx */
   icon: string
-  /** Submenu items (the reference rail's child rows). Plain data only. */
-  children?: readonly { label: string; href: string }[]
+  /** Submenu items (the reference rail's child rows): a copy key under this module, and the route. */
+  children?: readonly { key: string; href: string }[]
 }
 
 export interface ModuleDefinition {
   id: ModuleId
-  label: string
-  description: string
   navigation?: ModuleNavigation
   permissions?: readonly string[]
   dependencies?: readonly ModuleId[]
@@ -35,11 +38,8 @@ export interface ModuleDefinition {
 export const moduleRegistry = {
   overview: {
     id: "overview",
-    label: "Overview",
-    description: "Landing dashboard: stat cards, decision list, next actions.",
     navigation: {
       group: "operate",
-      label: "Overview",
       icon: "overview",
       href: "/",
       order: 0,
@@ -49,11 +49,8 @@ export const moduleRegistry = {
 
   analytics: {
     id: "analytics",
-    label: "Analytics",
-    description: "KPI tiles, trend charts, service matrix, cohorts.",
     navigation: {
       group: "operate",
-      label: "Analytics",
       icon: "analytics",
       href: "/analytics",
       order: 10,
@@ -63,11 +60,8 @@ export const moduleRegistry = {
 
   customers: {
     id: "customers",
-    label: "Customers",
-    description: "Customer table and customer records.",
     navigation: {
       group: "operate",
-      label: "Customers",
       icon: "customers",
       href: "/customers",
       order: 20,
@@ -77,11 +71,8 @@ export const moduleRegistry = {
 
   media: {
     id: "media",
-    label: "Media Library",
-    description: "File grid with usage tracking and orphan flagging.",
     navigation: {
       group: "configure",
-      label: "Media",
       icon: "media",
       href: "/media",
       order: 10,
@@ -92,18 +83,16 @@ export const moduleRegistry = {
   // palette, and guards stay registry-driven. Projects keep it enabled.
   settings: {
     id: "settings",
-    label: "Settings",
-    description: "Workspace settings: appearance & brand (more tabs later).",
     navigation: {
       group: "settings",
-      label: "Settings",
       icon: "settings",
       href: "/settings/appearance",
       order: 0,
       children: [
-        { label: "Appearance & brand", href: "/settings/appearance" },
-        { label: "Team & permissions", href: "/settings/team" },
-        { label: "Activity", href: "/settings/activity" },
+        { key: "appearance", href: "/settings/appearance" },
+        { key: "team", href: "/settings/team" },
+        { key: "activity", href: "/settings/activity" },
+        { key: "language", href: "/settings/language" },
       ],
     },
     permissions: ["settings.view", "settings.manage"],

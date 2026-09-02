@@ -1,6 +1,6 @@
 "use client"
 
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * Explicit-save footer + unsaved-changes pill, ported from part-records.
@@ -11,6 +11,7 @@ import { copy } from "@/core/i18n"
 export type SaveState = "clean" | "dirty" | "saving" | "saved" | "error"
 
 export function UnsavedChangesPill() {
+  const copy = useCopy()
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--warn)", background: "var(--warn-tint)", borderRadius: 999, padding: "6px 12px" }}>
       <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--warn-fill)", display: "block" }} />
@@ -25,8 +26,8 @@ export function SaveBar({
   errorMessage,
   onSave,
   onDiscard,
-  saveLabel = copy.forms.saveChanges,
-  discardLabel = copy.forms.discard,
+  saveLabel: saveLabelProp,
+  discardLabel: discardLabelProp,
 }: {
   state: SaveState
   hint?: string
@@ -36,6 +37,9 @@ export function SaveBar({
   saveLabel?: string
   discardLabel?: string
 }) {
+  const copy = useCopy()
+  const saveLabel = saveLabelProp ?? copy.forms.saveChanges
+  const discardLabel = discardLabelProp ?? copy.forms.discard
   const disabled = state === "clean" || state === "saving" || state === "saved"
   const hintText =
     state === "error" ? (errorMessage ?? copy.forms.couldNotSave) :

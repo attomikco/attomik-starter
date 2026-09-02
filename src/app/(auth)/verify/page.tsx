@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useCopy } from "@/core/i18n/client"
 import { AuthCardHeader } from "../card-header"
 
 /**
@@ -10,9 +11,9 @@ import { AuthCardHeader } from "../card-header"
  * genuinely takes a moment"). It remains routable for review and for any
  * future flow where verification is slow enough to show.
  */
-const LINES = ["Link signature checked", "Session issued for this device", "Workspace restored"]
-
 export default function VerifyPage() {
+  const copy = useCopy()
+  const LINES = copy.auth.verify.lines
   const [stage, setStage] = useState(0)
 
   useEffect(() => {
@@ -22,15 +23,15 @@ export default function VerifyPage() {
 
   return (
     <>
-      <AuthCardHeader stepLabel="Verifying" />
+      <AuthCardHeader stepLabel={copy.auth.verify.step} />
       <div style={{ flex: "none", padding: "26px 0 4px" }}>
         <div style={{ minWidth: 0 }}>
           <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
             <span style={{ width: 22, height: 22, borderRadius: 999, border: "2.5px solid var(--lead-line)", borderTopColor: "var(--accent)", display: "block", animation: "sh-spin .8s linear infinite" }} />
           </span>
-          <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>Signing you in</h1>
+          <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>{copy.auth.verify.title}</h1>
           <p style={{ fontSize: 15, color: "var(--txt-2)", lineHeight: 1.6, margin: "0 0 26px", textAlign: "center" }}>
-            Verifying the link and restoring your workspace. This takes a second or two.
+            {copy.auth.verify.intro}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 3, maxWidth: 340, margin: "0 auto" }}>
             {LINES.map((label, i) => {

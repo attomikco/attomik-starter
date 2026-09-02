@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import Link from "next/link"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * In-app recoverable error boundary. Users see a concise explanation,
@@ -11,6 +11,7 @@ import { copy } from "@/core/i18n"
  * server logs).
  */
 export default function AppError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const copy = useCopy()
   useEffect(() => {
     console.error("[app] route error:", error.digest ?? error.message)
   }, [error])

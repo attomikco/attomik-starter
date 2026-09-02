@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto"
 import { emailBrand, rowToSkinInput } from "@/core/branding"
 import { getResendKey } from "@/core/env"
+import { pickLocale, resolveCopy } from "@/core/i18n"
 import type { Role } from "@/core/permissions"
 import { createClient } from "@/core/supabase/server"
 import { brandingPublicUrl, getWorkspaceSettings } from "@/core/workspace"
@@ -106,9 +107,13 @@ export async function sendInvitationEmail(input: {
   // Workspace brand for the email: accent as literal hex, light-ground
   // logo. requireWorkspace is request-cached, so this reuses the invite
   // action's own lookup; branding failures never block the invitation.
+  // The recipient has no profile yet, so the email speaks the WORKSPACE
+  // default locale — the same one the sign-in screens will greet them in.
   let brand: { accent?: string; accentInk?: string; logoUrl?: string | null } = {}
+  let locale = pickLocale()
   try {
     const settings = await getWorkspaceSettings()
+    locale = pickLocale(settings.default_locale)
     brand = {
       ...emailBrand(rowToSkinInput(settings)),
       logoUrl: brandingPublicUrl(settings.logo_light_path),
@@ -120,9 +125,10 @@ export async function sendInvitationEmail(input: {
   const { subject, html, text } = invitationEmail({
     workspaceName: input.workspaceName,
     inviterEmail: input.inviterEmail,
-    role: input.role,
+    role: resolveCopy(locale).roles.labels[input.role],
     acceptUrl: input.acceptUrl,
     expiresInDays: INVITATION_TTL_DAYS,
+    locale,
     ...brand,
   })
 

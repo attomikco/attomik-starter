@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react"
 import type { ColumnDef } from "@/core/data/types"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /** Status tabs on the shell pill, from the reference table toolbar. */
 export function StatusTabs({
@@ -70,6 +70,7 @@ export function ColumnPicker<T>({
   onToggle: (key: string) => void
   onReset: () => void
 }) {
+  const copy = useCopy()
   const [open, setOpen] = useState(false)
   return (
     <div style={{ position: "relative" }}>

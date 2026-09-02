@@ -6,9 +6,16 @@ custom domain module…) without touching core.
 ## The three switches
 
 1. `src/config/project.ts` — add/enable the flag: `messages: true`.
-2. `src/core/modules/registry.ts` — the definition: id, label, description,
-   permissions, dependencies, and `navigation` (group, label, icon key,
-   href, order, optional `children` submenu). Plain data only — no React.
+2. `src/core/modules/registry.ts` — the definition: id, permissions,
+   dependencies, and `navigation` (group, icon key, href, order, optional
+   `children` submenu as `{ key, href }`). Plain data only — no React, and
+   no on-screen text: the module's label, description, and child labels
+   live in the shell dictionary under `nav.modules.<id>` (`src/core/i18n`,
+   every locale) and are resolved when navigation is built.
+2b. `src/modules/messages/copy.ts` — the module's own copy, one flat
+   dictionary per locale with English dotted keys under `messages.`
+   (`defineCopy`), read through `useT()` / `getT()`. English is required;
+   other shipped locales should follow. See docs/I18N.md.
 3. Routes under `src/app/(app)/<path>/page.tsx` calling
    `requireModule("messages")` before rendering, delegating to
    `src/modules/messages/`.

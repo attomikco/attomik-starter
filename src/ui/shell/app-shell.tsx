@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { getLocale } from "@/core/i18n/server"
 import { getEnabledNavigation } from "@/core/navigation"
 import { AppShellClient } from "./app-shell-client"
 
@@ -19,7 +20,7 @@ export interface ShellWorkspace {
   defaultAppearance: "light" | "dark" | "system"
 }
 
-export function AppShell({
+export async function AppShell({
   children,
   chrome = "full",
   account,
@@ -30,7 +31,7 @@ export function AppShell({
   account: ShellAccount
   workspace: ShellWorkspace
 }) {
-  const navigation = getEnabledNavigation()
+  const navigation = getEnabledNavigation(await getLocale())
 
   return (
     <AppShellClient navigation={navigation} chrome={chrome} account={account} workspace={workspace}>

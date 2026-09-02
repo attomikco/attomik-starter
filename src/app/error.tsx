@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * App-level recoverable boundary. Sits ABOVE the route-group layouts, so a
@@ -16,6 +16,7 @@ import { copy } from "@/core/i18n"
  * database details never reach the browser.
  */
 export default function AppFrameError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const copy = useCopy()
   useEffect(() => {
     console.error("[app] frame error:", error.digest ?? error.message)
   }, [error])

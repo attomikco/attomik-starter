@@ -6,6 +6,17 @@ export const en: ShellCopy = {
 
   nav: {
     groups: { operate: "Operate", configure: "Configure", settings: "Settings" },
+    modules: {
+      overview: { label: "Overview", description: "Landing dashboard: stat cards, decision list, next actions." },
+      analytics: { label: "Analytics", description: "KPI tiles, trend charts, service matrix, cohorts." },
+      customers: { label: "Customers", description: "Customer table and customer records." },
+      media: { label: "Media", description: "File grid with usage tracking and orphan flagging." },
+      settings: {
+        label: "Settings",
+        description: "Workspace settings: appearance & brand, team, activity, language.",
+        children: { appearance: "Appearance & brand", team: "Team & permissions", activity: "Activity", language: "Language" },
+      },
+    },
     expandSidebar: "Expand the sidebar",
     collapseSidebar: "Collapse the sidebar",
     openNavigation: "Open navigation",
@@ -94,6 +105,8 @@ export const en: ShellCopy = {
     clearSelection: "Clear selection",
     selected: (count, noun) => `${count} ${noun}${count === 1 ? "" : "s"} selected`,
     recordNoun: "record",
+    pageEmpty: "Showing 0 records",
+    pageRange: (start, end, total) => `Showing ${start}–${end} of ${total}`,
   },
 
   forms: {
@@ -142,6 +155,110 @@ export const en: ShellCopy = {
     fallback: (actor, action, label) => {
       const words = action.split(".").join(" ").split("_").join(" ")
       return `${actor} — ${words}${label ? ` — ${label}` : ""}`
+    },
+  },
+
+  roles: {
+    labels: { owner: "owner", admin: "admin", member: "member", viewer: "viewer" },
+    meanings: {
+      owner: "Full workspace control, including admins",
+      admin: "Invites and manages members and viewers",
+      member: "Normal product access",
+      viewer: "Read-only access",
+    },
+  },
+
+  overview: {
+    eyebrow: "Workspace",
+    intro: "This workspace is ready. Product modules appear here as they are enabled in the project configuration.",
+    links: {
+      appearance: { title: "Appearance & brand", body: "Set the accent, typefaces, logo, and default appearance." },
+      team: { title: "Team & permissions", body: "Invite people and manage their roles." },
+      activity: { title: "Activity", body: "See who changed what, and when." },
+    },
+  },
+
+  auth: {
+    facts: { singleUse: "Single-use link", expires: "Expires in 15 min", session: "Session 30 days", logged: "Every sign-in logged" },
+    logoPlaceholder: "Logo",
+    emailErrors: {
+      empty: "Enter the address you use at work.",
+      missing_at: "Missing the @ — an address looks like name@company.com.",
+      spaces: "Addresses cannot contain spaces.",
+      dotless_domain: "The domain needs a dot, like company.com.",
+      incomplete: "That does not look like a complete email address.",
+    },
+    rateLimited: "Too many sign-in requests. Wait a few minutes and try again.",
+    genericError: "Something went wrong — try again.",
+    login: {
+      step1: "Step 1 of 2",
+      step2: "Step 2 of 2",
+      title: "Sign in",
+      intro: "No password. Enter your work address and we send a link that signs you in for thirty days on this device.",
+      emailLabel: "Work email",
+      emailPlaceholder: "you@company.com",
+      submit: "Email me a link",
+      submitting: "Sending…",
+      or: "or",
+      sso: "Continue with SSO",
+      ssoUnavailable: "SSO is not configured yet",
+      terms: () => ["By continuing you accept the ", " and the ", "."],
+      termsWord: "terms",
+      privacyWord: "privacy notice",
+      sentTitle: "Check your inbox",
+      sentIntro: () => ["We sent a link to ", ". It works once and expires in fifteen minutes."],
+      nothingArrived: "Nothing arrived?",
+      resend: "Resend link",
+      resendIn: (seconds) => `Resend in ${seconds}s`,
+      tipSpam: "Check spam — the sender is",
+      tipSender: "auth@email.attomik.co",
+      tipFilters: "Corporate filters can hold it for a minute or two",
+      tipDevice: "Open the link on this device, or it will not carry the session",
+      useAnother: "Use another address",
+    },
+    verify: {
+      step: "Verifying",
+      title: "Signing you in",
+      intro: "Verifying the link and restoring your workspace. This takes a second or two.",
+      lines: ["Link signature checked", "Session issued for this device", "Workspace restored"],
+    },
+    expired: {
+      step: "Link expired",
+      title: "This link has expired",
+      intro: "Links last fifteen minutes and work once. Nothing is wrong with your account — request a fresh one.",
+      bannerTitle: "Only the newest link works",
+      bannerBody: "If you requested more than one link, every earlier email stopped working. Use the most recent one, or start again below.",
+      newLink: "Send a new link",
+      changeAddress: "Change address",
+    },
+    invite: {
+      step: "Workspace invitation",
+      join: (workspace) => `Join ${workspace}`,
+      invitedAs: (role) => [`You were invited as ${role}, signed in as `, "."],
+      accept: "Accept invitation",
+      onceNote: "The link works once. Accepting adds this account to the workspace.",
+      openApp: "Open the app",
+      errors: {
+        invalid: { title: "This invitation link is not valid", body: "The link may be incomplete, or it was replaced by a newer email. Use the most recent invitation email, or ask to be invited again." },
+        expired: { title: "This invitation has expired", body: "Invitations work for seven days. Nothing is wrong with your account — ask the workspace to send a fresh one." },
+        revoked: { title: "This invitation was revoked", body: "The workspace withdrew this invitation. If that seems wrong, ask them to invite you again." },
+        accepted: { title: "Already accepted", body: "This invitation has already been used. If that was you, just open the app." },
+        wrong_email: { title: "This invitation belongs to another email", body: "You are signed in with a different address than the one invited. Sign out and open the link again with the invited address." },
+        error: { title: "Something went wrong", body: "The invitation could not be processed. Try the link again in a moment." },
+      },
+    },
+  },
+
+  email: {
+    invitation: {
+      subject: (inviter, workspace) => `${inviter} invited you to ${workspace}`,
+      title: (workspace) => `You're invited to ${workspace}`,
+      body: (inviter, role) => `${inviter} invited you to join as ${role}. Accepting signs you in with a magic link — no password.`,
+      accept: "Accept invitation",
+      fallback: "If the button does not work, open this link:",
+      footer: (days, inviter, workspace) => `The link expires in ${days} days and works once. You received this because ${inviter} invited this address to ${workspace}.`,
+      textIntro: (inviter, workspace, role) => `${inviter} invited you to join ${workspace} as ${role}.`,
+      textAccept: (url) => `Accept the invitation: ${url}`,
     },
   },
 }

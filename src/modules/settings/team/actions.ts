@@ -3,6 +3,8 @@
 import { headers } from "next/headers"
 import { revalidatePath } from "next/cache"
 import { validateEmail } from "@/core/auth/email-validation"
+import { getCopy, getT } from "@/core/i18n/server"
+import { settingsCopy } from "../copy"
 import {
   assignableRoles,
   canManageTarget,
@@ -40,15 +42,17 @@ async function siteOrigin(): Promise<string> {
 }
 
 export async function inviteMember(rawEmail: string, rawRole: string): Promise<TeamActionResult> {
+  const t = await getT(settingsCopy)
+  const copy = await getCopy()
   const ctx = await requireWorkspace()
   const actor = ctx.workspace.role as Role
   const allowed = assignableRoles(actor)
-  if (allowed.length === 0) return { ok: false, message: "Only an owner or admin can invite people." }
+  if (allowed.length === 0) return { ok: false, message: t("settings.team.error.notAdmin") }
   if (!isValidRole(rawRole) || !allowed.includes(rawRole)) {
-    return { ok: false, message: `You can invite people as ${allowed.join(" or ")} — not ${rawRole}.` }
+    return { ok: false, message: t("settings.team.error.roleNotAllowed", { allowed: allowed.map((r) => copy.roles.labels[r]).join(` ${t("settings.team.or")} `), role: rawRole }) }
   }
   const check = validateEmail(rawEmail)
-  if (!check.ok) return { ok: false, message: check.message }
+  if (!check.ok) return { ok: false, message: copy.auth.emailErrors[check.code] }
   const email = normalizeEmail(check.email)
 
   const supabase = await createClient()
@@ -60,7 +64,7 @@ export async function inviteMember(rawEmail: string, rawRole: string): Promise<T
     .eq("profiles.email", email)
     .limit(1)
   if ((members.data ?? []).length > 0) {
-    return { ok: false, message: `${email} is already a member of this workspace.` }
+    return { ok: false, message: t("settings.team.error.alreadyMember", { email }) }
   }
 
   const { raw, hash } = mintInvitationToken()
@@ -74,10 +78,10 @@ export async function inviteMember(rawEmail: string, rawRole: string): Promise<T
   })
   if (error) {
     if (error.code === "23505") {
-      return { ok: false, message: `${email} already has a pending invitation — resend it instead.` }
+      return { ok: false, message: t("settings.team.error.alreadyInvited", { email }) }
     }
     console.error("[team] invite failed:", error.code)
-    return { ok: false, message: "Could not create the invitation. Try again." }
+    return { ok: false, message: t("settings.team.error.createFailed") }
   }
 
   try {
@@ -89,7 +93,7 @@ export async function inviteMember(rawEmail: string, rawRole: string): Promise<T
       acceptUrl: `${await siteOrigin()}/invite/${raw}`,
     })
   } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : "The email could not be sent." }
+    return { ok: false, message: e instanceof Error ? e.message : t("settings.team.error.emailFailed") }
   }
 
   revalidatePath("/settings/team")
@@ -98,6 +102,8 @@ export async function inviteMember(rawEmail: string, rawRole: string): Promise<T
 
 /** Resend rotates the token: the previous emailed link stops working. */
 export async function resendInvitation(invitationId: string): Promise<TeamActionResult> {
+  const t = await getT(settingsCopy)
+  const copy = await getCopy()
   const ctx = await requireWorkspace()
   const supabase = await createClient()
 
@@ -107,8 +113,8 @@ export async function resendInvitation(invitationId: string): Promise<TeamAction
     .eq("id", invitationId)
     .eq("workspace_id", ctx.workspace.id)
     .maybeSingle()
-  if (!inv) return { ok: false, message: "That invitation no longer exists." }
-  if (inv.status !== "pending") return { ok: false, message: "Only pending invitations can be resent." }
+  if (!inv) return { ok: false, message: t("settings.team.error.gone") }
+  if (inv.status !== "pending") return { ok: false, message: t("settings.team.error.notPending") }
 
   const { raw, hash } = mintInvitationToken()
   const { error, count } = await supabase
@@ -116,7 +122,7 @@ export async function resendInvitation(invitationId: string): Promise<TeamAction
     .update({ token_hash: hash, expires_at: invitationExpiry(), updated_at: new Date().toISOString() }, { count: "exact" })
     .eq("id", invitationId)
     .eq("status", "pending")
-  if (error || !count) return { ok: false, message: "Could not resend — check your access and try again." }
+  if (error || !count) return { ok: false, message: t("settings.team.error.resendFailed") }
 
   try {
     await sendInvitationEmail({
@@ -127,7 +133,7 @@ export async function resendInvitation(invitationId: string): Promise<TeamAction
       acceptUrl: `${await siteOrigin()}/invite/${raw}`,
     })
   } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : "The email could not be sent." }
+    return { ok: false, message: e instanceof Error ? e.message : t("settings.team.error.emailFailed") }
   }
 
   revalidatePath("/settings/team")
@@ -135,6 +141,8 @@ export async function resendInvitation(invitationId: string): Promise<TeamAction
 }
 
 export async function revokeInvitation(invitationId: string): Promise<TeamActionResult> {
+  const t = await getT(settingsCopy)
+  const copy = await getCopy()
   const ctx = await requireWorkspace()
   const supabase = await createClient()
   const { error, count } = await supabase
@@ -143,20 +151,22 @@ export async function revokeInvitation(invitationId: string): Promise<TeamAction
     .eq("id", invitationId)
     .eq("workspace_id", ctx.workspace.id)
     .eq("status", "pending")
-  if (error || !count) return { ok: false, message: "Could not revoke — it may already be accepted or gone." }
+  if (error || !count) return { ok: false, message: t("settings.team.error.revokeFailed") }
   revalidatePath("/settings/team")
   return { ok: true }
 }
 
 export async function changeMemberRole(userId: string, targetCurrentRole: string, rawRole: string): Promise<TeamActionResult> {
+  const t = await getT(settingsCopy)
+  const copy = await getCopy()
   const ctx = await requireWorkspace()
   const actor = ctx.workspace.role as Role
-  if (!isValidRole(rawRole) || !isValidRole(targetCurrentRole)) return { ok: false, message: "Unknown role." }
+  if (!isValidRole(rawRole) || !isValidRole(targetCurrentRole)) return { ok: false, message: t("settings.team.error.unknownRole") }
   if (!canManageTarget(actor, targetCurrentRole)) {
-    return { ok: false, message: targetCurrentRole === "owner" ? "The owner's role cannot be changed." : "You cannot manage that member." }
+    return { ok: false, message: targetCurrentRole === "owner" ? t("settings.team.error.ownerRole") : t("settings.team.error.cannotManage") }
   }
   if (!assignableRoles(actor).includes(rawRole)) {
-    return { ok: false, message: `You can assign ${assignableRoles(actor).join(" or ")} — not ${rawRole}.` }
+    return { ok: false, message: t("settings.team.error.assignNotAllowed", { allowed: assignableRoles(actor).map((r) => copy.roles.labels[r]).join(` ${t("settings.team.or")} `), role: rawRole }) }
   }
 
   const supabase = await createClient()
@@ -166,20 +176,22 @@ export async function changeMemberRole(userId: string, targetCurrentRole: string
     .eq("workspace_id", ctx.workspace.id)
     .eq("user_id", userId)
     .neq("role", "owner")
-  if (error || !count) return { ok: false, message: "The role was not changed — check your access." }
+  if (error || !count) return { ok: false, message: t("settings.team.error.roleUnchanged") }
   revalidatePath("/settings/team")
   return { ok: true }
 }
 
 /** Removes workspace membership only — never the person's auth account. */
 export async function removeMember(userId: string, targetCurrentRole: string): Promise<TeamActionResult> {
+  const t = await getT(settingsCopy)
+  const copy = await getCopy()
   const ctx = await requireWorkspace()
   const actor = ctx.workspace.role as Role
   if (!isValidRole(targetCurrentRole) || !canManageTarget(actor, targetCurrentRole)) {
-    return { ok: false, message: targetCurrentRole === "owner" ? "The owner cannot be removed." : "You cannot remove that member." }
+    return { ok: false, message: targetCurrentRole === "owner" ? t("settings.team.error.ownerRemove") : t("settings.team.error.cannotRemove") }
   }
   if (userId === ctx.user.id && actor === "owner") {
-    return { ok: false, message: "The owner cannot leave their own workspace." }
+    return { ok: false, message: t("settings.team.error.ownerLeave") }
   }
 
   const supabase = await createClient()
@@ -189,7 +201,7 @@ export async function removeMember(userId: string, targetCurrentRole: string): P
     .eq("workspace_id", ctx.workspace.id)
     .eq("user_id", userId)
     .neq("role", "owner")
-  if (error || !count) return { ok: false, message: "The member was not removed — check your access." }
+  if (error || !count) return { ok: false, message: t("settings.team.error.removeFailed") }
   revalidatePath("/settings/team")
   return { ok: true }
 }

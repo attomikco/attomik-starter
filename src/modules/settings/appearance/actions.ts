@@ -10,7 +10,9 @@ import {
   type SkinInput,
 } from "@/core/branding"
 import { createClient } from "@/core/supabase/server"
+import { getT } from "@/core/i18n/server"
 import { requireWorkspace } from "@/core/workspace"
+import { settingsCopy } from "../copy"
 import { FONT_OPTIONS, MONO_OPTIONS, WEIGHT_BOLD_OPTIONS, WEIGHT_SEMI_OPTIONS } from "./options"
 
 /**
@@ -34,38 +36,40 @@ export interface ActionResult {
 }
 
 async function requireAdminWorkspace() {
+  const t = await getT(settingsCopy)
   const ctx = await requireWorkspace()
   if (ctx.workspace.role !== "owner" && ctx.workspace.role !== "admin") {
-    return { ctx, error: "Only an owner or admin can change workspace branding." }
+    return { ctx, error: t("settings.appearance.error.notAdmin") }
   }
   return { ctx, error: null }
 }
 
 export async function saveAppearance(input: SaveAppearanceInput): Promise<ActionResult> {
+  const t = await getT(settingsCopy)
   const { ctx, error } = await requireAdminWorkspace()
   if (error) return { ok: false, message: error }
 
   const displayName = input.displayName.trim()
-  if (!displayName) return { ok: false, message: "The workspace needs a display name." }
-  if (displayName.length > 80) return { ok: false, message: "Keep the display name under 80 characters." }
+  if (!displayName) return { ok: false, message: t("settings.appearance.error.nameRequired") }
+  if (displayName.length > 80) return { ok: false, message: t("settings.appearance.error.nameTooLong") }
   if (!["light", "dark", "system"].includes(input.defaultAppearance)) {
-    return { ok: false, message: "Default appearance must be light, dark, or system." }
+    return { ok: false, message: t("settings.appearance.error.appearance") }
   }
 
   const s = input.skin
   const numbers = [s.ah, s.ac, s.nh, s.nc, s.sc, s.wb, s.ws, s.al, s.alDark, s.ink]
   if (numbers.some((n) => n !== undefined && !Number.isFinite(n))) {
-    return { ok: false, message: "One of the colour values is not a number." }
+    return { ok: false, message: t("settings.appearance.error.colorNaN") }
   }
-  if (!FONT_OPTIONS.includes(s.font)) return { ok: false, message: "Pick a display face from the list." }
-  if (!MONO_OPTIONS.includes(s.mono)) return { ok: false, message: "Pick a mono face from the list." }
-  if (!WEIGHT_BOLD_OPTIONS.includes(s.wb)) return { ok: false, message: "Pick a bold weight from the list." }
-  if (!WEIGHT_SEMI_OPTIONS.includes(s.ws)) return { ok: false, message: "Pick a semibold weight from the list." }
+  if (!FONT_OPTIONS.includes(s.font)) return { ok: false, message: t("settings.appearance.error.font") }
+  if (!MONO_OPTIONS.includes(s.mono)) return { ok: false, message: t("settings.appearance.error.mono") }
+  if (!WEIGHT_BOLD_OPTIONS.includes(s.wb)) return { ok: false, message: t("settings.appearance.error.bold") }
+  if (!WEIGHT_SEMI_OPTIONS.includes(s.ws)) return { ok: false, message: t("settings.appearance.error.semibold") }
 
   const g = input.geometry
   for (const v of [g.r, g.r2, g.r3]) {
     if (!Number.isInteger(v) || v < 0 || v > 34) {
-      return { ok: false, message: "Radii must be whole numbers between 0 and 34." }
+      return { ok: false, message: t("settings.appearance.error.radii") }
     }
   }
 
@@ -83,7 +87,7 @@ export async function saveAppearance(input: SaveAppearanceInput): Promise<Action
 
   if (dbError) {
     console.error("[appearance] save failed:", dbError.code)
-    return { ok: false, message: "Could not save — nothing was changed. Try again." }
+    return { ok: false, message: t("settings.appearance.error.saveFailed") }
   }
 
   revalidatePath("/", "layout")
@@ -108,17 +112,18 @@ const EXTENSIONS: Record<string, string> = {
 }
 
 export async function uploadBrandingAsset(kind: BrandingAssetKind, formData: FormData): Promise<ActionResult> {
+  const t = await getT(settingsCopy)
   const { ctx, error } = await requireAdminWorkspace()
   if (error) return { ok: false, message: error }
 
   const spec = ASSET_KINDS[kind]
-  if (!spec) return { ok: false, message: "Unknown asset kind." }
+  if (!spec) return { ok: false, message: t("settings.appearance.error.assetKind") }
   const file = formData.get("file")
-  if (!(file instanceof File) || file.size === 0) return { ok: false, message: "Choose a file first." }
+  if (!(file instanceof File) || file.size === 0) return { ok: false, message: t("settings.appearance.error.noFile") }
   if (!spec.accept.includes(file.type)) {
-    return { ok: false, message: "That format is not supported — use SVG or PNG." }
+    return { ok: false, message: t("settings.appearance.error.format") }
   }
-  if (file.size > 2 * 1024 * 1024) return { ok: false, message: "Keep artwork under 2MB." }
+  if (file.size > 2 * 1024 * 1024) return { ok: false, message: t("settings.appearance.error.tooLarge") }
 
   const path = `${ctx.workspace.id}/${kind}.${EXTENSIONS[file.type]}`
   const supabase = await createClient()
@@ -135,7 +140,7 @@ export async function uploadBrandingAsset(kind: BrandingAssetKind, formData: For
       detail.name ?? "",
       detail.message,
     )
-    return { ok: false, message: "Upload failed — nothing was changed." }
+    return { ok: false, message: t("settings.appearance.error.uploadFailed") }
   }
 
   const { error: dbError } = await supabase
@@ -144,7 +149,7 @@ export async function uploadBrandingAsset(kind: BrandingAssetKind, formData: For
     .eq("workspace_id", ctx.workspace.id)
   if (dbError) {
     console.error("[appearance] path save failed:", dbError.code)
-    return { ok: false, message: "Upload stored but not linked — try again." }
+    return { ok: false, message: t("settings.appearance.error.notLinked") }
   }
 
   revalidatePath("/", "layout")
@@ -152,11 +157,12 @@ export async function uploadBrandingAsset(kind: BrandingAssetKind, formData: For
 }
 
 export async function removeBrandingAsset(kind: BrandingAssetKind): Promise<ActionResult> {
+  const t = await getT(settingsCopy)
   const { ctx, error } = await requireAdminWorkspace()
   if (error) return { ok: false, message: error }
 
   const spec = ASSET_KINDS[kind]
-  if (!spec) return { ok: false, message: "Unknown asset kind." }
+  if (!spec) return { ok: false, message: t("settings.appearance.error.assetKind") }
 
   const supabase = await createClient()
   // Remove any extension variant of this asset, then unlink.
@@ -167,7 +173,7 @@ export async function removeBrandingAsset(kind: BrandingAssetKind): Promise<Acti
     .from("workspace_settings")
     .update({ [spec.column]: null, updated_at: new Date().toISOString() })
     .eq("workspace_id", ctx.workspace.id)
-  if (dbError) return { ok: false, message: "Could not remove — try again." }
+  if (dbError) return { ok: false, message: t("settings.appearance.error.removeFailed") }
 
   revalidatePath("/", "layout")
   return { ok: true }

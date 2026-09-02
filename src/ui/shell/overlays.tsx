@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react"
 import { signOut } from "@/core/auth/actions"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import { emailInitials } from "@/core/auth/email-validation"
 import type { ShellAccount } from "./app-shell"
 import { THEME_MODES, useTheme } from "./theme"
@@ -32,6 +32,7 @@ function AccountRow({ icon, label, hint, onPick }: { icon: string; label: string
 }
 
 export function AccountPanel({ account, openPalette, openKeys }: { account: ShellAccount; openPalette: () => void; openKeys: () => void }) {
+  const copy = useCopy()
   const { mode, setMode } = useTheme()
   const { say } = useToast()
   const notWired = () => say(copy.account.profileUnavailable)

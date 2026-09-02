@@ -1,7 +1,7 @@
 "use client"
 
 import type { CSSProperties } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import type { FilterCondition, FilterFieldDef, FilterOperator } from "@/core/data/types"
 
 /**
@@ -31,6 +31,7 @@ export function FilterBuilder({
   onChange: (conditions: FilterCondition[]) => void
   onClear: () => void
 }) {
+  const copy = useCopy()
   const fieldFor = (key: string) => fields.find((f) => f.key === key) ?? fields[0]
 
   const update = (i: number, patch: Partial<FilterCondition>) => {

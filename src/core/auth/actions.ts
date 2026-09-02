@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { getCopy } from "@/core/i18n/server"
 import { createClient } from "@/core/supabase/server"
 import { validateEmail } from "./email-validation"
 import { sanitizeNextPath } from "./redirects"
@@ -29,7 +30,7 @@ async function siteOrigin(): Promise<string> {
 
 export async function requestMagicLink(rawEmail: string, rawNext?: string): Promise<MagicLinkResult> {
   const check = validateEmail(rawEmail)
-  if (!check.ok) return { sent: false, message: check.message }
+  if (!check.ok) return { sent: false, message: (await getCopy()).auth.emailErrors[check.code] }
 
   const next = sanitizeNextPath(rawNext)
   const supabase = await createClient()
@@ -52,7 +53,7 @@ export async function requestMagicLink(rawEmail: string, rawNext?: string): Prom
       return {
         sent: false,
         rateLimited: true,
-        message: "Too many sign-in requests. Wait a few minutes and try again.",
+        message: (await getCopy()).auth.rateLimited,
       }
     }
   }

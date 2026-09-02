@@ -1,11 +1,12 @@
 import Link from "next/link"
-import { copy } from "@/core/i18n"
+import { getCopy } from "@/core/i18n/server"
 
 /**
  * Root 404 — reached outside the authenticated shell. Standalone light
  * presentation consistent with the auth surface; never leaks internals.
  */
-export default function RootNotFound() {
+export default async function RootNotFound() {
+  const copy = await getCopy()
   return (
     <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--shell)", color: "var(--txt)", fontFamily: "var(--font)", padding: 24, boxSizing: "border-box" }}>
       <div style={{ textAlign: "center", maxWidth: 420 }}>

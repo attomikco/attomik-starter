@@ -14,6 +14,7 @@ import { requireUser, type AuthUser } from "@/core/auth/require-user"
 import { getSupabaseEnv, hasSupabaseEnv } from "@/core/env"
 import { createClient } from "@/core/supabase/server"
 import { projectConfig } from "@/config/project"
+import { pickLocale, type Locale } from "@/core/i18n"
 
 /**
  * The canonical workspace access layer. Server-only. Modules never
@@ -112,6 +113,7 @@ async function ensureWorkspaceForUser(user: AuthUser): Promise<void> {
           workspace_id: workspaceId,
           display_name: name,
           default_appearance: "light",
+          default_locale: projectConfig.locale,
           ...skinInputToRow(defaultSkin),
         })
         if (error && error.code !== "23505") {
@@ -188,6 +190,8 @@ export interface AuthBranding {
   skin: SkinInput
   geometry: ProductGeometry
   mode: "light" | "dark"
+  /** Workspace default locale — the pre-auth screens' language. */
+  locale: Locale
   logoUrl: string | null
   faviconUrl: string | null
 }
@@ -195,7 +199,7 @@ export interface AuthBranding {
 export const getAuthBranding = cache(async (): Promise<AuthBranding> => {
   const fallback: AuthBranding = {
     name: projectConfig.name, skin: defaultSkin, geometry: DEFAULT_GEOMETRY,
-    mode: "light", logoUrl: null, faviconUrl: null,
+    mode: "light", locale: pickLocale(), logoUrl: null, faviconUrl: null,
   }
   if (!hasSupabaseEnv()) return fallback
   try {
@@ -212,6 +216,7 @@ export const getAuthBranding = cache(async (): Promise<AuthBranding> => {
       skin: rowToSkinInput(row),
       geometry: rowToGeometry(row),
       mode,
+      locale: pickLocale(row.default_locale),
       logoUrl: brandingPublicUrl(logoPath),
       faviconUrl: brandingPublicUrl(row.favicon_path),
     }

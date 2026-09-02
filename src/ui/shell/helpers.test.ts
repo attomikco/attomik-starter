@@ -40,20 +40,21 @@ test("command palette filtering", () => {
 const mod = (id: string, group: "operate" | "configure" | "settings", order: number, nav = true): ModuleDefinition =>
   ({
     id: id as ModuleDefinition["id"],
-    label: id,
-    description: "",
-    ...(nav ? { navigation: { group, label: id, href: `/${id}`, order, icon: id } } : {}),
+    ...(nav ? { navigation: { group, href: `/${id}`, order, icon: id } } : {}),
   }) as ModuleDefinition
 
+/** On-screen names come from the dictionary, not the registry; the fixture supplies English ones. */
+const NAMES = { media: { label: "Media", description: "" }, overview: { label: "Overview", description: "" }, analytics: { label: "Analytics", description: "" } }
+
 test("navigation derives from enabled modules only, sorted by order", () => {
-  const nav = buildNavigation([mod("media", "configure", 10), mod("overview", "operate", 0), mod("analytics", "operate", 5)])
+  const nav = buildNavigation([mod("media", "configure", 10), mod("overview", "operate", 0), mod("analytics", "operate", 5)], NAMES)
   assert.deepEqual(nav.map((g) => g.group), ["operate", "configure"])
   assert.deepEqual(nav[0].items.map((i) => i.moduleId), ["overview", "analytics"])
   assert.deepEqual(nav[1].items.map((i) => i.moduleId), ["media"])
 })
 
 test("empty nav groups are removed; nav-less modules are skipped", () => {
-  const nav = buildNavigation([mod("overview", "operate", 0), mod("hidden", "settings", 0, false)])
+  const nav = buildNavigation([mod("overview", "operate", 0), mod("hidden", "settings", 0, false)], NAMES)
   assert.equal(nav.length, 1)
   assert.equal(nav[0].group, "operate")
 })

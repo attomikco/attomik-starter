@@ -1,6 +1,6 @@
 "use client"
 
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 
 /**
  * ⌘/ shortcuts sheet, ported from the reference host. Only shell-level
@@ -14,6 +14,7 @@ export function ShortcutsDialog({
   goRows: [label: string, keys: string][]
   onClose: () => void
 }) {
+  const copy = useCopy()
   const groups: [string, [string, string][]][] = [
     [copy.shortcuts.anywhere, [[copy.shortcuts.commandPalette, "⌘ K"], [copy.shortcuts.shortcuts, "⌘ /"], [copy.shortcuts.collapseSidebar, "⌘ B"], [copy.shortcuts.closeAnything, "Esc"]]],
     ...(goRows.length > 0 ? [[copy.shortcuts.move, goRows] as [string, [string, string][]]] : []),

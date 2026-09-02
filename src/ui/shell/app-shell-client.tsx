@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import type { NavigationGroup } from "@/core/navigation"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import { CommandBar, type ShellPanel } from "./command-bar"
 import type { ShellAccount, ShellWorkspace } from "./app-shell"
 import { CommandPalette } from "./command-palette"
@@ -45,6 +45,7 @@ export function AppShellClient({
 }
 
 function ShellInner({ navigation, chrome, account, workspace, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; account: ShellAccount; workspace: ShellWorkspace; children: ReactNode }) {
+  const copy = useCopy()
   const router = useRouter()
   const pathname = usePathname()
   const { setMode } = useTheme()
@@ -143,7 +144,7 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
         { label: copy.palette.followSystem, run: () => { setMode("system"); setPaletteOpen(false) } },
       ],
     },
-  ], [destinations, goto, toggleCollapse, setMode])
+  ], [copy, destinations, goto, toggleCollapse, setMode])
 
   const goHint = Object.entries(goMap).map(([letter, d]) => `${letter.toUpperCase()} ${d.label.toLowerCase()}`).join(" · ")
   const goRows: [string, string][] = Object.entries(goMap).map(([letter, d]) => [d.label, copy.shortcuts.goThen(letter.toUpperCase())])

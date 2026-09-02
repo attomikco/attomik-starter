@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import type { CSSProperties, ReactNode } from "react"
 import { resolveSkin } from "@/core/branding"
+import { getCopy } from "@/core/i18n/server"
 import { getAuthBranding } from "@/core/workspace"
 import { AuthBrandingProvider } from "./branding"
 import "@/ui/shell/shell.css"
@@ -30,6 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function AuthLayout({ children }: { children: ReactNode }) {
   const branding = await getAuthBranding()
+  const copy = await getCopy()
   const tokens = resolveSkin(branding.skin, branding.mode, branding.geometry) as CSSProperties
 
   return (
@@ -44,13 +46,13 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
       </div>
 
       <div style={{ flex: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap", padding: "14px 0 4px", fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>
-        <span>Single-use link</span>
+        <span>{copy.auth.facts.singleUse}</span>
         <span style={{ color: "var(--line-2)" }}>·</span>
-        <span>Expires in 15 min</span>
+        <span>{copy.auth.facts.expires}</span>
         <span style={{ color: "var(--line-2)" }}>·</span>
-        <span>Session 30 days</span>
+        <span>{copy.auth.facts.session}</span>
         <span style={{ color: "var(--line-2)" }}>·</span>
-        <span>Every sign-in logged</span>
+        <span>{copy.auth.facts.logged}</span>
       </div>
     </div>
   )

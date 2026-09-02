@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { useRouter } from "next/navigation"
-import { resolveSkin, clampSkinInput, skinStylesheetWithDefault, themedDeclarations, type DefaultAppearance, type ProductGeometry, type SkinInput } from "@/core/branding"
+import { resolveSkin, clampSkinInput, skinStylesheetWithDefault, themedDeclarations, brandContrastIssues, normalizeHex, seedsToSkinInput, skinToSeeds, type DefaultAppearance, type ProductGeometry, type SkinInput, type SkinSeeds } from "@/core/branding"
 import { useToast } from "@/ui/shell/toast-provider"
+import { useT } from "@/core/i18n/client"
+import type { Translator } from "@/core/i18n"
+import { settingsCopy } from "../copy"
 import { useSystemPrefersDark } from "@/ui/shell/theme"
 import { removeBrandingAsset, saveAppearance, uploadBrandingAsset, type BrandingAssetKind } from "./actions"
 import { FONT_OPTIONS, MONO_OPTIONS, PRESET_PATCHES, WEIGHT_BOLD_OPTIONS, WEIGHT_SEMI_OPTIONS } from "./options"
@@ -24,22 +27,16 @@ const cardTitle: CSSProperties = { fontSize: 16, fontWeight: "var(--w-bold)" as 
 const cardSub: CSSProperties = { fontSize: 13.5, color: "var(--txt-2)", marginBottom: 18 }
 const eyebrow: CSSProperties = { fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)" }
 
-const INTAKE: [string, string, string, string][] = [
-  ["01", "One accent colour", "Their primary, as a hex or an oklch triplet. We read its hue and chroma and place every other value from there.", "e.g. #2D5BFF → hue 262, chroma .19"],
-  ["02", "One neutral direction", "Warm, cool, or true neutral — a single grey from their palette is enough to infer it.", "e.g. #6B6560 reads warm"],
-  ["03", "Two typefaces", "A display and body face, and a mono for numerals. If they have no mono, say so and keep ours.", "e.g. Figtree + IBM Plex Mono"],
-  ["04", "Two weights", "Which weight of that face reads as bold, and which as semibold. Faces differ; the scale does not.", "e.g. 700 and 600"],
-  ["05", "Logo, two files", "One for light grounds, one for dark. SVG preferred, and it has to stay legible at 30px tall.", "e.g. logo-light.svg, logo-dark.svg"],
-  ["06", "Favicon", "A square mark, not the full wordmark — it renders at 16px in a browser tab and anything with words turns to mush. SVG plus a 512px PNG fallback.", "e.g. favicon.svg, icon-512.png"],
-]
+const intake = (t: Translator): [string, string, string, string][] =>
+  ["1", "2", "3", "4", "5", "6"].map((n) => [`0${n}`, t(`settings.appearance.intake.${n}.title`), t(`settings.appearance.intake.${n}.body`), t(`settings.appearance.intake.${n}.example`)])
 
-const RULES: [string, string][] = [
-  ["surfaces", "Five steps on the neutral hue: page ground, shell, card, hairline, border. On dark they are redrawn as peers, never inverted."],
-  ["text", "Four fixed lightness steps. The gap between secondary and muted is what keeps enabled and disabled apart."],
-  ["accent-text", "The accent minus .08 lightness, because a fill-bright colour fails contrast at 13px."],
-  ["--s1…--s5", "One hue, five steps of falling lightness and chroma. Charts use them in rank order, never as categories."],
-  ["semantics", "Hues fixed at 147, 78 and 25 so green is green in every brand — only the chroma follows the accent."],
-  ["hero / lead", "The emphasised panel is a tint of the accent, not a black slab, so it holds up in a pale layout."],
+const rules = (t: Translator): [string, string][] => [
+  ["surfaces", t("settings.appearance.rule.surfaces")],
+  ["text", t("settings.appearance.rule.text")],
+  ["accent-text", t("settings.appearance.rule.accentText")],
+  ["--s1…--s5", t("settings.appearance.rule.series")],
+  ["semantics", t("settings.appearance.rule.semantics")],
+  ["hero / lead", t("settings.appearance.rule.lead")],
 ]
 
 export interface AppearanceInitial {
@@ -56,6 +53,7 @@ export interface AppearanceInitial {
 export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   const router = useRouter()
   const { say } = useToast()
+  const t = useT(settingsCopy)
   const [displayName, setDisplayName] = useState(initial.displayName)
   const [appearance, setAppearance] = useState<DefaultAppearance>(initial.defaultAppearance)
   const [skin, setSkin] = useState<SkinInput>(initial.skin)
@@ -73,6 +71,9 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
   // shows each from the same engine instead of following one appearance.
   const lightPreview = useMemo(() => resolveSkin(skin, "light", geometry) as CSSProperties, [skin, geometry])
   const darkPreview = useMemo(() => resolveSkin(skin, "dark", geometry) as CSSProperties, [skin, geometry])
+  // Accent pairs the seeds can break, both themes, WCAG AA. Amber, not red:
+  // a failing draft is a warning to act on, nothing is broken yet.
+  const contrastIssues = useMemo(() => brandContrastIssues(skin), [skin])
 
   // ---- Live app-wide application -----------------------------------------
   // The draft is rendered into an override <style> appended to <head>: same
@@ -161,41 +162,41 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
     const fd = new FormData()
     fd.set("file", file)
     const result = await uploadBrandingAsset(kind, fd)
-    if (!result.ok) return say(result.message ?? "Upload failed")
-    say(kind === "favicon" ? "Favicon updated" : "Logo updated")
+    if (!result.ok) return say(result.message ?? t("settings.appearance.toast.uploadFailed"))
+    say(kind === "favicon" ? t("settings.appearance.toast.faviconUpdated") : t("settings.appearance.toast.logoUpdated"))
     router.refresh()
   }
 
   const remove = async (kind: BrandingAssetKind) => {
     if (!canEdit) return
     const result = await removeBrandingAsset(kind)
-    say(result.ok ? "Removed" : result.message ?? "Could not remove")
+    say(result.ok ? t("settings.appearance.toast.removed") : result.message ?? t("settings.appearance.toast.removeFailed"))
     if (result.ok) router.refresh()
   }
 
   return (
     <div className="sh-scroll" style={{ position: "absolute", inset: 0, padding: 26, boxSizing: "border-box" }}>
       <div style={{ marginBottom: 18 }}>
-        <div style={eyebrow}>Workspace · brand variables</div>
+        <div style={eyebrow}>{t("settings.appearance.eyebrow")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <h1 style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", margin: "6px 0 6px" }}>Appearance & brand</h1>
+          <h1 style={{ fontSize: 26, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", margin: "6px 0 6px" }}>{t("settings.appearance.title")}</h1>
           {canEdit && status !== "idle" && (
             <span style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".04em", borderRadius: 999, padding: "4px 10px", flex: "none",
               ...(status === "saving" ? { color: "var(--txt-3)", background: "var(--shell)" }
                 : status === "saved" ? { color: "var(--ok)", background: "var(--ok-tint)" }
                 : { color: "var(--bad)", background: "var(--bad-tint)" }) }}>
-              {status === "saving" ? "Saving…" : status === "saved" ? "Saved" : statusMsg || "Couldn't save"}
+              {status === "saving" ? t("settings.appearance.status.saving") : status === "saved" ? t("settings.appearance.status.saved") : statusMsg || t("settings.appearance.status.failed")}
             </span>
           )}
         </div>
         <p style={{ fontSize: 14, color: "var(--txt-2)", margin: 0, maxWidth: 720 }}>
-          The nine values a brand supplies. Everything else in the product is computed from them, in both themes.
+          {t("settings.appearance.intro")}
         </p>
       </div>
 
       {!canEdit && (
         <div style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--warn-tint)", color: "var(--warn)", borderRadius: "var(--r3)", padding: "12px 16px", fontSize: 13.5, marginBottom: 14 }}>
-          You can view these settings, but only an owner or admin can change them.
+          {t("settings.appearance.readOnly")}
         </div>
       )}
 
@@ -206,14 +207,14 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8h.01M11 12h1v5" /><circle cx="12" cy="12" r="9" /></svg>
           </span>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 16, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.02em" }}>What to ask a brand for</div>
+            <div style={{ fontSize: 16, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.02em" }}>{t("settings.appearance.askTitle")}</div>
             <p style={{ fontSize: 13.5, color: "var(--txt-2)", lineHeight: 1.6, margin: "6px 0 0", maxWidth: 720 }}>
-              Six things, and only six. Everything on this page — every surface, all four text steps, the chart ramp, green, amber, red, both themes — is computed from them. Asking for a full palette produces drift, because somebody eventually picks the wrong grey.
+              {t("settings.appearance.askBody")}
             </p>
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 10 }}>
-          {INTAKE.map(([n, title, body, example]) => (
+          {intake(t).map(([n, title, body, example]) => (
             <div key={n} style={{ background: "var(--card)", borderRadius: "var(--r3)", padding: 16, minWidth: 0, display: "flex", gap: 12 }}>
               <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent-text)", flex: "none" }}>{n}</span>
               <div style={{ minWidth: 0 }}>
@@ -225,9 +226,9 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 16, borderTop: "1px solid var(--lead-line)", paddingTop: 16 }}>
-          <span style={{ ...eyebrow, flex: "none", paddingTop: 2 }}>Do not ask for</span>
+          <span style={{ ...eyebrow, flex: "none", paddingTop: 2 }}>{t("settings.appearance.doNotAsk")}</span>
           <span style={{ fontSize: 13, color: "var(--txt-2)", lineHeight: 1.55 }}>
-            Hover and pressed states, disabled greys, chart palettes, tints, dark-mode equivalents, corner radii, spacing, or per-component colour. The system owns all of it, and a brand that insists on its own radius is asking for a different product.
+            {t("settings.appearance.doNotAskBody")}
           </span>
         </div>
       </div>
@@ -236,15 +237,15 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
           {/* Workspace identity + default appearance */}
           <div style={card}>
-            <div style={cardTitle}>Workspace</div>
-            <div style={cardSub}>The name shown in the shell and browser tab, and the default appearance new sessions start in.</div>
+            <div style={cardTitle}>{t("settings.appearance.workspace.title")}</div>
+            <div style={cardSub}>{t("settings.appearance.workspace.body")}</div>
             <label style={{ display: "block", marginBottom: 16 }}>
-              <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>Display name</span>
+              <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>{t("settings.appearance.workspace.name")}</span>
               <span className="ui-field" style={{ display: "flex", alignItems: "center", background: "var(--card)", border: "1.5px solid var(--line-2)", borderRadius: "var(--r3)", padding: "11px 14px" }}>
                 <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} disabled={!canEdit} style={{ fontSize: 14.5, width: "100%" }} />
               </span>
             </label>
-            <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>Default appearance</span>
+            <span style={{ ...eyebrow, display: "block", marginBottom: 8 }}>{t("settings.appearance.workspace.defaultAppearance")}</span>
             <div style={{ display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, maxWidth: 340 }}>
               {(["light", "dark", "system"] as const).map((a) => (
                 <span key={a} onClick={() => canEdit && setAppearance(a)}
@@ -257,31 +258,31 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
 
           {/* Brand mark */}
           <div style={card}>
-            <div style={cardTitle}>Brand mark</div>
-            <div style={cardSub}>Drops into the rail at exactly 30px tall, up to 176px wide. Supply a horizontal lockup as SVG (or PNG at 2×, ≥ 352×60) with a transparent background and no built-in padding — a stacked or square-only mark renders tiny at this height. Supply artwork for both grounds — light and dark are peer palettes, so provide a version legible on each, not one recolored file.</div>
-            <AssetRow label="Logo · light ground" hint="Shown on the light theme rail. Dark or full-color artwork that holds up on near-white." url={initial.logoLightUrl} kind="logo-light" tall canEdit={canEdit} onUpload={upload} onRemove={remove} />
-            <AssetRow label="Logo · dark ground" hint="Shown on the dark theme rail. Light artwork that holds up on near-black." url={initial.logoDarkUrl} kind="logo-dark" tall dark canEdit={canEdit} onUpload={upload} onRemove={remove} />
-            <AssetRow label="Favicon" hint="Square mark only. It renders at 16px, so a wordmark turns to mush." url={initial.faviconUrl} kind="favicon" canEdit={canEdit} onUpload={upload} onRemove={remove} />
+            <div style={cardTitle}>{t("settings.appearance.logo.title")}</div>
+            <div style={cardSub}>{t("settings.appearance.logo.body")}</div>
+            <AssetRow label={t("settings.appearance.logo.light")} hint={t("settings.appearance.logo.lightHint")} url={initial.logoLightUrl} kind="logo-light" tall canEdit={canEdit} onUpload={upload} onRemove={remove} />
+            <AssetRow label={t("settings.appearance.logo.dark")} hint={t("settings.appearance.logo.darkHint")} url={initial.logoDarkUrl} kind="logo-dark" tall dark canEdit={canEdit} onUpload={upload} onRemove={remove} />
+            <AssetRow label={t("settings.appearance.logo.favicon")} hint={t("settings.appearance.logo.faviconHint")} url={initial.faviconUrl} kind="favicon" canEdit={canEdit} onUpload={upload} onRemove={remove} />
           </div>
 
           {/* Colour */}
           <div style={card}>
-            <div style={cardTitle}>Colour</div>
-            <div style={cardSub}>Two hues and two chroma levels. Every surface, text step, chart step, and status colour is computed from these, in both themes.</div>
+            <div style={cardTitle}>{t("settings.appearance.color.title")}</div>
+            <div style={cardSub}>{t("settings.appearance.color.body")}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-              <Slider label="Accent hue" value={skin.ah} display={String(Math.round(skin.ah))} min={0} max={360} step={1} onChange={(v) => patch({ ah: v })} disabled={!canEdit}
-                swatches={[250, 300, 350, 25, 78, 147].map((hu) => ({ color: `oklch(.58 .17 ${hu})`, on: Math.abs(skin.ah - hu) < 6, title: `Hue ${hu}`, pick: () => patch({ ah: hu }) }))} />
-              <Slider label="Accent chroma" value={skin.ac} display={skin.ac.toFixed(3)} min={0} max={0.28} step={0.005} onChange={(v) => patch({ ac: v })} disabled={!canEdit}
-                swatches={[0.04, 0.1, 0.16, 0.22].map((c) => ({ color: `oklch(.58 ${c} ${skin.ah})`, on: Math.abs(skin.ac - c) < 0.02, title: `Chroma ${c}`, pick: () => patch({ ac: c }) }))} />
-              <Slider label="Neutral hue" value={skin.nh} display={String(Math.round(skin.nh))} min={0} max={360} step={1} onChange={(v) => patch({ nh: v })} disabled={!canEdit}
-                swatches={[250, 285, 140, 70, 30, 0].map((hu) => ({ color: `oklch(.80 .02 ${hu})`, dark: true, on: Math.abs(skin.nh - hu) < 6, title: `Neutral hue ${hu}`, pick: () => patch({ nh: hu }) }))} />
-              <Slider label="Neutral chroma" value={skin.nc} display={skin.nc.toFixed(3)} min={0} max={0.02} step={0.001} onChange={(v) => patch({ nc: v })} disabled={!canEdit}
-                swatches={[0, 0.006, 0.012, 0.018].map((c) => ({ color: `oklch(.86 ${c} ${skin.nh})`, dark: true, on: Math.abs(skin.nc - c) < 0.002, title: `Neutral chroma ${c}`, pick: () => patch({ nc: c }) }))} />
-              <Slider label="Semantic chroma" value={skin.sc} display={skin.sc.toFixed(3)} min={0.06} max={0.24} step={0.005} onChange={(v) => patch({ sc: v })} disabled={!canEdit}
-                hint="Controls the intensity of success, warning, and error colours. Their hues stay fixed."
+              <Slider label={t("settings.appearance.color.accentHue")} value={skin.ah} display={String(Math.round(skin.ah))} min={0} max={360} step={1} onChange={(v) => patch({ ah: v })} disabled={!canEdit}
+                swatches={[250, 300, 350, 25, 78, 147].map((hu) => ({ color: `oklch(.58 .17 ${hu})`, on: Math.abs(skin.ah - hu) < 6, title: t("settings.appearance.color.hue", { n: hu }), pick: () => patch({ ah: hu }) }))} />
+              <Slider label={t("settings.appearance.color.accentChroma")} value={skin.ac} display={skin.ac.toFixed(3)} min={0} max={0.28} step={0.005} onChange={(v) => patch({ ac: v })} disabled={!canEdit}
+                swatches={[0.04, 0.1, 0.16, 0.22].map((c) => ({ color: `oklch(.58 ${c} ${skin.ah})`, on: Math.abs(skin.ac - c) < 0.02, title: t("settings.appearance.color.chroma", { n: c }), pick: () => patch({ ac: c }) }))} />
+              <Slider label={t("settings.appearance.color.neutralHue")} value={skin.nh} display={String(Math.round(skin.nh))} min={0} max={360} step={1} onChange={(v) => patch({ nh: v })} disabled={!canEdit}
+                swatches={[250, 285, 140, 70, 30, 0].map((hu) => ({ color: `oklch(.80 .02 ${hu})`, dark: true, on: Math.abs(skin.nh - hu) < 6, title: t("settings.appearance.color.neutralHueSwatch", { n: hu }), pick: () => patch({ nh: hu }) }))} />
+              <Slider label={t("settings.appearance.color.neutralChroma")} value={skin.nc} display={skin.nc.toFixed(3)} min={0} max={0.02} step={0.001} onChange={(v) => patch({ nc: v })} disabled={!canEdit}
+                swatches={[0, 0.006, 0.012, 0.018].map((c) => ({ color: `oklch(.86 ${c} ${skin.nh})`, dark: true, on: Math.abs(skin.nc - c) < 0.002, title: t("settings.appearance.color.neutralChromaSwatch", { n: c }), pick: () => patch({ nc: c }) }))} />
+              <Slider label={t("settings.appearance.color.semanticChroma")} value={skin.sc} display={skin.sc.toFixed(3)} min={0.06} max={0.24} step={0.005} onChange={(v) => patch({ sc: v })} disabled={!canEdit}
+                hint={t("settings.appearance.color.semanticHint")}
                 preview={
                   <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }} aria-hidden>
-                    {([["Success", "--ok-fill"], ["Warning", "--warn-fill"], ["Error", "--bad-fill"]] as const).map(([name, token]) => (
+                    {([[t("settings.appearance.color.success"), "--ok-fill"], [t("settings.appearance.color.warning"), "--warn-fill"], [t("settings.appearance.color.error"), "--bad-fill"]] as const).map(([name, token]) => (
                       <span key={name} style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
                         <span style={{ width: 22, height: 22, borderRadius: 7, display: "block", border: "1px solid var(--line)", background: draftTokens[token] }} />
                         <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--txt-3)" }}>{name}</span>
@@ -290,26 +291,39 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
                   </div>
                 } />
             </div>
+            {contrastIssues.length > 0 && (
+              <div role="status" style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 18, padding: "11px 13px", borderRadius: "var(--r3)", background: "var(--warn-tint)", color: "var(--txt)", fontSize: 12.5, lineHeight: 1.5 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none", marginTop: 2 }}><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: "var(--w-semi)" as never }}>{t("settings.appearance.contrast.title")}</div>
+                  {contrastIssues.map((i) => (
+                    <div key={i.mode + i.pair} style={{ color: "var(--txt-2)" }}>
+                      {t("settings.appearance.contrast.line", { pair: t(`settings.appearance.contrast.pair.${i.pair}`), mode: t(`settings.appearance.contrast.mode.${i.mode}`), ratio: i.ratio.toFixed(1), minimum: i.minimum })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Type */}
           <div style={card}>
-            <div style={cardTitle}>Type</div>
-            <div style={cardSub}>Sizes and tracking are fixed by the system. A brand supplies the faces and the two emphasis weights.</div>
+            <div style={cardTitle}>{t("settings.appearance.type.title")}</div>
+            <div style={cardSub}>{t("settings.appearance.type.body")}</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-              <Picker label="Display and body" value={skin.font} options={FONT_OPTIONS} face disabled={!canEdit} onPick={(v) => patch({ font: v as string })} />
-              <Picker label="Mono" value={skin.mono} options={MONO_OPTIONS} face mono disabled={!canEdit} onPick={(v) => patch({ mono: v as string })} />
-              <Picker label="Bold weight" value={skin.wb} options={WEIGHT_BOLD_OPTIONS} disabled={!canEdit} onPick={(v) => patch({ wb: v as number })} />
-              <Picker label="Semibold weight" value={skin.ws} options={WEIGHT_SEMI_OPTIONS} disabled={!canEdit} onPick={(v) => patch({ ws: v as number })} />
+              <Picker label={t("settings.appearance.type.display")} value={skin.font} options={FONT_OPTIONS} face disabled={!canEdit} onPick={(v) => patch({ font: v as string })} />
+              <Picker label={t("settings.appearance.type.mono")} value={skin.mono} options={MONO_OPTIONS} face mono disabled={!canEdit} onPick={(v) => patch({ mono: v as string })} />
+              <Picker label={t("settings.appearance.type.bold")} value={skin.wb} options={WEIGHT_BOLD_OPTIONS} disabled={!canEdit} onPick={(v) => patch({ wb: v as number })} />
+              <Picker label={t("settings.appearance.type.semibold")} value={skin.ws} options={WEIGHT_SEMI_OPTIONS} disabled={!canEdit} onPick={(v) => patch({ ws: v as number })} />
             </div>
           </div>
           {/* Shape — interface geometry, ported from the reference; NOT brand */}
           <div style={card}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-              <div style={cardTitle}>Shape</div>
-              <span style={{ ...eyebrow, color: "var(--txt-4)" }}>Interface setting</span>
+              <div style={cardTitle}>{t("settings.appearance.shape.title")}</div>
+              <span style={{ ...eyebrow, color: "var(--txt-4)" }}>{t("settings.appearance.shape.tag")}</span>
             </div>
-            <div style={cardSub}>Three radii: outer panels, inner panels, controls. Changing these changes the product, not the brand — move them deliberately.</div>
+            <div style={cardSub}>{t("settings.appearance.shape.body")}</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16 }}>
               {([["--r", "r", geometry.r], ["--r2", "r2", geometry.r2], ["--r3", "r3", geometry.r3]] as const).map(([token, key, value]) => (
                 <div key={token} style={{ minWidth: 0 }}>
@@ -330,12 +344,12 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
           {/* Live preview — both grounds, each scoped to its own resolved
               palette from the canonical engine, with that ground's logo. */}
-          <PreviewPanel label="Light" tokens={lightPreview} logoUrl={initial.logoLightUrl} />
-          <PreviewPanel label="Dark" tokens={darkPreview} logoUrl={initial.logoDarkUrl} />
+          <PreviewPanel scheme="light" label={t("settings.appearance.preview.light")} tokens={lightPreview} logoUrl={initial.logoLightUrl} />
+          <PreviewPanel scheme="dark" label={t("settings.appearance.preview.dark")} tokens={darkPreview} logoUrl={initial.logoDarkUrl} />
 
           {/* Presets */}
           <div style={card}>
-            <div style={{ ...eyebrow, marginBottom: 14 }}>Presets</div>
+            <div style={{ ...eyebrow, marginBottom: 14 }}>{t("settings.appearance.presets")}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {PRESET_PATCHES.map((p) => {
                 const on = Math.abs(skin.ah - p.patch.ah) < 4 && Math.abs(skin.ac - p.patch.ac) < 0.03 && p.patch.font === skin.font
@@ -344,22 +358,27 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
                     style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--r3)", cursor: canEdit ? "pointer" : "default", boxSizing: "border-box", background: "var(--card)", border: `1.5px solid ${on ? "var(--accent)" : "var(--line)"}` }}>
                     <span style={{ width: 22, height: 22, borderRadius: 7, flex: "none", display: "block", background: p.dot }} />
                     <span style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em" }}>{p.label}</span>
-                    <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)" }}>{p.hint}</span>
+                    <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)" }}>{t(`settings.appearance.preset.${p.id}.hint`)}</span>
                   </div>
                 )
               })}
+              <CustomSeedsRow
+                skin={skin}
+                on={!PRESET_PATCHES.some((p) => Math.abs(skin.ah - p.patch.ah) < 4 && Math.abs(skin.ac - p.patch.ac) < 0.03 && p.patch.font === skin.font)}
+                canEdit={canEdit}
+                onApply={(seeds) => setSkin((s) => clampSkinInput(seedsToSkinInput(seeds, s)))} />
             </div>
           </div>
 
           {/* Derivation rules */}
           <div style={card}>
-            <div style={{ ...eyebrow, marginBottom: 6 }}>How the rest is derived</div>
+            <div style={{ ...eyebrow, marginBottom: 6 }}>{t("settings.appearance.derived")}</div>
             <p style={{ fontSize: 12.5, color: "var(--txt-2)", lineHeight: 1.55, margin: "0 0 14px" }}>
-              Colour is built in oklch, where the first number is perceived lightness. That is what lets one rule hold for every hue instead of being eyeballed per brand.
+              {t("settings.appearance.derivedBody")}
             </p>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {RULES.map(([token, rule], i) => (
-                <div key={token} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "9px 0", borderBottom: i < RULES.length - 1 ? "1px solid var(--line)" : undefined }}>
+              {rules(t).map(([token, rule], i) => (
+                <div key={token} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "9px 0", borderBottom: i < 5 ? "1px solid var(--line)" : undefined }}>
                   <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent-text)", width: 84, flex: "none" }}>{token}</span>
                   <span style={{ fontSize: 12.5, color: "var(--txt-2)", flex: 1, minWidth: 0, lineHeight: 1.45 }}>{rule}</span>
                 </div>
@@ -369,7 +388,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
 
           {/* Resolved tokens (from the draft, via the canonical engine) */}
           <div style={card}>
-            <div style={{ ...eyebrow, marginBottom: 12 }}>Resolved tokens</div>
+            <div style={{ ...eyebrow, marginBottom: 12 }}>{t("settings.appearance.tokens")}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {["--accent", "--accent-text", "--bg", "--card", "--line-2", "--ok", "--warn", "--bad"].map((n) => (
                 <div key={n} style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -380,7 +399,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
               ))}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, borderTop: "1px solid var(--line)", paddingTop: 14 }}>
-              <span className="sh-pick" title="Restores the last successfully saved values (not the starter defaults)"
+              <span className="sh-pick" title={t("settings.appearance.restoreTitle")}
                 onClick={() => {
                   if (!canEdit) return
                   const saved = JSON.parse(savedRef.current) as typeof draftRef.current
@@ -390,7 +409,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
                   setGeometry(saved.geometry)
                 }}
                 style={{ fontSize: 13.5, fontWeight: "var(--w-semi)" as never, color: "var(--txt-2)", border: "1px solid var(--line-2)", borderRadius: 999, padding: "9px 16px", cursor: canEdit ? "pointer" : "default" }}>
-                Reset to last saved
+                {t("settings.appearance.restore")}
               </span>
             </div>
           </div>
@@ -403,16 +422,17 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
 
 /** One live-preview ground: the draft palette resolved for that theme,
     scoped to this panel, with the ground's own logo where it will appear. */
-function PreviewPanel({ label, tokens, logoUrl }: { label: string; tokens: CSSProperties; logoUrl: string | null }) {
+function PreviewPanel({ scheme, label, tokens, logoUrl }: { scheme: "light" | "dark"; label: string; tokens: CSSProperties; logoUrl: string | null }) {
+  const t = useT(settingsCopy)
   return (
     // Ground is the theme's neutral shell — the preview shows the app on
     // its own dark/light ground, never the accent-tinted lead color.
-    <div style={{ ...tokens, colorScheme: label === "Dark" ? "dark" : "light", background: "var(--shell)", border: "1px solid var(--line-2)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
+    <div style={{ ...tokens, colorScheme: scheme, background: "var(--shell)", border: "1px solid var(--line-2)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>Live preview · {label}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>{t("settings.appearance.preview.live")} · {label}</span>
         {logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logoUrl} alt={`${label} ground logo`} style={{ height: 20, maxWidth: 120, objectFit: "contain", flex: "none", display: "block" }} />
+          <img src={logoUrl} alt={t("settings.appearance.preview.logoAlt", { ground: label })} style={{ height: 20, maxWidth: 120, objectFit: "contain", flex: "none", display: "block" }} />
         )}
       </div>
       <div style={{ fontSize: 30, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1 }}>$248,310</div>
@@ -426,15 +446,67 @@ function PreviewPanel({ label, tokens, logoUrl }: { label: string; tokens: CSSPr
         ))}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 20, flexWrap: "wrap" }}>
-        <span style={{ background: "var(--accent)", color: "var(--accent-ink)", borderRadius: 999, padding: "10px 18px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>Primary</span>
-        <span style={{ border: "1px solid var(--line-2)", color: "var(--txt-2)", borderRadius: 999, padding: "9px 17px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>Secondary</span>
+        <span style={{ background: "var(--accent)", color: "var(--accent-ink)", borderRadius: 999, padding: "10px 18px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>{t("settings.appearance.preview.primary")}</span>
+        <span style={{ border: "1px solid var(--line-2)", color: "var(--txt-2)", borderRadius: 999, padding: "9px 17px", fontSize: 13.5, fontWeight: "var(--w-semi)" as never }}>{t("settings.appearance.preview.secondary")}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
-        {([["Settled", "ok"], ["Waiting", "warn"], ["Failed", "bad"]] as const).map(([chip, tone]) => (
+        {([[t("settings.appearance.preview.settled"), "ok"], [t("settings.appearance.preview.waiting"), "warn"], [t("settings.appearance.preview.failed"), "bad"]] as const).map(([chip, tone]) => (
           <span key={chip} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)", fontSize: 11, color: `var(--${tone})`, background: `var(--${tone}-tint)`, borderRadius: 999, padding: "4px 10px" }}>
             <span style={{ width: 5, height: 5, borderRadius: 999, background: `var(--${tone}-fill)`, display: "block" }} />
             {chip}
           </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Custom skin: the two seeds the engine needs, as hex. Reads hue, chroma,
+    and fill lightness from the accent and hue/tint from the neutral; every
+    other value stays derived. Applies live on every valid edit and persists
+    through the same autosave as the sliders — nothing new is stored. */
+function CustomSeedsRow({ skin, on, canEdit, onApply }: {
+  skin: SkinInput; on: boolean; canEdit: boolean; onApply: (seeds: SkinSeeds) => void
+}) {
+  const t = useT(settingsCopy)
+  const [seeds, setSeeds] = useState<SkinSeeds>(() => skinToSeeds(skin))
+  const editing = useRef(false)
+  // Presets and sliders move the skin underneath: resync the fields unless
+  // the admin is mid-edit here (the resolved hex would fight their typing).
+  useEffect(() => {
+    if (!editing.current) setSeeds(skinToSeeds(skin))
+  }, [skin])
+
+  const invalid = { accent: !normalizeHex(seeds.accent), neutral: !normalizeHex(seeds.neutral) }
+  const change = (key: keyof SkinSeeds, value: string) => {
+    const next = { ...seeds, [key]: value }
+    setSeeds(next)
+    if (normalizeHex(next.accent) && normalizeHex(next.neutral)) onApply(next)
+  }
+
+  return (
+    <div style={{ padding: "12px 14px", borderRadius: "var(--r3)", boxSizing: "border-box", background: "var(--card)", border: `1.5px solid ${on ? "var(--accent)" : "var(--line)"}` }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <span aria-hidden style={{ width: 22, height: 22, borderRadius: 7, flex: "none", display: "block", background: `linear-gradient(135deg, ${normalizeHex(seeds.accent) ?? "var(--accent)"} 50%, ${normalizeHex(seeds.neutral) ?? "var(--txt-3)"} 50%)` }} />
+        <span style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em" }}>{t("settings.appearance.custom.title")}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)" }}>{t("settings.appearance.custom.hint")}</span>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginTop: 12 }}>
+        {(["accent", "neutral"] as const).map((key) => (
+          <label key={key} style={{ minWidth: 0 }}>
+            <span style={{ ...eyebrow, display: "block", marginBottom: 6 }}>{t(`settings.appearance.custom.${key}`)}</span>
+            <span className="ui-field" style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--shell)", border: `1.5px solid ${invalid[key] ? "var(--bad)" : "var(--line-2)"}`, borderRadius: "var(--r3)", padding: "8px 10px", boxSizing: "border-box" }}>
+              <input type="color" aria-label={t("settings.appearance.custom.picker", { seed: t(`settings.appearance.custom.${key}`) })} value={normalizeHex(seeds[key]) ?? "#000000"} disabled={!canEdit}
+                onChange={(e) => change(key, e.target.value)}
+                style={{ width: 22, height: 22, padding: 0, border: "1px solid var(--line)", borderRadius: 6, background: "none", cursor: canEdit ? "pointer" : "default", flex: "none" }} />
+              <input value={seeds[key]} disabled={!canEdit} spellCheck={false} maxLength={7} aria-invalid={invalid[key] || undefined}
+                onFocus={() => { editing.current = true }}
+                onBlur={() => { editing.current = false; if (!invalid[key]) setSeeds((s) => ({ ...s, [key]: normalizeHex(s[key]) ?? s[key] })) }}
+                onChange={(e) => change(key, e.target.value)}
+                style={{ fontFamily: "var(--mono)", fontSize: 13, width: "100%", minWidth: 0 }} />
+            </span>
+            {invalid[key] && <span style={{ display: "block", fontSize: 12, color: "var(--bad)", marginTop: 5 }}>{t("settings.appearance.custom.invalidHex")}</span>}
+          </label>
         ))}
       </div>
     </div>
@@ -511,6 +583,7 @@ function AssetRow({ label, hint, url, kind, tall, dark, canEdit, onUpload, onRem
   onUpload: (kind: BrandingAssetKind, file: File | null) => void
   onRemove: (kind: BrandingAssetKind) => void
 }) {
+  const t = useT(settingsCopy)
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", padding: "14px 0", borderBottom: "1px solid var(--line)" }}>
       <span style={{ minWidth: tall ? 152 : 46, height: tall ? 56 : 46, borderRadius: tall ? "var(--r3)" : 10, background: dark ? "oklch(0.2 0 0)" : "var(--card)", border: `1px ${url ? "solid var(--line)" : "dashed var(--line-2)"}`, display: "grid", placeItems: "center", padding: tall ? "0 14px" : 0, boxSizing: "border-box" }}>
@@ -528,12 +601,12 @@ function AssetRow({ label, hint, url, kind, tall, dark, canEdit, onUpload, onRem
       {canEdit && (
         <label style={{ display: "inline-flex", alignItems: "center", gap: 9, fontSize: 13.5, fontWeight: "var(--w-semi)" as never, color: "var(--accent-text)", background: "var(--accent-tint)", borderRadius: 999, padding: "10px 16px", cursor: "pointer", flex: "none" }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
-          Upload
+          {t("settings.appearance.logo.upload")}
           <input type="file" accept="image/*" onChange={(e) => onUpload(kind, e.target.files?.[0] ?? null)} style={{ display: "none" }} />
         </label>
       )}
       {canEdit && url && (
-        <span onClick={() => onRemove(kind)} style={{ fontSize: 13, fontWeight: "var(--w-semi)" as never, color: "var(--bad)", cursor: "pointer", flex: "none" }}>Remove</span>
+        <span onClick={() => onRemove(kind)} style={{ fontSize: 13, fontWeight: "var(--w-semi)" as never, color: "var(--bad)", cursor: "pointer", flex: "none" }}>{t("settings.appearance.logo.remove")}</span>
       )}
     </div>
   )

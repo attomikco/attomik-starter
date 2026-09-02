@@ -3,13 +3,13 @@ import assert from "node:assert/strict"
 import { validateEmail, emailInitials } from "./email-validation.ts"
 import { sanitizeNextPath } from "./redirects.ts"
 
-test("email validation names the specific problem (reference copy)", () => {
+test("email validation returns a specific code per problem", () => {
   assert.equal(validateEmail("").ok, false)
-  assert.match((validateEmail("") as { message: string }).message, /address you use at work/)
-  assert.match((validateEmail("name.company.com") as { message: string }).message, /Missing the @/)
-  assert.match((validateEmail("na me@company.com") as { message: string }).message, /cannot contain spaces/)
-  assert.match((validateEmail("name@company") as { message: string }).message, /needs a dot/)
-  assert.match((validateEmail("name@company.c") as { message: string }).message, /complete email address/)
+  assert.equal((validateEmail("") as { code: string }).code, "empty")
+  assert.equal((validateEmail("name.company.com") as { code: string }).code, "missing_at")
+  assert.equal((validateEmail("na me@company.com") as { code: string }).code, "spaces")
+  assert.equal((validateEmail("name@company") as { code: string }).code, "dotless_domain")
+  assert.equal((validateEmail("name@company.c") as { code: string }).code, "incomplete")
 })
 
 test("valid emails pass and are trimmed", () => {

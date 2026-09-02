@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import { filterPaletteGroups, type PaletteGroup } from "./helpers"
 
 /**
@@ -18,6 +18,7 @@ export function CommandPalette({
   mobile: boolean
   onClose: () => void
 }) {
+  const copy = useCopy()
   const [query, setQuery] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => inputRef.current?.focus(), [])

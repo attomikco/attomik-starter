@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, type ReactNode } from "react"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import type { ColumnDef, DataState, SortState } from "@/core/data/types"
 import { TableEmpty, TableError, TableLoading } from "./data-states"
 import { Pagination, type PaginationProps } from "./pagination"
@@ -46,6 +46,7 @@ export interface DataTableProps<T> {
 }
 
 export function DataTable<T>(props: DataTableProps<T>) {
+  const copy = useCopy()
   const {
     columns, rows, rowKey, sort, onSort, hiddenColumns = [],
     selected = {}, onToggleRow, onToggleAll, onRowClick,

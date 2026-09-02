@@ -1,11 +1,22 @@
 import type { ShellCopy } from "./copy"
 
-/** Español (México) — the first non-English locale, shipped for Matpro. */
+/** Spanish (Mexico) — sentence case throughout, as the reference copy is. */
 export const esMX: ShellCopy = {
   lang: "es-MX",
 
   nav: {
     groups: { operate: "Operar", configure: "Configurar", settings: "Ajustes" },
+    modules: {
+      overview: { label: "Inicio", description: "Panel de inicio: tarjetas de estado, decisiones y siguientes acciones." },
+      analytics: { label: "Analítica", description: "Indicadores, tendencias, matriz de servicio, cohortes." },
+      customers: { label: "Clientes", description: "Tabla y expedientes de clientes." },
+      media: { label: "Medios", description: "Biblioteca de archivos con seguimiento de uso y detección de huérfanos." },
+      settings: {
+        label: "Configuración",
+        description: "Configuración del espacio: apariencia y marca, equipo, actividad, idioma.",
+        children: { appearance: "Apariencia y marca", team: "Equipo y permisos", activity: "Actividad", language: "Idioma" },
+      },
+    },
     expandSidebar: "Expandir la barra lateral",
     collapseSidebar: "Contraer la barra lateral",
     openNavigation: "Abrir la navegación",
@@ -99,6 +110,8 @@ export const esMX: ShellCopy = {
       return `${count} ${count === 1 ? noun : plural} ${count === 1 ? "seleccionado" : "seleccionados"}`
     },
     recordNoun: "registro",
+    pageEmpty: "Mostrando 0 registros",
+    pageRange: (start, end, total) => `Mostrando ${start}–${end} de ${total}`,
   },
 
   forms: {
@@ -145,5 +158,109 @@ export const esMX: ShellCopy = {
     // The action is an English code identifier; splitting it into words
     // would produce fake Spanish prose, so it is shown as the identifier.
     fallback: (actor, action, label) => `${actor} · ${action}${label ? ` · ${label}` : ""}`,
+  },
+
+  roles: {
+    labels: { owner: "propietario", admin: "administrador", member: "miembro", viewer: "lector" },
+    meanings: {
+      owner: "Control total del espacio, incluidos los administradores",
+      admin: "Invita y administra miembros y lectores",
+      member: "Acceso normal al producto",
+      viewer: "Acceso de solo lectura",
+    },
+  },
+
+  overview: {
+    eyebrow: "Espacio de trabajo",
+    intro: "Este espacio de trabajo está listo. Los módulos del producto aparecen aquí conforme se activan en la configuración del proyecto.",
+    links: {
+      appearance: { title: "Apariencia y marca", body: "Define el acento, las tipografías, el logo y la apariencia predeterminada." },
+      team: { title: "Equipo y permisos", body: "Invita personas y administra sus roles." },
+      activity: { title: "Actividad", body: "Ve quién cambió qué, y cuándo." },
+    },
+  },
+
+  auth: {
+    facts: { singleUse: "Enlace de un solo uso", expires: "Caduca en 15 min", session: "Sesión de 30 días", logged: "Cada acceso queda registrado" },
+    logoPlaceholder: "Logo",
+    emailErrors: {
+      empty: "Escribe el correo que usas en el trabajo.",
+      missing_at: "Falta la @: un correo se ve como nombre@empresa.com.",
+      spaces: "El correo no puede tener espacios.",
+      dotless_domain: "El dominio necesita un punto, como empresa.com.",
+      incomplete: "Eso no parece un correo completo.",
+    },
+    rateLimited: "Demasiados intentos de acceso. Espera unos minutos e inténtalo de nuevo.",
+    genericError: "Algo salió mal; inténtalo de nuevo.",
+    login: {
+      step1: "Paso 1 de 2",
+      step2: "Paso 2 de 2",
+      title: "Iniciar sesión",
+      intro: "Sin contraseña. Escribe tu correo de trabajo y te enviamos un enlace que inicia tu sesión por treinta días en este dispositivo.",
+      emailLabel: "Correo de trabajo",
+      emailPlaceholder: "tu@empresa.com",
+      submit: "Enviarme un enlace",
+      submitting: "Enviando…",
+      or: "o",
+      sso: "Continuar con SSO",
+      ssoUnavailable: "SSO aún no está configurado",
+      terms: () => ["Al continuar aceptas los ", " y el ", "."],
+      termsWord: "términos",
+      privacyWord: "aviso de privacidad",
+      sentTitle: "Revisa tu correo",
+      sentIntro: () => ["Enviamos un enlace a ", ". Funciona una sola vez y caduca en quince minutos."],
+      nothingArrived: "¿No llegó nada?",
+      resend: "Reenviar enlace",
+      resendIn: (seconds) => `Reenviar en ${seconds} s`,
+      tipSpam: "Revisa el spam; el remitente es",
+      tipSender: "auth@email.attomik.co",
+      tipFilters: "Los filtros corporativos pueden retenerlo uno o dos minutos",
+      tipDevice: "Abre el enlace en este dispositivo o la sesión no se mantendrá",
+      useAnother: "Usar otro correo",
+    },
+    verify: {
+      step: "Verificando",
+      title: "Iniciando tu sesión",
+      intro: "Verificamos el enlace y restauramos tu espacio de trabajo. Toma uno o dos segundos.",
+      lines: ["Firma del enlace verificada", "Sesión emitida para este dispositivo", "Espacio de trabajo restaurado"],
+    },
+    expired: {
+      step: "Enlace caducado",
+      title: "Este enlace caducó",
+      intro: "Los enlaces duran quince minutos y funcionan una sola vez. Tu cuenta está bien; pide uno nuevo.",
+      bannerTitle: "Solo funciona el enlace más reciente",
+      bannerBody: "Si pediste más de un enlace, los correos anteriores dejaron de funcionar. Usa el más reciente o empieza de nuevo abajo.",
+      newLink: "Enviar un enlace nuevo",
+      changeAddress: "Cambiar correo",
+    },
+    invite: {
+      step: "Invitación al espacio de trabajo",
+      join: (workspace) => `Únete a ${workspace}`,
+      invitedAs: (role) => [`Te invitaron como ${role}, con sesión como `, "."],
+      accept: "Aceptar invitación",
+      onceNote: "El enlace funciona una sola vez. Al aceptar, esta cuenta se agrega al espacio de trabajo.",
+      openApp: "Abrir la aplicación",
+      errors: {
+        invalid: { title: "Este enlace de invitación no es válido", body: "El enlace puede estar incompleto o fue reemplazado por un correo más reciente. Usa la invitación más reciente o pide que te inviten de nuevo." },
+        expired: { title: "Esta invitación caducó", body: "Las invitaciones duran siete días. Tu cuenta está bien; pide al espacio de trabajo que envíe una nueva." },
+        revoked: { title: "Esta invitación fue revocada", body: "El espacio de trabajo retiró esta invitación. Si parece un error, pide que te inviten de nuevo." },
+        accepted: { title: "Ya fue aceptada", body: "Esta invitación ya se usó. Si fuiste tú, solo abre la aplicación." },
+        wrong_email: { title: "Esta invitación es para otro correo", body: "Tu sesión es de un correo distinto al invitado. Cierra sesión y abre el enlace con el correo invitado." },
+        error: { title: "Algo salió mal", body: "No se pudo procesar la invitación. Intenta el enlace de nuevo en un momento." },
+      },
+    },
+  },
+
+  email: {
+    invitation: {
+      subject: (inviter, workspace) => `${inviter} te invitó a ${workspace}`,
+      title: (workspace) => `Te invitaron a ${workspace}`,
+      body: (inviter, role) => `${inviter} te invitó a unirte como ${role}. Al aceptar inicias sesión con un enlace mágico, sin contraseña.`,
+      accept: "Aceptar invitación",
+      fallback: "Si el botón no funciona, abre este enlace:",
+      footer: (days, inviter, workspace) => `El enlace caduca en ${days} días y funciona una sola vez. Recibiste este correo porque ${inviter} invitó esta dirección a ${workspace}.`,
+      textIntro: (inviter, workspace, role) => `${inviter} te invitó a unirte a ${workspace} como ${role}.`,
+      textAccept: (url) => `Acepta la invitación: ${url}`,
+    },
   },
 }

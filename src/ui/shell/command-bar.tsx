@@ -1,7 +1,7 @@
 "use client"
 
 import { emailInitials } from "@/core/auth/email-validation"
-import { copy } from "@/core/i18n"
+import { useCopy } from "@/core/i18n/client"
 import type { ShellAccount } from "./app-shell"
 import { AccountPanel } from "./overlays"
 
@@ -25,6 +25,7 @@ export function CommandBar({
   openPalette: () => void
   openKeys: () => void
 }) {
+  const copy = useCopy()
   const initials = emailInitials(account.email)
   const localPart = account.email.split("@")[0] || account.email
   const toggle = (p: Exclude<ShellPanel, null>) => setPanel(panel === p ? null : p)
