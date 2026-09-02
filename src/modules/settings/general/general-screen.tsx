@@ -23,11 +23,6 @@ const sectionSub: CSSProperties = { fontSize: 13.5, color: "var(--txt-2)", margi
 const eyebrow: CSSProperties = { fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)" }
 const fieldLabel: CSSProperties = { ...eyebrow, display: "block", marginBottom: 8 }
 const grid: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: 16 }
-const selectStyle: CSSProperties = {
-  width: "100%", background: "var(--card)", border: "1.5px solid var(--line-2)", borderRadius: "var(--r3)",
-  padding: "11.5px 13.5px", fontSize: 14, color: "var(--txt)", appearance: "none", WebkitAppearance: "none", cursor: "pointer",
-  font: "inherit", boxSizing: "border-box",
-}
 
 export type MemberDefaultRole = "admin" | "member" | "viewer"
 
@@ -111,14 +106,7 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
     const now = new Date()
     return `${f.dateTime(now)} · ${f.number(1234.5, { maximumFractionDigits: 1 })}`
   }, [defaultLocale, timeZone])
-  const zones = useMemo(() => {
-    const groups = new Map<string, string[]>()
-    for (const z of listTimeZones()) {
-      const region = z.includes("/") ? z.slice(0, z.indexOf("/")) : "Etc"
-      groups.set(region, [...(groups.get(region) ?? []), z])
-    }
-    return [...groups.entries()]
-  }, [])
+  const zones = useMemo(() => listTimeZones(timeZone), [timeZone])
 
   const [copied, setCopied] = useState(false)
   const copyId = async () => {
@@ -208,21 +196,18 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
               />
               <div style={{ fontSize: 12.5, color: "var(--txt-3)", marginTop: 8, lineHeight: 1.5 }}>{t("settings.general.regional.hint")}</div>
             </div>
-            <label style={{ minWidth: 0, display: "block" }}>
+            <div style={{ minWidth: 0 }}>
               <span style={fieldLabel}>{t("settings.general.regional.timeZone")}</span>
-              <span style={{ position: "relative", display: "block" }}>
-                <select value={timeZone} disabled={!canEdit} style={selectStyle}
-                  onChange={(e) => pick(timeZone, e.target.value, setTimeZone, { timeZone: e.target.value }, t("settings.general.toast.timeZoneSaved"))}>
-                  {zones.map(([region, list]) => (
-                    <optgroup key={region} label={region}>
-                      {list.map((z) => <option key={z} value={z}>{z.replace(/_/g, " ")}</option>)}
-                    </optgroup>
-                  ))}
-                </select>
-                <span aria-hidden style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", pointerEvents: "none" }}>▾</span>
-              </span>
+              <Listbox
+                ariaLabel={t("settings.general.regional.timeZone")}
+                value={timeZone}
+                disabled={!canEdit}
+                fullWidth
+                options={zones}
+                onChange={(v) => pick(timeZone, v, setTimeZone, { timeZone: v }, t("settings.general.toast.timeZoneSaved"))}
+              />
               <div style={{ fontSize: 12.5, color: "var(--txt-3)", marginTop: 8, lineHeight: 1.5 }}>{t("settings.general.regional.timeZoneHint")}</div>
-            </label>
+            </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--line)" }}>
             <span style={{ ...eyebrow, flex: "none" }}>{t("settings.general.regional.sample")}</span>

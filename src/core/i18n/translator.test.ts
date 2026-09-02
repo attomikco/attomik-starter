@@ -1,7 +1,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { createTranslator, defineCopy, interpolate, resetMissingKeyWarnings } from "./t.ts"
-import { createFormatters } from "./format.ts"
+import { createFormatters, isTimeZone, listTimeZones, utcOffsetLabel, TIME_ZONE_CHOICES } from "./format.ts"
 import { settingsCopy } from "../../modules/settings/copy.ts"
 
 const DICTS = {
@@ -89,4 +89,16 @@ test("formatters follow the locale for dates and numbers", () => {
   assert.equal(es.number(1204.5, { maximumFractionDigits: 1 }), "1,204.5")
   assert.equal(en.daysBetween("2026-09-01T00:00:00Z", "2026-09-08T00:00:00Z"), 7)
   assert.equal(createFormatters("en", "UTC"), en, "cached per locale + zone")
+})
+
+test("time zone choices are valid IANA ids with readable offset labels", () => {
+  for (const id of TIME_ZONE_CHOICES) assert.ok(isTimeZone(id), `${id} is not a zone Intl accepts`)
+  assert.equal(utcOffsetLabel("UTC", new Date("2026-01-15T12:00:00Z")), "UTC")
+  assert.equal(utcOffsetLabel("America/New_York", new Date("2026-01-15T12:00:00Z")), "UTC−5")
+  assert.equal(utcOffsetLabel("America/New_York", new Date("2026-07-15T12:00:00Z")), "UTC−4")
+  assert.equal(utcOffsetLabel("Europe/Madrid", new Date("2026-01-15T12:00:00Z")), "UTC+1")
+  const rows = listTimeZones("Asia/Tokyo")
+  assert.equal(rows[0].value, "Asia/Tokyo", "a zone set elsewhere still shows, first")
+  assert.match(rows.find((r) => r.value === "America/Mexico_City")!.label, /^Mexico City · UTC−6$/)
+  assert.equal(isTimeZone("Mars/Olympus"), false)
 })

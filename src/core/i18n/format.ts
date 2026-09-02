@@ -23,9 +23,41 @@ export interface Formatters {
 
 const cache = new Map<string, Formatters>()
 
-/** Every IANA zone this runtime knows, for pickers. */
-export function listTimeZones(): string[] {
-  return Intl.supportedValuesOf("timeZone")
+/**
+ * The zones a workspace would actually pick: the Americas and Europe,
+ * one representative city per offset region, plus UTC. Validation
+ * (`isTimeZone`) still accepts any IANA id, so a value set elsewhere
+ * keeps working and shows up in the picker.
+ */
+export const TIME_ZONE_CHOICES: readonly string[] = [
+  "America/New_York", "America/Chicago", "America/Denver", "America/Phoenix", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu",
+  "America/Toronto", "America/Vancouver",
+  "America/Mexico_City", "America/Monterrey", "America/Cancun", "America/Tijuana",
+  "America/Bogota", "America/Lima", "America/Santiago", "America/Argentina/Buenos_Aires", "America/Sao_Paulo",
+  "Europe/London", "Europe/Dublin", "Europe/Lisbon", "Europe/Madrid", "Europe/Paris", "Europe/Berlin", "Europe/Amsterdam",
+  "Europe/Rome", "Europe/Zurich", "Europe/Stockholm", "Europe/Warsaw", "Europe/Athens",
+  "UTC",
+]
+
+/** Picker rows: the curated list (plus `current` if it is not in it), labelled "City · UTC−5". */
+export function listTimeZones(current?: string): { value: string; label: string }[] {
+  const ids = current && !TIME_ZONE_CHOICES.includes(current) ? [current, ...TIME_ZONE_CHOICES] : [...TIME_ZONE_CHOICES]
+  return ids.map((id) => ({ value: id, label: `${timeZoneCity(id)} · ${utcOffsetLabel(id)}` }))
+}
+
+function timeZoneCity(id: string): string {
+  if (id === "UTC") return "UTC"
+  return id.slice(id.lastIndexOf("/") + 1).replace(/_/g, " ")
+}
+
+/** "UTC−5" / "UTC+1" / "UTC+5:30" for the zone right now (DST-aware). */
+export function utcOffsetLabel(id: string, at: Date = new Date()): string {
+  const part = new Intl.DateTimeFormat("en", { timeZone: id, timeZoneName: "longOffset" }).formatToParts(at).find((p) => p.type === "timeZoneName")?.value ?? "GMT"
+  const raw = part.replace("GMT", "")
+  const [h, m] = raw.slice(1).split(":")
+  if (!raw || (Number(h) === 0 && (!m || m === "00"))) return "UTC"
+  const sign = raw[0] === "-" ? "−" : "+"
+  return `UTC${sign}${Number(h)}${m && m !== "00" ? `:${m}` : ""}`
 }
 
 /** True when Intl accepts the zone (canonical IANA id). */

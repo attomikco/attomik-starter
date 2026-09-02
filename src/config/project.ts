@@ -21,7 +21,7 @@ export const projectConfig = {
    * its own on Settings → General. Dates, "today", and period boundaries
    * follow the workspace zone, never the server's.
    */
-  timeZone: "UTC",
+  timeZone: "America/New_York",
 
   /**
    * Bootstrap skin: first paint, auth screens, and the branding every new
