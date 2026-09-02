@@ -31,7 +31,7 @@ export function CommandBar({
   const toggle = (p: Exclude<ShellPanel, null>) => setPanel(panel === p ? null : p)
 
   return (
-    <div style={{ background: "var(--card)", borderRadius: "var(--r)", padding: "14px 18px", display: "flex", alignItems: "center", gap: 18, flex: "none", position: "relative", zIndex: 30 }}>
+    <div style={{ background: "var(--card)", padding: "14px 18px", display: "flex", alignItems: "center", gap: 18, flex: "none", position: "relative", zIndex: 30 }}>
       <div onClick={openPalette}
         style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 11, background: "var(--shell)", borderRadius: 13, padding: "11px 14px", cursor: "pointer" }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="2" strokeLinecap="round" style={{ flex: "none" }}><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
