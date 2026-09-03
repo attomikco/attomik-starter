@@ -19,7 +19,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
   return (
     <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", padding: 40 }}>
       <div style={{ textAlign: "center", maxWidth: 440 }}>
-        <span style={{ width: 48, height: 48, borderRadius: 14, background: "var(--bad-tint)", display: "inline-grid", placeItems: "center", marginBottom: 16 }}>
+        <span style={{ width: 48, height: 48, borderRadius: "var(--r3)", background: "var(--bad-tint)", display: "inline-grid", placeItems: "center", marginBottom: 16 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8v5M12 17h.01" /><circle cx="12" cy="12" r="9" /></svg>
         </span>
         <div style={{ fontSize: 20, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em", color: "var(--bad)", marginBottom: 8 }}>{copy.errors.title}</div>

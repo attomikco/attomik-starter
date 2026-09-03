@@ -91,7 +91,7 @@ function LoginCard() {
         <AuthCardHeader stepLabel={copy.auth.login.step2} />
         <div style={{ flex: "none", padding: "26px 0 4px" }}>
           <div style={{ minWidth: 0 }}>
-            <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--accent-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
+            <span style={{ width: 52, height: 52, borderRadius: "var(--r3)", background: "var(--accent-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
             </span>
             <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>{copy.auth.login.sentTitle}</h1>
@@ -138,7 +138,7 @@ function LoginCard() {
       <AuthCardHeader stepLabel={copy.auth.login.step1} />
       <div style={{ flex: "none", padding: "26px 0 4px" }}>
         <div style={{ minWidth: 0 }}>
-          <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--accent-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
+          <span style={{ width: 52, height: 52, borderRadius: "var(--r3)", background: "var(--accent-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
           </span>
           <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>{copy.auth.login.title}</h1>

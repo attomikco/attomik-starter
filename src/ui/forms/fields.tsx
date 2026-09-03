@@ -135,7 +135,7 @@ export function SelectInput({
         options={options.map((o) => ({ value: o, label: o }))}
         onChange={onChange}
         fullWidth
-        triggerStyle={{ borderRadius: "var(--r3)", borderWidth: 1.5, borderColor: error ? "var(--bad)" : undefined, padding: "12px 14px", fontSize: 14.5 }}
+        triggerStyle={{ borderWidth: 1.5, borderColor: error ? "var(--bad)" : undefined, padding: "12px 14px", fontSize: 14.5 }}
       />
     </Field>
   )

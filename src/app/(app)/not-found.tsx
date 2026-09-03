@@ -10,7 +10,7 @@ export default async function AppNotFound() {
   return (
     <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", padding: 40 }}>
       <div style={{ textAlign: "center", maxWidth: 420 }}>
-        <span style={{ width: 48, height: 48, borderRadius: 14, background: "var(--shell)", display: "inline-grid", placeItems: "center", marginBottom: 16 }}>
+        <span style={{ width: 48, height: 48, borderRadius: "var(--r3)", background: "var(--shell)", display: "inline-grid", placeItems: "center", marginBottom: 16 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
         </span>
         <div style={{ fontSize: 20, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em", marginBottom: 8 }}>{copy.errors.notAvailableTitle}</div>

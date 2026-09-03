@@ -200,7 +200,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
       {/* Lead: what to ask a brand for (reference copy, verbatim) */}
       <div style={{ background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 24, marginBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 20 }}>
-          <span style={{ width: 34, height: 34, borderRadius: 10, background: "var(--card)", display: "grid", placeItems: "center", flex: "none" }}>
+          <span style={{ width: 34, height: 34, borderRadius: "var(--r3)", background: "var(--card)", display: "grid", placeItems: "center", flex: "none" }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8h.01M11 12h1v5" /><circle cx="12" cy="12" r="9" /></svg>
           </span>
           <div style={{ minWidth: 0 }}>
@@ -239,7 +239,7 @@ export function AppearanceEditor({ initial }: { initial: AppearanceInitial }) {
             <div style={{ display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, maxWidth: 340 }}>
               {(["light", "dark", "system"] as const).map((a) => (
                 <span key={a} onClick={() => canEdit && setAppearance(a)}
-                  style={{ flex: 1, textAlign: "center", padding: "8px 0", borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: canEdit ? "pointer" : "default", ...(appearance === a ? { background: "var(--shell)", color: "var(--txt)" } : { color: "var(--txt-4)" }) }}>
+                  style={{ flex: 1, textAlign: "center", padding: "8px 0", borderRadius: "var(--r3)", fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: canEdit ? "pointer" : "default", ...(appearance === a ? { background: "var(--shell)", color: "var(--txt)" } : { color: "var(--txt-4)" }) }}>
                   {a}
                 </span>
               ))}
@@ -553,7 +553,7 @@ function Picker({ label, value, options, face, mono, disabled, onPick }: {
         <div className="sh-scroll" style={{ position: "absolute", top: 76, left: 0, right: 0, zIndex: 40, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.16)", padding: 6, maxHeight: 268, animation: "sh-rise .12s ease-out" }}>
           {options.map((o) => (
             <div key={String(o)} className="sh-row-hover" onClick={() => { setOpen(false); onPick(o) }}
-              style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: 8, cursor: "pointer", color: o === value ? "var(--txt)" : "var(--txt-2)" }}>
+              style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: "var(--r3)", cursor: "pointer", color: o === value ? "var(--txt)" : "var(--txt-2)" }}>
               <span style={face ? { fontFamily: mono ? `'${o}', ui-monospace, monospace` : `'${o}', system-ui, sans-serif`, fontSize: 15, letterSpacing: "-0.01em" } : { fontFamily: "var(--mono)", fontSize: 13.5 }}>{String(o)}</span>
               {o === value && (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none", marginLeft: "auto" }}><path d="m5 13 5 5L20 7" /></svg>

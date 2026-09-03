@@ -83,7 +83,7 @@ export function AccountPanel({ account, openPalette, openKeys }: { account: Shel
         <div style={{ display: "flex", gap: 3, background: "var(--shell)", borderRadius: "var(--r3)", padding: 3 }}>
           {THEME_MODES.map(([choice]) => (
             <span key={choice} onClick={() => setMode(choice)}
-              style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: "pointer", ...(mode === choice ? { background: "var(--card)", color: "var(--txt)" } : { color: "var(--txt-4)" }) }}>
+              style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", borderRadius: "var(--r3)", fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: "pointer", ...(mode === choice ? { background: "var(--card)", color: "var(--txt)" } : { color: "var(--txt-4)" }) }}>
               {copy.nav.themeModes[choice].short}
             </span>
           ))}

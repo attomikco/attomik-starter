@@ -106,7 +106,7 @@ export function TeamScreen({
               cancelLabel: t("settings.team.remove.cancel"),
               onConfirm: () => run(m.userId, () => removeMember(m.userId, m.role), t("settings.team.toast.memberRemoved")),
             })}
-            style={{ width: 30, height: 30, borderRadius: 8, display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
+            style={{ width: 30, height: 30, borderRadius: "var(--r3)", display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
             ✕
           </button>
         ) : null,

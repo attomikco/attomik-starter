@@ -141,7 +141,7 @@ export function NavItem({
             return (
               <Link key={c.href} href={c.href} role="menuitem" className="sh-subnav-item" aria-current={on ? "page" : undefined}
                 onClick={() => { setFlyout(null); onNavigate?.() }}
-                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 11px", borderRadius: 8, fontSize: 13.5, cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap", color: on ? "var(--txt)" : "var(--txt-3)", fontWeight: (on ? "var(--w-semi)" : 400) as never }}>
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 11px", borderRadius: "var(--r3)", fontSize: 13.5, cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap", color: on ? "var(--txt)" : "var(--txt-3)", fontWeight: (on ? "var(--w-semi)" : 400) as never }}>
                 <span style={{ width: 4, height: 4, borderRadius: 999, display: "block", flex: "none", background: on ? "var(--accent)" : "var(--line-2)" }} />
                 {c.label}
               </Link>
@@ -156,7 +156,7 @@ export function NavItem({
             const on = isNavActive(pathname, c.href)
             return (
               <Link key={c.href} href={c.href} onClick={onNavigate} className="sh-subnav-item" aria-current={on ? "page" : undefined}
-                style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 12px", borderRadius: 8, fontSize: 13.5, cursor: "pointer", textDecoration: "none", color: on ? "var(--txt)" : "var(--txt-3)", fontWeight: (on ? "var(--w-semi)" : 400) as never }}>
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 12px", borderRadius: "var(--r3)", fontSize: 13.5, cursor: "pointer", textDecoration: "none", color: on ? "var(--txt)" : "var(--txt-3)", fontWeight: (on ? "var(--w-semi)" : 400) as never }}>
                 <span style={{ width: 4, height: 4, borderRadius: 999, display: "block", flex: "none", background: on ? "var(--accent)" : "var(--line-2)" }} />
                 {c.label}
               </Link>

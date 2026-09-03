@@ -24,7 +24,7 @@ export function Pagination({ page, pageCount, onPage }: PaginationProps) {
       aria-label={ariaLabel}
       aria-current={active ? "page" : undefined}
       onClick={() => target !== null && onPage(target)}
-      style={{ width: 32, height: 32, borderRadius: 9, display: "grid", placeItems: "center", fontFamily: "var(--mono)", fontSize: 12, boxSizing: "border-box",
+      style={{ width: 32, height: 32, borderRadius: "var(--r3)", display: "grid", placeItems: "center", fontFamily: "var(--mono)", fontSize: 12, boxSizing: "border-box",
         opacity: target === null ? 0.45 : 1,
         ...(active
           ? { background: "var(--accent)", color: "var(--accent-ink)" }

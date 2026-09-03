@@ -26,7 +26,7 @@ export default function VerifyPage() {
       <AuthCardHeader stepLabel={copy.auth.verify.step} />
       <div style={{ flex: "none", padding: "26px 0 4px" }}>
         <div style={{ minWidth: 0 }}>
-          <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
+          <span style={{ width: 52, height: 52, borderRadius: "var(--r3)", background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
             <span style={{ width: 22, height: 22, borderRadius: 999, border: "2.5px solid var(--lead-line)", borderTopColor: "var(--accent)", display: "block", animation: "sh-spin .8s linear infinite" }} />
           </span>
           <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>{copy.auth.verify.title}</h1>

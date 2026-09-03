@@ -56,7 +56,7 @@ export function ConfirmDialog({ options, onClose }: { options: ConfirmOptions | 
         onClick={(e) => e.stopPropagation()}
         style={{ width: 448, maxWidth: "calc(100% - 32px)", background: "var(--card)", borderRadius: "var(--r)", padding: 30, boxShadow: "0 30px 70px rgba(0,0,0,.3)", animation: "sh-rise .16s ease-out", outline: "none" }}
       >
-        <span style={{ width: 44, height: 44, borderRadius: 13, display: "grid", placeItems: "center", ...(bad ? { background: "var(--bad-tint)", color: "var(--bad)" } : { background: "var(--accent-tint)", color: "var(--accent-text)" }) }}>
+        <span style={{ width: 44, height: 44, borderRadius: "var(--r3)", display: "grid", placeItems: "center", ...(bad ? { background: "var(--bad-tint)", color: "var(--bad)" } : { background: "var(--accent-tint)", color: "var(--accent-text)" }) }}>
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d={bad ? "M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" : "M12 8h.01M11 12h1v5"} />
           </svg>

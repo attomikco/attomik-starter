@@ -38,7 +38,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
       <>
         <AuthCardHeader stepLabel={copy.auth.invite.step} />
         <div style={{ flex: "none", padding: "26px 0 4px" }}>
-          <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--accent-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
+          <span style={{ width: 52, height: 52, borderRadius: "var(--r3)", background: "var(--accent-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M22 21v-2a4 4 0 0 0-3-3.87" /></svg>
           </span>
           <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>
@@ -67,7 +67,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     <>
       <AuthCardHeader stepLabel={copy.auth.invite.step} />
       <div style={{ flex: "none", padding: "26px 0 4px" }}>
-        <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--warn-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
+        <span style={{ width: 52, height: 52, borderRadius: "var(--r3)", background: "var(--warn-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5l3 2" /></svg>
         </span>
         <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>{state.title}</h1>

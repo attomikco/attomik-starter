@@ -20,7 +20,7 @@ export default async function ExpiredPage() {
       <AuthCardHeader stepLabel={copy.auth.expired.step} />
       <div style={{ flex: "none", padding: "26px 0 4px" }}>
         <div style={{ minWidth: 0 }}>
-          <span style={{ width: 52, height: 52, borderRadius: 15, background: "var(--warn-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
+          <span style={{ width: 52, height: 52, borderRadius: "var(--r3)", background: "var(--warn-tint)", display: "grid", placeItems: "center", margin: "0 auto 22px" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5l3 2" /></svg>
           </span>
           <h1 style={{ fontSize: 34, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1.08, margin: "0 0 12px", textAlign: "center" }}>{copy.auth.expired.title}</h1>

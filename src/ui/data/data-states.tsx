@@ -39,7 +39,7 @@ export function TableEmpty({
 }) {
   return (
     <div style={stateWrap}>
-      <span style={{ width: 48, height: 48, borderRadius: 14, background: "var(--shell)", display: "grid", placeItems: "center", marginBottom: 8 }}>
+      <span style={{ width: 48, height: 48, borderRadius: "var(--r3)", background: "var(--shell)", display: "grid", placeItems: "center", marginBottom: 8 }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
       </span>
       <div style={{ fontSize: 20, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em" }}>{title}</div>
@@ -73,7 +73,7 @@ export function TableError({
   const retryLabel = retryLabelProp ?? copy.data.retry
   return (
     <div style={stateWrap}>
-      <span style={{ width: 48, height: 48, borderRadius: 14, background: "var(--bad-tint)", display: "grid", placeItems: "center", marginBottom: 8 }}>
+      <span style={{ width: 48, height: 48, borderRadius: "var(--r3)", background: "var(--bad-tint)", display: "grid", placeItems: "center", marginBottom: 8 }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8v5M12 17h.01" /><circle cx="12" cy="12" r="9" /></svg>
       </span>
       <div style={{ fontSize: 20, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em", color: "var(--bad)" }}>{title}</div>

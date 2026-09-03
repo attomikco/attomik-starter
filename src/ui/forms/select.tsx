@@ -117,7 +117,7 @@ export function Listbox({
     () => ({
       display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
       background: "var(--card)", border: `1px solid ${open ? "var(--accent)" : "var(--line-2)"}`,
-      borderRadius: 8, padding: "9px 12px", fontSize: 13, color: "var(--txt)",
+      borderRadius: "var(--r3)", padding: "9px 12px", fontSize: 13, color: "var(--txt)",
       minWidth, width: fullWidth ? "100%" : undefined, boxSizing: "border-box", cursor: disabled ? "default" : "pointer",
       opacity: disabled ? 0.6 : 1, textAlign: "left",
       ...triggerStyle,
@@ -165,7 +165,7 @@ export function Listbox({
                 onMouseEnter={() => setActiveIndex(i)}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => commit(i)}
-                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 11px", borderRadius: 8, fontSize: 13.5, cursor: "pointer", whiteSpace: "nowrap",
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 11px", borderRadius: "var(--r3)", fontSize: 13.5, cursor: "pointer", whiteSpace: "nowrap",
                   color: isSelected ? "var(--txt)" : "var(--txt-2)",
                   fontWeight: (isSelected ? "var(--w-semi)" : 400) as never,
                   background: isActive ? "var(--accent-tint)" : "transparent",

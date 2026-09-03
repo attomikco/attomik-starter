@@ -88,7 +88,7 @@ export function ColumnPicker<T>({
             return (
               <button key={c.key} className="ui-btn" disabled={c.pinned} onClick={() => onToggle(c.key)}
                 role="checkbox" aria-checked={shown}
-                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", borderRadius: 8, fontSize: 13.5, color: "var(--txt-2)", cursor: c.pinned ? "default" : "pointer" }}>
+                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", borderRadius: "var(--r3)", fontSize: 13.5, color: "var(--txt-2)", cursor: c.pinned ? "default" : "pointer" }}>
                 <span aria-hidden style={{ width: 16, height: 16, borderRadius: 4, flex: "none", display: "grid", placeItems: "center", fontSize: 10, boxSizing: "border-box",
                   ...(shown ? { background: "var(--accent)", color: "var(--accent-ink)", border: "1.5px solid var(--accent)" } : { border: "1.5px solid var(--line-2)", color: "transparent" }),
                   ...(c.pinned ? { opacity: 0.55 } : {}) }}>
@@ -120,7 +120,7 @@ export function SearchInput({
   placeholder: string
 }) {
   return (
-    <span className="ui-field" style={{ display: "flex", alignItems: "center", gap: 11, background: "var(--shell)", borderRadius: 13, padding: "9px 14px", minWidth: 200 }}>
+    <span className="ui-field" style={{ display: "flex", alignItems: "center", gap: 11, background: "var(--shell)", borderRadius: "var(--r3)", padding: "9px 14px", minWidth: 200 }}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" strokeWidth="2" strokeLinecap="round" style={{ flex: "none" }}><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
       <input aria-label={placeholder} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} style={{ flex: 1, minWidth: 0, fontSize: 14 }} />
     </span>

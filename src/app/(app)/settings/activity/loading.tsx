@@ -10,9 +10,9 @@ export default function ActivityLoading() {
         <span className="sh-shimmer" style={{ width: 340, height: 11, borderRadius: 4, background: "var(--shell)", display: "block" }} />
       </div>
       <div style={{ display: "flex", gap: 10, flex: "none" }}>
-        <span className="sh-shimmer" style={{ width: 220, height: 36, borderRadius: 13, background: "var(--shell)", display: "block" }} />
-        <span className="sh-shimmer" style={{ width: 150, height: 36, borderRadius: 8, background: "var(--shell)", display: "block" }} />
-        <span className="sh-shimmer" style={{ width: 150, height: 36, borderRadius: 8, background: "var(--shell)", display: "block" }} />
+        <span className="sh-shimmer" style={{ width: 220, height: 36, borderRadius: "var(--r3)", background: "var(--shell)", display: "block" }} />
+        <span className="sh-shimmer" style={{ width: 150, height: 36, borderRadius: "var(--r3)", background: "var(--shell)", display: "block" }} />
+        <span className="sh-shimmer" style={{ width: 150, height: 36, borderRadius: "var(--r3)", background: "var(--shell)", display: "block" }} />
       </div>
       <div style={{ flex: 1, minHeight: 0, border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden" }}>
         <TableLoading rowCount={8} />

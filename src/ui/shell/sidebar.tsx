@@ -53,7 +53,7 @@ export function Sidebar({
             onClick={onToggleCollapse}
             aria-label={tight ? copy.nav.expandSidebar : copy.nav.collapseSidebar}
             title={tight ? copy.nav.expandSidebar : copy.nav.collapseSidebar}
-            style={{ width: 30, height: 30, borderRadius: 9, display: "grid", placeItems: "center", flex: "none", color: "var(--txt-3)", background: tight ? "var(--card)" : "transparent" }}
+            style={{ width: 30, height: 30, borderRadius: "var(--r3)", display: "grid", placeItems: "center", flex: "none", color: "var(--txt-3)", background: tight ? "var(--card)" : "transparent" }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg>
           </button>
@@ -97,7 +97,7 @@ export function Sidebar({
               title={title}
               style={{
                 flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
-                borderRadius: 8, fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase",
+                borderRadius: "var(--r3)", fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase",
                 ...(active ? { background: "var(--shell)", color: "var(--txt)" } : { color: "var(--txt-4)" }),
               }}
             >

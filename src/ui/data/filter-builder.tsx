@@ -13,7 +13,7 @@ import type { FilterCondition, FilterFieldDef, FilterOperator } from "@/core/dat
  */
 
 const selectStyle: CSSProperties = {
-  background: "var(--card)", border: "1px solid var(--line-2)", borderRadius: 8,
+  background: "var(--card)", border: "1px solid var(--line-2)", borderRadius: "var(--r3)",
   padding: "9px 12px", fontSize: 13.5, minWidth: 132, color: "var(--txt)",
   appearance: "none", WebkitAppearance: "none", cursor: "pointer",
 }
@@ -84,7 +84,7 @@ export function FilterBuilder({
               ))}
 
               <button className="ui-btn" aria-label={copy.data.removeCondition} onClick={() => onChange(conditions.filter((_, j) => j !== i))}
-                style={{ width: 30, height: 30, borderRadius: 8, display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
+                style={{ width: 30, height: 30, borderRadius: "var(--r3)", display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
                 ✕
               </button>
             </div>
