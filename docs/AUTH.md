@@ -76,8 +76,21 @@ it lives in Supabase project config and is never committed. Rate-limit
 failures (429 / `over_email_send_rate_limit`) are surfaced to the user with
 a generic "Too many sign-in requests" message — that reveals nothing about
 account existence; every other failure still renders the identical Sent
-state. Custom React Email auth templates (from `Starter Emails.dc.html`)
-via a send-email hook are a later task.
+state.
+
+Auth email TEMPLATES are ours, not Supabase's defaults. They are generated
+from the canonical catalog (`src/core/email/templates.ts`) into
+`supabase/templates/*.html` and referenced from `config.toml`:
+
+```bash
+pnpm build:auth-emails                              # regenerate
+SMTP_PASS=<resend api key> supabase config push     # ship
+```
+
+Never hand-edit `supabase/templates/*.html` — the script overwrites it, and
+fails if `config.toml` has drifted from the rendered subject or path. Auth
+mail carries the PROJECT skin and locale (there is no workspace at sign-in
+time); Settings → Emails previews it exactly as pushed. See docs/EMAIL.md.
 
 ## Auth-surface branding
 

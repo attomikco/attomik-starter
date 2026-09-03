@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<meta name="supported-color-schemes" content="light dark" />
+<title>Expires in 15 minutes, works once</title>
+<style>
+  a { text-decoration: none; }
+  @media only screen and (max-width: 620px) {
+    .e-card { padding: 26px 22px !important; border-radius: 12px !important; }
+    .e-heading { font-size: 21px !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    body, .e-ground { background: #14171b !important; }
+    .e-card { background: #1c1f24 !important; }
+    .e-inset { background: #23272d !important; border-color: #2b3037 !important; }
+    .e-hair { border-color: #2b3037 !important; }
+    .e-ink { color: #f2f3f5 !important; }
+    .e-heading { color: #f2f3f5 !important; }
+    .e-ink2 { color: #aab1ba !important; }
+    .e-meta { color: #79818b !important; }
+    .e-link { color: #aab1ba !important; }
+    .e-btn { background: #3496ef !important; color: #07090c !important; }
+    .e-badge-ok { color: #63d69b !important; background: #16301f !important; }
+    .e-badge-warn { color: #e6b45c !important; background: #33270f !important; }
+    .e-badge-bad { color: #f08175 !important; background: #361b19 !important; }
+  }
+</style>
+</head>
+<body class="e-ground" style="margin:0;padding:0;background:#eef0f3;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#0e1013;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="e-ground" style="background:#eef0f3;padding:32px 16px;">
+<tr><td align="center">
+<table role="presentation" width="620" cellpadding="0" cellspacing="0" border="0" class="e-card" style="max-width:620px;width:100%;background:#ffffff;border-radius:16px;padding:40px;">
+<tr><td style="padding-bottom:24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+    <td align="left" style="vertical-align:middle;"><span class="e-meta" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7b8188;">Attomik Starter</span></td>
+    <td align="right" class="e-meta" style="vertical-align:middle;font-size:11.5px;color:#7b8188;padding-left:16px;">Expires in 15 minutes, works once</td>
+  </tr></table>
+</td></tr>
+<tr><td style="padding:0 0 12px;"><div class="e-heading e-ink" style="font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1.2;color:#0e1013;">Sign in to Attomik Starter</div></td></tr>
+<tr><td style="padding:0 0 22px;"><div class="e-ink2" style="font-size:15px;line-height:1.6;color:#4c5158;">Somebody asked for a sign-in link for this address. If it was you, the button below signs you in on this device.</div></td></tr>
+<tr><td style="padding:4px 0 18px;"><a href="{{ .ConfirmationURL }}" class="e-btn" style="display:inline-block;background:#006ac0;color:#fbfcfc;font-size:15px;font-weight:600;text-decoration:none;border-radius:999px;padding:13px 26px;">Sign in</a></td></tr>
+<tr><td style="padding:0 0 22px;"><div class="e-meta" style="font-size:13px;line-height:1.6;color:#7b8188;">If the button does not work, open this link:<br /><a href="{{ .ConfirmationURL }}" class="e-link" style="color:#4c5158;word-break:break-all;">{{ .ConfirmationURL }}</a></div></td></tr>
+<tr><td style="padding:0 0 22px;"><div class="e-inset" style="background:#f5f6f8;border:1px solid #e3e6ea;border-radius:12px;padding:16px 18px;">
+          <div class="e-ink" style="font-size:13.5px;font-weight:600;color:#0e1013;padding-bottom:5px;">Not you?</div>
+          <div class="e-ink2" style="font-size:13.5px;line-height:1.55;color:#4c5158;">Ignore this email and nothing happens. The link only works from this message, and it expires on its own.</div>
+        </div></td></tr>
+<tr><td style="padding:0 0 22px;"><div class="e-meta" style="font-size:13px;line-height:1.6;color:#7b8188;">This link expires in 15 minutes and can only be used once.</div></td></tr>
+<tr><td class="e-hair" style="border-top:1px solid #e3e6ea;padding-top:20px;">
+  <div class="e-meta" style="font-size:12.5px;line-height:1.6;color:#7b8188;">You received this because this address was entered on the Attomik Starter sign-in screen. No account is created by ignoring it.</div>
+  
+  
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

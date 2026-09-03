@@ -1,5 +1,6 @@
 import { resolveCopy, type Locale } from "@/core/i18n"
 import { getEnabledModules } from "@/core/modules"
+import type { Role } from "@/core/permissions"
 import { buildNavigation, type NavigationCopy, type NavigationGroup, type NavigationItem } from "./build"
 
 /**
@@ -11,6 +12,6 @@ import { buildNavigation, type NavigationCopy, type NavigationGroup, type Naviga
 export type { NavigationCopy, NavigationGroup, NavigationItem }
 export { GROUP_ORDER } from "./build"
 
-export function getEnabledNavigation(locale: Locale): NavigationGroup[] {
-  return buildNavigation(getEnabledModules(), resolveCopy(locale).nav.modules)
+export function getEnabledNavigation(locale: Locale, actorRole?: Role): NavigationGroup[] {
+  return buildNavigation(getEnabledModules(), resolveCopy(locale).nav.modules, actorRole)
 }

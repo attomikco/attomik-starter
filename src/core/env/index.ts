@@ -52,3 +52,14 @@ export function getResendKey(): string | null {
   const key = process.env.RESEND_API_KEY
   return key && key.trim() ? key.trim() : null
 }
+
+/**
+ * The From identity for app-sent mail (invitations). Must be an address on
+ * a domain verified in Resend — all app/auth email leaves from
+ * email.attomik.co unless a project overrides it.
+ */
+export const DEFAULT_APP_EMAIL_FROM = "Attomik Starter <auth@email.attomik.co>"
+
+export function getAppEmailFrom(): string {
+  return process.env.APP_EMAIL_FROM?.trim() || DEFAULT_APP_EMAIL_FROM
+}

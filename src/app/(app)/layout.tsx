@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import type { ReactNode } from "react"
 import { rowToGeometry, rowToSkinInput, skinStylesheetWithDefault, themedDeclarations } from "@/core/branding"
 import { isLocale, pickLocale } from "@/core/i18n"
+import type { Role } from "@/core/permissions"
 import { getLocaleSources } from "@/core/i18n/server"
 import { brandingPublicUrl, requireWorkspace } from "@/core/workspace"
 import { AppShell } from "@/ui/shell/app-shell"
@@ -60,6 +61,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         }}
         workspace={{
           name: settings.display_name || workspace.name,
+          role: workspace.role as Role,
           logoLightUrl: brandingPublicUrl(settings.logo_light_path),
           logoDarkUrl: brandingPublicUrl(settings.logo_dark_path),
           defaultAppearance: settings.default_appearance,

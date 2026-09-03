@@ -13,8 +13,8 @@ export const en: ShellCopy = {
       media: { label: "Media", description: "File grid with usage tracking and orphan flagging." },
       settings: {
         label: "Settings",
-        description: "Workspace settings: general, appearance & brand, team, activity.",
-        children: { general: "General", appearance: "Appearance & brand", team: "Team & permissions", activity: "Activity" },
+        description: "Workspace settings: general, appearance & brand, team, emails, activity.",
+        children: { general: "General", appearance: "Appearance & brand", team: "Team & permissions", emails: "Emails", activity: "Activity" },
       },
     },
     expandSidebar: "Expand the sidebar",
@@ -255,15 +255,27 @@ export const en: ShellCopy = {
   },
 
   email: {
+    magicLink: {
+      subject: "Your sign-in link",
+      preheader: "Expires in 15 minutes, works once",
+      title: (workspace) => `Sign in to ${workspace}`,
+      body: "Somebody asked for a sign-in link for this address. If it was you, the button below signs you in on this device.",
+      action: "Sign in",
+      fallback: "If the button does not work, open this link:",
+      calloutTitle: "Not you?",
+      calloutBody: "Ignore this email and nothing happens. The link only works from this message, and it expires on its own.",
+      secondary: (minutes) => `This link expires in ${minutes} minutes and can only be used once.`,
+      footer: (workspace) => `You received this because this address was entered on the ${workspace} sign-in screen. No account is created by ignoring it.`,
+    },
     invitation: {
       subject: (inviter, workspace) => `${inviter} invited you to ${workspace}`,
+      preheader: (role, days) => `${role} seat · expires in ${days} days`,
       title: (workspace) => `You're invited to ${workspace}`,
       body: (inviter, role) => `${inviter} invited you to join as ${role}. Accepting signs you in with a magic link — no password.`,
       accept: "Accept invitation",
       fallback: "If the button does not work, open this link:",
+      rows: { workspace: "Workspace", role: "Role", invitedBy: "Invited by" },
       footer: (days, inviter, workspace) => `The link expires in ${days} days and works once. You received this because ${inviter} invited this address to ${workspace}.`,
-      textIntro: (inviter, workspace, role) => `${inviter} invited you to join ${workspace} as ${role}.`,
-      textAccept: (url) => `Accept the invitation: ${url}`,
     },
   },
 }

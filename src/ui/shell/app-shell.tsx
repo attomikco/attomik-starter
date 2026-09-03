@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import type { Locale } from "@/core/i18n"
 import { getLocale } from "@/core/i18n/server"
 import { getEnabledNavigation } from "@/core/navigation"
+import type { Role } from "@/core/permissions"
 import { AppShellClient } from "./app-shell-client"
 
 /**
@@ -20,6 +21,8 @@ export interface ShellAccount {
 
 export interface ShellWorkspace {
   name: string
+  /** The actor's role in this workspace — hides nav rows they cannot reach. */
+  role: Role
   logoLightUrl: string | null
   logoDarkUrl: string | null
   defaultAppearance: "light" | "dark" | "system"
@@ -36,7 +39,7 @@ export async function AppShell({
   account: ShellAccount
   workspace: ShellWorkspace
 }) {
-  const navigation = getEnabledNavigation(await getLocale())
+  const navigation = getEnabledNavigation(await getLocale(), workspace.role)
 
   return (
     <AppShellClient navigation={navigation} chrome={chrome} account={account} workspace={workspace}>

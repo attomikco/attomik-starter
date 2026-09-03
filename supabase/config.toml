@@ -32,6 +32,15 @@ pass = "env(SMTP_PASS)"
 admin_email = "auth@email.attomik.co"
 sender_name = "Attomik Starter"
 
+# Auth email templates. These files are GENERATED from the canonical email
+# catalog (src/core/email/templates.ts) by `pnpm build:auth-emails` — never
+# hand-edit supabase/templates/*.html, and re-run the script after changing
+# the copy or the project skin. The subject lives in the shell dictionary
+# (copy.email.magicLink.subject); the script fails if this block drifts.
+[auth.email.template.magic_link]
+subject = "Your sign-in link"
+content_path = "./supabase/templates/magic_link.html"
+
 [auth.rate_limit]
 # Auth emails per hour across the project (custom SMTP unlocks this knob).
 email_sent = 100

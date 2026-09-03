@@ -1,5 +1,5 @@
 import { resolveSkin } from "./derive.ts"
-import type { SkinInput } from "./types.ts"
+import type { SkinInput, ThemeMode } from "./types.ts"
 
 /**
  * Email-safe brand values — the documented exception to token-driven color
@@ -47,9 +47,13 @@ export function oklchToHex(l: number, c: number, hDeg: number): string {
   return "#" + [r, g, bb].map((ch) => toByte(ch).toString(16).padStart(2, "0")).join("")
 }
 
-/** The workspace accent as email-ready hex (light palette — email cards are light). */
-export function emailBrand(skin: SkinInput): { accent: string; accentInk: string } {
-  const tokens = resolveSkin(skin, "light")
+/**
+ * The workspace accent as email-ready hex. Emails inline the LIGHT palette
+ * and carry the dark one in a prefers-color-scheme block, so both themes
+ * are resolved from the same skin — pass "dark" for the override pair.
+ */
+export function emailBrand(skin: SkinInput, mode: ThemeMode = "light"): { accent: string; accentInk: string } {
+  const tokens = resolveSkin(skin, mode)
   return {
     accent: cssColorToHex(tokens["--accent"]),
     accentInk: cssColorToHex(tokens["--accent-ink"]),

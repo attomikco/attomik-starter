@@ -13,8 +13,8 @@ export const esMX: ShellCopy = {
       media: { label: "Medios", description: "Biblioteca de archivos con seguimiento de uso y detección de huérfanos." },
       settings: {
         label: "Configuración",
-        description: "Configuración del espacio: general, apariencia y marca, equipo, actividad.",
-        children: { general: "General", appearance: "Apariencia y marca", team: "Equipo y permisos", activity: "Actividad" },
+        description: "Configuración del espacio: general, apariencia y marca, equipo, correos, actividad.",
+        children: { general: "General", appearance: "Apariencia y marca", team: "Equipo y permisos", emails: "Correos", activity: "Actividad" },
       },
     },
     expandSidebar: "Expandir la barra lateral",
@@ -257,15 +257,27 @@ export const esMX: ShellCopy = {
   },
 
   email: {
+    magicLink: {
+      subject: "Tu enlace de acceso",
+      preheader: "Caduca en 15 minutos y funciona una sola vez",
+      title: (workspace) => `Inicia sesión en ${workspace}`,
+      body: "Alguien pidió un enlace de acceso para esta dirección. Si fuiste tú, el botón de abajo te deja dentro en este dispositivo.",
+      action: "Iniciar sesión",
+      fallback: "Si el botón no funciona, abre este enlace:",
+      calloutTitle: "¿No fuiste tú?",
+      calloutBody: "Ignora este correo y no pasa nada. El enlace solo funciona desde este mensaje y caduca por su cuenta.",
+      secondary: (minutes) => `Este enlace caduca en ${minutes} minutos y solo se puede usar una vez.`,
+      footer: (workspace) => `Recibiste este correo porque esta dirección se escribió en la pantalla de acceso de ${workspace}. Si lo ignoras, no se crea ninguna cuenta.`,
+    },
     invitation: {
       subject: (inviter, workspace) => `${inviter} te invitó a ${workspace}`,
+      preheader: (role, days) => `Lugar de ${role} · caduca en ${days} días`,
       title: (workspace) => `Te invitaron a ${workspace}`,
       body: (inviter, role) => `${inviter} te invitó a unirte como ${role}. Al aceptar inicias sesión con un enlace mágico, sin contraseña.`,
       accept: "Aceptar invitación",
       fallback: "Si el botón no funciona, abre este enlace:",
+      rows: { workspace: "Espacio de trabajo", role: "Rol", invitedBy: "Invitado por" },
       footer: (days, inviter, workspace) => `El enlace caduca en ${days} días y funciona una sola vez. Recibiste este correo porque ${inviter} invitó esta dirección a ${workspace}.`,
-      textIntro: (inviter, workspace, role) => `${inviter} te invitó a unirte a ${workspace} como ${role}.`,
-      textAccept: (url) => `Acepta la invitación: ${url}`,
     },
   },
 }

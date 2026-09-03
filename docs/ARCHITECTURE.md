@@ -17,6 +17,7 @@ src/core/               infrastructure shared by every project
   workspace/            canonical user→workspace→settings resolution
   permissions/          role capability model (mirrored by RLS)
   team/                 members + invitation lifecycle
+  email/                the ONE email catalog + renderer (light/dark, text)
   audit/                activity events (reads, summaries, custom recorder)
   data/                 domain-agnostic table/query primitives
   env/, dev.ts          env validation, dev-tooling gate
@@ -44,7 +45,7 @@ supabase/               config.toml (auth as code) + migrations
   colors are theme tokens.
 
 Detailed docs: MODULES, SUPABASE, AUTH, WORKSPACES, BRANDING, DATA, TEAM,
-AUDIT, NEW_PROJECT, DEPLOYMENT.
+EMAIL, AUDIT, NEW_PROJECT, DEPLOYMENT.
 
 ## Settings map
 
@@ -55,6 +56,7 @@ Settings is a core-adjacent module registered like any other:
 | `/settings/general` | workspace name, default language | owner, admin |
 | `/settings/appearance` | logos, favicon, colours, type, shape, default appearance | owner, admin |
 | `/settings/team` | members, roles, invitations | owner, admin (viewers read) |
+| `/settings/emails` | every transactional email, previewed as sent | owner, admin (read-only) |
 | `/settings/activity` | audit log | members |
 
 Personal preferences (interface language, theme) live in the account menu,

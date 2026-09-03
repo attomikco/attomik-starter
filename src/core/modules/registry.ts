@@ -1,4 +1,5 @@
 import type { ModuleId } from "@/config/project"
+import type { Role } from "@/core/permissions"
 
 /**
  * Canonical module registry. Every module the starter ships is defined here,
@@ -24,8 +25,13 @@ export interface ModuleNavigation {
   order: number
   /** Icon key, mapped to the reference SVG path in src/ui/shell/icons.tsx */
   icon: string
-  /** Submenu items (the reference rail's child rows): a copy key under this module, and the route. */
-  children?: readonly { key: string; href: string }[]
+  /**
+   * Submenu items (the reference rail's child rows): a copy key under this
+   * module, and the route. `minRole` hides a child from ranks that cannot
+   * reach it — convenience only, never the authorization boundary: the
+   * route guards itself and RLS enforces the same matrix.
+   */
+  children?: readonly { key: string; href: string; minRole?: Role }[]
 }
 
 export interface ModuleDefinition {
@@ -92,6 +98,7 @@ export const moduleRegistry = {
         { key: "general", href: "/settings/general" },
         { key: "appearance", href: "/settings/appearance" },
         { key: "team", href: "/settings/team" },
+        { key: "emails", href: "/settings/emails", minRole: "admin" },
         { key: "activity", href: "/settings/activity" },
       ],
     },

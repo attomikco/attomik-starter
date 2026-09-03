@@ -57,6 +57,26 @@ delete module code because a project doesn't use it.
   and never author events (canRecordActivity() mirrors the database rule).
 - No module-specific audit tables. Details: docs/AUDIT.md.
 
+## Email rules
+
+- `src/core/email` is the ONE email layer: the catalog
+  (`templates.ts`), the renderer, the palettes, and the text part. Never
+  write email HTML anywhere else, and never add a second template
+  language or a module-specific email.
+- Emails are block lists, not markup. Words come from the shell
+  dictionary (`copy.email.*`) in every locale.
+- Literal hex only — mail clients strip custom properties and oklch.
+  Colours resolve from the same skin at send time (`emailBrand()`).
+- Every button ships the same URL as plain text; every email says why it
+  was received. Both are enforced by tests.
+- Supabase Auth templates in `supabase/templates/*.html` are GENERATED
+  (`pnpm build:auth-emails`) — never hand-edit them, and re-run after
+  changing copy, the project skin, or the project locale.
+- Auth mail carries the PROJECT skin and locale (no workspace exists at
+  sign-in); app-sent mail carries the workspace's. Settings → Emails says
+  which, per template, and is read-only.
+- Details: docs/EMAIL.md.
+
 ## Team / permission rules
 
 - Authorization comes from workspace_members via src/core/permissions;

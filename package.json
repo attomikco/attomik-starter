@@ -9,7 +9,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node --test 'src/**/*.test.ts'",
-    "enable-module": "scripts/enable-module.sh"
+    "enable-module": "scripts/enable-module.sh",
+    "build:auth-emails": "node scripts/build-auth-emails.ts",
+    "preview-emails": "node scripts/preview-emails.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

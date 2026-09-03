@@ -208,19 +208,37 @@ export interface ShellCopy {
     }
   }
 
-  /** Core transactional emails (the invitation; auth mail is Supabase's). */
+  /**
+   * Every transactional email the product sends, in the catalog order of
+   * `src/core/email/templates.ts`. The magic link is delivered by Supabase
+   * Auth from a template we own and push (supabase/templates/), so its
+   * words live here like any other send.
+   */
   email: {
+    magicLink: {
+      subject: string
+      /** Inbox preview line — one clause, no punctuation at the end. */
+      preheader: string
+      title: (workspace: string) => string
+      body: string
+      action: string
+      fallback: string
+      calloutTitle: string
+      calloutBody: string
+      secondary: (minutes: number) => string
+      footer: (workspace: string) => string
+    }
     invitation: {
       subject: (inviter: string, workspace: string) => string
+      preheader: (role: string, days: number) => string
       title: (workspace: string) => string
       /** `inviter` and `role` arrive pre-formatted (plain text or markup). */
       body: (inviter: string, role: string) => string
       accept: string
       fallback: string
+      rows: { workspace: string; role: string; invitedBy: string }
       /** `inviter` and `workspace` arrive pre-escaped. */
       footer: (days: number, inviter: string, workspace: string) => string
-      textIntro: (inviter: string, workspace: string, role: string) => string
-      textAccept: (url: string) => string
     }
   }
 }
