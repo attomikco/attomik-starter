@@ -13,7 +13,7 @@
  * to one. Workspace-branded mail is sent from app code instead.
  */
 
-import { readFileSync, writeFileSync } from "node:fs"
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { projectConfig } from "../src/config/project.ts"
 import { skins } from "../src/core/branding/skins.ts"
 import { emailBrand } from "../src/core/branding/email.ts"
@@ -43,6 +43,7 @@ for (const def of emailTemplates) {
   })
 
   const path = `supabase/templates/${def.id}.html`
+  mkdirSync("supabase/templates", { recursive: true })
   writeFileSync(path, html, "utf8")
   wrote++
   console.log(`wrote ${path}  (${html.length} bytes)`)
