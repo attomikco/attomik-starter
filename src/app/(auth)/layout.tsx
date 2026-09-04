@@ -35,14 +35,18 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
   const tokens = resolveSkin(branding.skin, branding.mode, branding.geometry) as CSSProperties
 
   return (
-    // Outer div is pinned to the viewport (100dvh) and is the ONLY scroll
-    // container here — html/body never scroll, matching the app shell.
-    // Centering lives on the inner div instead of this one: centering a
-    // flex container that also scrolls clips the start of any overflow in
-    // most browsers, so the inner div grows past 100% and this one scrolls
-    // it top-down like ordinary block content.
-    <div className="sh-scroll" style={{ ...tokens, colorScheme: branding.mode, width: "100%", height: "100dvh", boxSizing: "border-box", background: "var(--shell)" }}>
-      <div style={{ minHeight: "100%", width: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "var(--txt)", padding: "26px 16px", gap: 4, overflowWrap: "anywhere" }}>
+    // Pinned to the viewport (100dvh) and the ONLY scroll container here —
+    // html/body never scroll, matching the app shell. Vertical centering
+    // uses margin:auto on the group below, not justify-content:center on
+    // this scrolling flex container: centering the container itself is a
+    // known cross-browser bug — once content overflows, the start of that
+    // overflow becomes unreachable by scroll. auto margins collapse to 0
+    // instead, so a card taller than the viewport just scrolls normally.
+    <div
+      className="sh-scroll"
+      style={{ ...tokens, colorScheme: branding.mode, color: "var(--txt)", width: "100%", height: "100dvh", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", background: "var(--shell)", padding: "26px 16px", overflowWrap: "anywhere" }}
+    >
+      <div style={{ margin: "auto 0", minHeight: "min-content", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
         <div style={{ background: "var(--card)", borderRadius: "var(--r)", padding: 40, boxSizing: "border-box", width: "100%", maxWidth: 520, minHeight: 640, flex: "none", display: "flex", flexDirection: "column", gap: 4 }}>
           <AuthBrandingProvider value={{ name: branding.name, logoUrl: branding.logoUrl }}>
             {children}
