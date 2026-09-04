@@ -29,6 +29,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           fontFamily: "var(--font)",
         }}
       >
+        {/* iOS Safari rubber-bands (and can drag the whole page sideways) when
+            html/body are left as the document's default scroll container.
+            Each route pins its own content to the viewport and scrolls
+            internally instead (AppShellClient, the auth layout) — this is
+            the shared backstop: no bounce past an edge, no horizontal
+            drift from a stray wide element. */}
+        <style dangerouslySetInnerHTML={{ __html: "html,body{overscroll-behavior:none;overflow-x:hidden}" }} />
         {/* Server-resolved skin: correct palette on first paint, both themes. */}
         <style dangerouslySetInnerHTML={{ __html: skinStylesheet(defaultSkin) }} />
         {/* Replays an explicit stored theme choice before paint (no flash). */}

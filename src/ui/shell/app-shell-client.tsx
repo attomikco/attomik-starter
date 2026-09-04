@@ -150,7 +150,7 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
   const goRows: [string, string][] = Object.entries(goMap).map(([letter, d]) => [d.label, copy.shortcuts.goThen(letter.toUpperCase())])
 
   const pageStyle: CSSProperties = {
-    width: "100%", ...(full ? {} : { maxWidth: 1440 }), margin: "0 auto", height: "100vh",
+    width: "100%", ...(full ? {} : { maxWidth: 1440 }), margin: "0 auto", height: "100dvh",
     padding: full ? 0 : mobile ? 10 : 26, boxSizing: "border-box",
     display: "flex", flexDirection: "column", background: "var(--bg)", overflow: "hidden", position: "relative",
   }

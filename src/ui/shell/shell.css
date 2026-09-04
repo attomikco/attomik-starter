@@ -24,7 +24,7 @@ textarea { resize: none; }
 @keyframes sh-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes sh-rise-center { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
-.sh-scroll { overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
+.sh-scroll { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }
 
 /* Nav item idle hover: background card, text lifts (reference style-hover) */
 .sh-nav-item { font-weight: 500; color: var(--txt-2); }

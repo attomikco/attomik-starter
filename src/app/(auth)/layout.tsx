@@ -35,24 +35,29 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
   const tokens = resolveSkin(branding.skin, branding.mode, branding.geometry) as CSSProperties
 
   return (
-    <div
-      className="sh-scroll"
-      style={{ ...tokens, colorScheme: branding.mode, color: "var(--txt)", width: "100%", minHeight: "100vh", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--shell)", padding: "26px 16px", gap: 4 }}
-    >
-      <div style={{ background: "var(--card)", borderRadius: "var(--r)", padding: 40, boxSizing: "border-box", width: "100%", maxWidth: 520, minHeight: 640, flex: "none", display: "flex", flexDirection: "column", gap: 4 }}>
-        <AuthBrandingProvider value={{ name: branding.name, logoUrl: branding.logoUrl }}>
-          {children}
-        </AuthBrandingProvider>
-      </div>
+    // Outer div is pinned to the viewport (100dvh) and is the ONLY scroll
+    // container here — html/body never scroll, matching the app shell.
+    // Centering lives on the inner div instead of this one: centering a
+    // flex container that also scrolls clips the start of any overflow in
+    // most browsers, so the inner div grows past 100% and this one scrolls
+    // it top-down like ordinary block content.
+    <div className="sh-scroll" style={{ ...tokens, colorScheme: branding.mode, width: "100%", height: "100dvh", boxSizing: "border-box", background: "var(--shell)" }}>
+      <div style={{ minHeight: "100%", width: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "var(--txt)", padding: "26px 16px", gap: 4, overflowWrap: "anywhere" }}>
+        <div style={{ background: "var(--card)", borderRadius: "var(--r)", padding: 40, boxSizing: "border-box", width: "100%", maxWidth: 520, minHeight: 640, flex: "none", display: "flex", flexDirection: "column", gap: 4 }}>
+          <AuthBrandingProvider value={{ name: branding.name, logoUrl: branding.logoUrl }}>
+            {children}
+          </AuthBrandingProvider>
+        </div>
 
-      <div style={{ flex: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap", padding: "14px 0 4px", fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>
-        <span>{copy.auth.facts.singleUse}</span>
-        <span style={{ color: "var(--line-2)" }}>·</span>
-        <span>{copy.auth.facts.expires}</span>
-        <span style={{ color: "var(--line-2)" }}>·</span>
-        <span>{copy.auth.facts.session}</span>
-        <span style={{ color: "var(--line-2)" }}>·</span>
-        <span>{copy.auth.facts.logged}</span>
+        <div style={{ flex: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap", padding: "14px 0 4px", fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>
+          <span>{copy.auth.facts.singleUse}</span>
+          <span style={{ color: "var(--line-2)" }}>·</span>
+          <span>{copy.auth.facts.expires}</span>
+          <span style={{ color: "var(--line-2)" }}>·</span>
+          <span>{copy.auth.facts.session}</span>
+          <span style={{ color: "var(--line-2)" }}>·</span>
+          <span>{copy.auth.facts.logged}</span>
+        </div>
       </div>
     </div>
   )
