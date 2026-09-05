@@ -45,16 +45,16 @@ export function Field({
   )
 }
 
-function fieldFrame(state: "idle" | "invalid" | "valid"): CSSProperties {
+function fieldFrame(state: "idle" | "invalid" | "valid", compact?: boolean): CSSProperties {
   return {
     display: "flex", alignItems: "center", gap: 10, background: "var(--card)", borderRadius: "var(--r3)",
-    padding: "12px 14px", boxSizing: "border-box",
+    padding: compact ? "9px 12px" : "12px 14px", boxSizing: "border-box",
     border: `1.5px solid ${state === "invalid" ? "var(--bad)" : "var(--line-2)"}`,
   }
 }
 
 export function TextInput({
-  label, required, value, onChange, onBlur, placeholder, error, hint, valid, type = "text",
+  label, required, value, onChange, onBlur, placeholder, error, hint, valid, type = "text", compact,
 }: {
   label: string
   required?: boolean
@@ -66,14 +66,16 @@ export function TextInput({
   hint?: string
   valid?: boolean
   type?: string
+  /** Search-bar scale (9px/12px padding, 13.5px text), for a field embedded in an already-compact card. */
+  compact?: boolean
 }) {
   const id = useId()
   return (
     <Field label={label} required={required} error={error} hint={hint} htmlFor={id}>
-      <span className="ui-field" style={fieldFrame(error ? "invalid" : valid ? "valid" : "idle")}>
+      <span className="ui-field" style={fieldFrame(error ? "invalid" : valid ? "valid" : "idle", compact)}>
         <input id={id} type={type} value={value} placeholder={placeholder} aria-invalid={!!error}
           onChange={(e) => onChange(e.target.value)} onBlur={onBlur}
-          style={{ fontSize: 14.5, flex: 1, minWidth: 0 }} />
+          style={{ fontSize: compact ? 13.5 : 14.5, flex: 1, minWidth: 0 }} />
         {error && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" strokeWidth="2.2" strokeLinecap="round" style={{ flex: "none" }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>}
         {!error && valid && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d="m5 13 5 5L20 7" /></svg>}
       </span>
