@@ -11,6 +11,7 @@ import { TextInput } from "@/ui/forms/fields"
 import { Listbox } from "@/ui/forms/select"
 import { ConfirmDialog, type ConfirmOptions } from "@/ui/records/confirm-dialog"
 import { useToast } from "@/ui/shell/toast-provider"
+import { useAction } from "@/ui/actions/use-action"
 import { settingsCopy } from "../copy"
 import { changeMemberRole, inviteMember, removeMember, resendInvitation, revokeInvitation } from "./actions"
 
@@ -48,16 +49,8 @@ export function TeamScreen({
   const ROLE_LABELS = copy.roles.labels
   const [confirm, setConfirm] = useState<ConfirmOptions | null>(null)
   const [inviteOpen, setInviteOpen] = useState(false)
-  const [busy, setBusy] = useState<string | null>(null)
+  const { run, busy: isBusy } = useAction()
   const canManage = canInvite(actorRole)
-
-  const run = async (key: string, fn: () => Promise<{ ok: boolean; message?: string }>, okMsg: string) => {
-    setBusy(key)
-    const result = await fn()
-    setBusy(null)
-    say(result.ok ? okMsg : result.message ?? t("settings.team.toast.failed"))
-    if (result.ok) router.refresh()
-  }
 
   const adminCount = members.filter((m) => m.role === "owner" || m.role === "admin").length
   const summary = [
@@ -79,7 +72,7 @@ export function TeamScreen({
           <Listbox
             ariaLabel={t("settings.team.roleFor", { email: m.email })}
             value={m.role}
-            disabled={busy === m.userId}
+            disabled={isBusy(m.userId)}
             options={[m.role, ...assignableRoles(actorRole).filter((r) => r !== m.role)].map((r) => ({ value: r, label: ROLE_LABELS[r] }))}
             onChange={(r) => run(m.userId, () => changeMemberRole(m.userId, m.role, r), t("settings.team.toast.roleUpdated"))}
             minWidth={110}
@@ -153,12 +146,12 @@ export function TeamScreen({
                   </span>
                 </span>
                 <ToneChip tone="warn" label={t("settings.team.invitedChip")} />
-                <button className="ui-btn" disabled={busy === inv.id}
+                <button className="ui-btn" disabled={isBusy(inv.id)}
                   onClick={() => run(inv.id, () => resendInvitation(inv.id), t("settings.team.toast.resent"))}
                   style={{ fontSize: 13, fontWeight: "var(--w-semi)" as never, color: "var(--accent-text)", background: "var(--accent-tint)", borderRadius: 999, padding: "8px 14px" }}>
                   {t("settings.team.resend")}
                 </button>
-                <button className="ui-btn" disabled={busy === inv.id}
+                <button className="ui-btn" disabled={isBusy(inv.id)}
                   onClick={() => setConfirm({
                     tone: "bad",
                     title: t("settings.team.revoke.title", { email: inv.email }),
