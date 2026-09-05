@@ -151,7 +151,7 @@ export function Listbox({
           role="listbox"
           aria-label={ariaLabel}
           className="sh-scroll"
-          style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, minWidth: "100%", zIndex: 40, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.14)", padding: 6, maxHeight: 268, animation: "sh-rise .12s ease-out" }}
+          style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, minWidth: "100%", maxWidth: "calc(100vw - 24px)", zIndex: 40, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.14)", padding: 6, maxHeight: 268, animation: "sh-rise .12s ease-out" }}
         >
           {options.map((o, i) => {
             const isSelected = o.value === value
@@ -165,7 +165,7 @@ export function Listbox({
                 onMouseEnter={() => setActiveIndex(i)}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => commit(i)}
-                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 11px", borderRadius: "var(--r3)", fontSize: 13.5, cursor: "pointer", whiteSpace: "nowrap",
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 11px", borderRadius: "var(--r3)", fontSize: 13.5, cursor: "pointer",
                   color: isSelected ? "var(--txt)" : "var(--txt-2)",
                   fontWeight: (isSelected ? "var(--w-semi)" : 400) as never,
                   background: isActive ? "var(--accent-tint)" : "transparent",

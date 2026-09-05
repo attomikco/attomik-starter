@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, type ReactNode } from "react"
+import { TabStrip } from "@/ui/data/tab-strip"
 
 /**
  * Canonical record/detail shell, ported from part-records.dc.html: header
@@ -58,18 +59,8 @@ export function RecordLayout({
       </div>
 
       {tabs && onTab && (
-        <div role="tablist" style={{ display: "flex", alignItems: "center", gap: 3, background: "var(--shell)", borderRadius: 999, padding: 4, flex: "none", alignSelf: "flex-start" }}>
-          {tabs.map((t) => {
-            const on = t.label === activeTab
-            return (
-              <button key={t.label} className="ui-btn" role="tab" aria-selected={on} onClick={() => onTab(t.label)}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 15px", borderRadius: 999, fontSize: 14,
-                  ...(on ? { background: "var(--card)", color: "var(--txt)", fontWeight: "var(--w-semi)" as never } : { color: "var(--txt-2)", fontWeight: 500 }) }}>
-                {t.label}
-                {t.count !== undefined && <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: on ? "var(--accent-text)" : "var(--txt-4)" }}>{t.count}</span>}
-              </button>
-            )
-          })}
+        <div style={{ flex: "none", alignSelf: "flex-start", maxWidth: "100%" }}>
+          <TabStrip tabs={tabs} active={activeTab ?? ""} onPick={onTab} />
         </div>
       )}
 

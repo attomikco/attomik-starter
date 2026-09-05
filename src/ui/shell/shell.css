@@ -26,6 +26,13 @@ textarea { resize: none; }
 
 .sh-scroll { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }
 
+/* Horizontal scroll strip for a row of items that must never wrap or
+   clip (status/record tabs, currently) — momentum scroll on iOS, no
+   visible scrollbar since the pill/chip shape is the only affordance
+   needed. */
+.sh-hscroll { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.sh-hscroll::-webkit-scrollbar { display: none; }
+
 /* Nav item idle hover: background card, text lifts (reference style-hover) */
 .sh-nav-item { font-weight: 500; color: var(--txt-2); }
 .sh-nav-item:hover { background: var(--card); color: var(--txt); }
