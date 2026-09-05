@@ -47,7 +47,8 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
       style={{ ...tokens, colorScheme: branding.mode, color: "var(--txt)", width: "100%", height: "100dvh", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", background: "var(--shell)", padding: "26px 16px", overflowWrap: "anywhere" }}
     >
       <div style={{ margin: "auto 0", minHeight: "min-content", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-        <div style={{ background: "var(--card)", borderRadius: "var(--r)", padding: 40, boxSizing: "border-box", width: "100%", maxWidth: 520, minHeight: 640, flex: "none", display: "flex", flexDirection: "column", gap: 4 }}>
+        {/* min(640px, ...) mirrors the reference's fixed desktop height without forcing it on short mobile viewports — the design artifact is a fixed-size 1440px canvas with no mobile breakpoint of its own. */}
+        <div style={{ background: "var(--card)", borderRadius: "var(--r)", padding: 40, boxSizing: "border-box", width: "100%", maxWidth: 520, minHeight: "min(640px, calc(100dvh - 140px))", flex: "none", display: "flex", flexDirection: "column", gap: 4 }}>
           <AuthBrandingProvider value={{ name: branding.name, logoUrl: branding.logoUrl }}>
             {children}
           </AuthBrandingProvider>
