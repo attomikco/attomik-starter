@@ -13,6 +13,22 @@ test("active route calculation", () => {
   assert.equal(isNavActive("/customers", "/media"), false)
 })
 
+test("exact mode matches only the literal route, prefix mode stays lit for descendants", () => {
+  assert.equal(isNavActive("/media", "/media", { exact: true }), true)
+  assert.equal(isNavActive("/media/uploads", "/media", { exact: true }), false)
+  assert.equal(isNavActive("/media/uploads", "/media"), true) // default (prefix) still matches
+})
+
+test("exact mode fixes a submenu index child sharing its module's base href", () => {
+  // A submenu whose index child's href equals the module's own base href
+  // (e.g. Media's "All media" child at "/media") would prefix-match every
+  // sibling route too ("/media/uploads" starts with "/media/") and never
+  // yield the highlight to the sibling that's actually active.
+  assert.equal(isNavActive("/media/uploads", "/media"), true, "prefix mode over-matches (the bug)")
+  assert.equal(isNavActive("/media/uploads", "/media", { exact: true }), false, "exact mode yields to the sibling (the fix)")
+  assert.equal(isNavActive("/media/uploads", "/media/uploads", { exact: true }), true, "the sibling still exact-matches itself")
+})
+
 test("keyboard shortcuts suppressed inside text fields", () => {
   assert.equal(isTypingTarget("INPUT", false), true)
   assert.equal(isTypingTarget("input", false), true)

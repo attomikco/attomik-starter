@@ -2,8 +2,18 @@
  * Pure shell logic, kept dependency-free so it runs under `node --test`.
  */
 
-/** Active nav derives from the route: exact for "/", prefix for others. */
-export function isNavActive(pathname: string, href: string): boolean {
+/**
+ * Active nav derives from the route: exact for "/", prefix for others —
+ * right for a top-level rail item (and a detail page under it), which
+ * should stay lit while any of its own children are open.
+ *
+ * A submenu row needs `exact: true` instead. A module whose index child
+ * shares the module's own base href would otherwise prefix-match every
+ * sibling route too under the default rule, and never yield the
+ * highlight to whichever sibling is actually active.
+ */
+export function isNavActive(pathname: string, href: string, { exact = false }: { exact?: boolean } = {}): boolean {
+  if (exact) return pathname === href
   if (href === "/") return pathname === "/"
   return pathname === href || pathname.startsWith(href + "/")
 }

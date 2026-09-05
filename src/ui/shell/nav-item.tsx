@@ -137,7 +137,7 @@ export function NavItem({
         <div role="menu" aria-label={item.label} style={{ position: "fixed", top: flyout.top, left: flyout.left, zIndex: 60, minWidth: 176, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.16)", padding: 6, animation: "sh-rise .12s ease-out" }}>
           <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", padding: "6px 11px 4px" }}>{item.label}</div>
           {children.map((c) => {
-            const on = isNavActive(pathname, c.href)
+            const on = isNavActive(pathname, c.href, { exact: true })
             return (
               <Link key={c.href} href={c.href} role="menuitem" className="sh-subnav-item" aria-current={on ? "page" : undefined}
                 onClick={() => { setFlyout(null); onNavigate?.() }}
@@ -153,7 +153,7 @@ export function NavItem({
       {hasKids && !tight && open && (
         <div style={{ display: "flex", flexDirection: "column", gap: 1, padding: "2px 0 6px 30px" }}>
           {children.map((c) => {
-            const on = isNavActive(pathname, c.href)
+            const on = isNavActive(pathname, c.href, { exact: true })
             return (
               <Link key={c.href} href={c.href} onClick={onNavigate} className="sh-subnav-item" aria-current={on ? "page" : undefined}
                 style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 12px", borderRadius: "var(--r3)", fontSize: 13.5, cursor: "pointer", textDecoration: "none", color: on ? "var(--txt)" : "var(--txt-3)", fontWeight: (on ? "var(--w-semi)" : 400) as never }}>
