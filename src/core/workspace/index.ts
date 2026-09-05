@@ -15,6 +15,7 @@ import { getSupabaseEnv, hasSupabaseEnv } from "@/core/env"
 import { createClient } from "@/core/supabase/server"
 import { projectConfig } from "@/config/project"
 import { pickLocale, type Locale } from "@/core/i18n"
+import { ownMembership } from "./membership"
 
 /**
  * The canonical workspace access layer. Server-only. Modules never
@@ -71,6 +72,7 @@ async function ensureWorkspaceForUser(user: AuthUser): Promise<void> {
         const { data } = await supabase
           .from("workspace_members")
           .select("workspace_id")
+          .eq("user_id", user.id)
           .limit(1)
           .maybeSingle()
         return !!data
@@ -136,24 +138,26 @@ export const requireWorkspace = cache(async (): Promise<WorkspaceContext> => {
   const user = await requireUser()
   const supabase = await createClient()
 
-  let { data: row } = await supabase
-    .from("workspace_members")
-    .select("role, workspaces(id, name, slug)")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  // The caller's OWN seat, earliest first. The select policy shows a member
+  // every seat of their workspaces (the Team screen lists co-members), so
+  // the query filters by user_id and ownMembership() re-checks the rows:
+  // the role must never come from another user's row.
+  type SeatRow = { user_id: string; role: string; created_at: string; workspaces: { id: string; name: string; slug: string } | null }
+  const ownSeat = async () => {
+    const { data } = await supabase
+      .from("workspace_members")
+      .select("user_id, role, created_at, workspaces(id, name, slug)")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: true })
+    return ownMembership((data ?? []) as unknown as SeatRow[], user.id)
+  }
 
+  let row = await ownSeat()
   if (!row) {
     await ensureWorkspaceForUser(user)
-    const retry = await supabase
-      .from("workspace_members")
-      .select("role, workspaces(id, name, slug)")
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle()
-    row = retry.data as typeof row
+    row = await ownSeat()
   }
-  const ws = (row as { workspaces?: { id: string; name: string; slug: string } } | null)?.workspaces
+  const ws = row?.workspaces
   if (!row || !ws) throw new Error("No workspace available for user")
 
   const { data: settings, error } = await supabase
@@ -165,7 +169,7 @@ export const requireWorkspace = cache(async (): Promise<WorkspaceContext> => {
 
   return {
     user,
-    workspace: { id: ws.id, name: ws.name, slug: ws.slug, role: (row as { role: string }).role },
+    workspace: { id: ws.id, name: ws.name, slug: ws.slug, role: row.role },
     settings: settings as WorkspaceSettings,
   }
 })
