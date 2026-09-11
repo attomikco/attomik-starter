@@ -95,6 +95,7 @@ function isPublicPath(pathname: string): boolean {
     pathname === "/verify" ||
     pathname === "/expired" ||
     pathname.startsWith("/auth/") ||
+    pathname === "/api/health" ||
     pathname.startsWith("/api/health/") ||
     pathname === "/dev/theme" ||
     pathname === "/dev/auth"
