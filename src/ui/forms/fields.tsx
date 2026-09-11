@@ -226,6 +226,55 @@ export function Toggle({
   )
 }
 
+/**
+ * The one compact segmented control, everywhere a small fixed set of
+ * mutually exclusive options needs a chip row instead of a Listbox
+ * dropdown or RadioCards' full card grid (the sidebar/account-menu
+ * light/dark/system switch — ThemeModeToggle below — and Settings →
+ * General's brand editor both build on this). Fully tokenized: `--card`/
+ * `--line` surface, active state via `--accent-tint`/`--accent-text` —
+ * never a plain white border or a flat `--shell` fill. Natural width by
+ * default; `stretch` fills its container instead, each option sharing it
+ * evenly.
+ */
+export function SegmentedControl<T extends string>({
+  options, value, onChange, ariaLabel, vertical = false, iconOnly = false, stretch = false, disabled = false, style,
+}: {
+  options: { value: T; label: string; icon?: ReactNode; title?: string }[]
+  value: T
+  onChange: (v: T) => void
+  ariaLabel?: string
+  vertical?: boolean
+  /** Icon-only chips — the icon itself must be given for every option. */
+  iconOnly?: boolean
+  stretch?: boolean
+  disabled?: boolean
+  style?: CSSProperties
+}) {
+  return (
+    <div role="radiogroup" aria-label={ariaLabel}
+      style={{ display: "inline-flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, boxSizing: "border-box", flexDirection: vertical ? "column" : "row", width: stretch ? "100%" : "fit-content", ...style }}>
+      {options.map((o) => {
+        const active = o.value === value
+        return (
+          <button type="button" key={o.value} className="ui-btn" role="radio" aria-checked={active} disabled={disabled} title={o.title}
+            onClick={() => onChange(o.value)}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: iconOnly ? "7px" : "7px 10px",
+              borderRadius: "var(--r3)", fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase",
+              cursor: disabled ? "default" : "pointer",
+              ...(stretch ? { flex: 1, minWidth: 0 } : {}),
+              ...(active ? { background: "var(--accent-tint)", color: "var(--accent-text)" } : { color: "var(--txt-4)" }),
+            }}>
+            {o.icon}
+            {!iconOnly && o.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export function Checkbox({ label, on, onToggle }: { label: string; on: boolean; onToggle: () => void }) {
   return (
     <button type="button" className="ui-btn" role="checkbox" aria-checked={on} onClick={onToggle}

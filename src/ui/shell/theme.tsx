@@ -1,6 +1,8 @@
 "use client"
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
+import { createContext, useCallback, useContext, useEffect, useState, type CSSProperties, type ReactNode } from "react"
+import { useCopy } from "@/core/i18n/client"
+import { SegmentedControl } from "@/ui/forms/fields"
 import { resolveTheme, effectivePreference, type ThemePreference } from "./theme-resolve"
 
 /**
@@ -87,3 +89,18 @@ export const THEME_MODES: [ThemeChoice, string][] = [
   ["system", "M3 5h18v11H3zM8 20h8M12 16v4"],
   ["dark", "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5"],
 ]
+
+/** The one shared light/dark/system switch — the rail and the account menu both render this instead of their own copy. */
+export function ThemeModeToggle({ vertical = false, iconOnly = false, stretch = false, style }: { vertical?: boolean; iconOnly?: boolean; stretch?: boolean; style?: CSSProperties }) {
+  const { mode, setMode } = useTheme()
+  const copy = useCopy()
+  return (
+    <SegmentedControl ariaLabel={copy.nav.theme} value={mode} onChange={setMode} vertical={vertical} iconOnly={iconOnly} stretch={stretch} style={style}
+      options={THEME_MODES.map(([choice, icon]) => ({
+        value: choice,
+        label: copy.nav.themeModes[choice].short,
+        title: copy.nav.themeModes[choice].title,
+        icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d={icon} /></svg>,
+      }))} />
+  )
+}

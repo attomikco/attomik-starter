@@ -6,7 +6,7 @@ import type { NavigationGroup } from "@/core/navigation"
 import type { ShellWorkspace } from "./app-shell"
 import { useCopy } from "@/core/i18n/client"
 import { NavItem } from "./nav-item"
-import { THEME_MODES, useTheme } from "./theme"
+import { ThemeModeToggle } from "./theme"
 
 /**
  * The rail, ported from the reference host: 244px expanded / 76px collapsed
@@ -32,7 +32,6 @@ export function Sidebar({
 }) {
   const copy = useCopy()
   const pathname = usePathname()
-  const { mode, setMode } = useTheme()
 
   const railStyle: CSSProperties = mobile
     ? { position: "absolute", zIndex: 50, top: 10, left: 10, bottom: 10, width: 252, background: "var(--card)", borderRadius: "var(--r)", boxShadow: "0 24px 60px rgba(0,0,0,.26)", display: "flex", flexDirection: "column", padding: "14px 10px 8px 14px", boxSizing: "border-box" }
@@ -83,30 +82,7 @@ export function Sidebar({
         ))}
       </div>
 
-      <div role="radiogroup" aria-label={copy.nav.theme} style={{ flex: "none", display: "flex", gap: 3, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r3)", padding: 3, margin: "8px 0", boxSizing: "border-box", flexDirection: tight ? "column" : "row" }}>
-        {THEME_MODES.map(([choice, icon]) => {
-          const active = mode === choice
-          const { title, short } = copy.nav.themeModes[choice]
-          return (
-            <button
-              key={choice}
-              className="ui-btn"
-              role="radio"
-              aria-checked={active}
-              onClick={() => setMode(choice)}
-              title={title}
-              style={{
-                flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
-                borderRadius: "var(--r3)", fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase",
-                ...(active ? { background: "var(--shell)", color: "var(--txt)" } : { color: "var(--txt-4)" }),
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d={icon} /></svg>
-              {!tight && short}
-            </button>
-          )
-        })}
-      </div>
+      <ThemeModeToggle vertical={tight} iconOnly={tight} stretch style={{ margin: "8px 0" }} />
 
       <a
         href="https://attomik.co"

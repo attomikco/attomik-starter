@@ -9,8 +9,9 @@ import { saveUserLocale } from "@/core/i18n/actions"
 import { useCopy } from "@/core/i18n/client"
 import { Listbox } from "@/ui/forms/select"
 import { emailInitials } from "@/core/auth/email-validation"
+import { nameInitials } from "@/ui/initials"
 import type { ShellAccount } from "./app-shell"
-import { THEME_MODES, useTheme } from "./theme"
+import { ThemeModeToggle } from "./theme"
 import { useToast } from "./toast-provider"
 
 /**
@@ -38,10 +39,9 @@ function AccountRow({ icon, label, hint, onPick }: { icon: string; label: string
 
 export function AccountPanel({ account, openPalette, openKeys }: { account: ShellAccount; openPalette: () => void; openKeys: () => void }) {
   const copy = useCopy()
-  const { mode, setMode } = useTheme()
   const { say } = useToast()
-  const notWired = () => say(copy.account.profileUnavailable)
   const router = useRouter()
+  const openProfile = () => router.push("/settings/profile")
   const [locale, setLocale] = useState<Locale | null>(account.locale)
   const [savingLocale, setSavingLocale] = useState(false)
   // Personal language: applies at once and persists on the profile. The
@@ -61,33 +61,29 @@ export function AccountPanel({ account, openPalette, openKeys }: { account: Shel
     say(copy.account.languageSaved)
     router.refresh()
   }
-  const initials = emailInitials(account.email)
+  const initials = account.displayName ? nameInitials(account.displayName) : emailInitials(account.email)
   const localPart = account.email.split("@")[0] || account.email
+  const displayLabel = account.displayName || localPart
 
   return (
     <div style={{ ...panelStyle, top: 52, width: 316 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 16, borderBottom: "1px solid var(--line)" }}>
-        <span style={{ width: 42, height: 42, borderRadius: 999, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", color: "var(--accent-text)", display: "grid", placeItems: "center", fontSize: 15, fontWeight: "var(--w-bold)" as never, flex: "none" }}>{initials}</span>
+        <span style={{ width: 42, height: 42, borderRadius: 999, background: "var(--lead)", border: "1px solid var(--lead-line)", boxSizing: "border-box", color: "var(--accent-text)", display: "grid", placeItems: "center", fontSize: 15, fontWeight: "var(--w-bold)" as never, flex: "none", overflow: "hidden" }}>
+          {account.avatarUrl ? <img src={account.avatarUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : initials}
+        </span>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.015em" }}>{localPart}</div>
+          <div style={{ fontSize: 15, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.015em" }}>{displayLabel}</div>
           <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)", marginTop: 2 }}>{account.email}</div>
         </div>
       </div>
       <div style={{ padding: 8 }}>
-        <AccountRow icon="M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" label={copy.account.profile} onPick={notWired} />
+        <AccountRow icon="M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" label={copy.account.profile} onPick={openProfile} />
         <AccountRow icon="M9 3h6v6H9zM3 9h6v6H3zM15 9h6v6h-6zM9 15h6v6H9z" label={copy.account.commandPalette} hint="⌘K" onPick={openPalette} />
         <AccountRow icon="M3 6h18v12H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10" label={copy.account.keyboardShortcuts} hint="⌘/" onPick={openKeys} />
       </div>
       <div style={{ padding: "10px 16px 14px", borderTop: "1px solid var(--line)" }}>
         <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 8 }}>{copy.account.appearance}</div>
-        <div style={{ display: "flex", gap: 3, background: "var(--shell)", borderRadius: "var(--r3)", padding: 3 }}>
-          {THEME_MODES.map(([choice]) => (
-            <span key={choice} onClick={() => setMode(choice)}
-              style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", borderRadius: "var(--r3)", fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".04em", textTransform: "uppercase", cursor: "pointer", ...(mode === choice ? { background: "var(--card)", color: "var(--txt)" } : { color: "var(--txt-4)" }) }}>
-              {copy.nav.themeModes[choice].short}
-            </span>
-          ))}
-        </div>
+        <ThemeModeToggle stretch />
       </div>
       <div style={{ padding: "10px 16px 14px", borderTop: "1px solid var(--line)" }}>
         <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 8 }}>{copy.account.language}</div>
