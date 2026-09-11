@@ -40,7 +40,7 @@ export function Field({
           {error}
         </span>
       )}
-      {!error && hint && <span style={{ display: "block", fontSize: 12, color: "var(--txt-3)", marginTop: 7 }}>{hint}</span>}
+      {!error && hint && <span style={{ display: "block", fontSize: 12, color: "var(--txt-2)", marginTop: 7 }}>{hint}</span>}
     </label>
   )
 }
@@ -156,7 +156,7 @@ export function Toggle({
     <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "14px 0", borderBottom: last ? undefined : "1px solid var(--line)" }}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em" }}>{title}</div>
-        {sub && <div style={{ fontSize: 12.5, color: "var(--txt-3)", marginTop: 3 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: 12.5, color: "var(--txt-2)", marginTop: 3 }}>{sub}</div>}
       </div>
       <button type="button" className="ui-btn" role="switch" aria-checked={on} aria-label={title} onClick={onToggle}
         style={{ width: 42, height: 25, borderRadius: 999, flex: "none", display: "flex", alignItems: "center", padding: 3, boxSizing: "border-box", justifyContent: on ? "flex-end" : "flex-start", background: on ? "var(--accent)" : "var(--line-2)" }}>
