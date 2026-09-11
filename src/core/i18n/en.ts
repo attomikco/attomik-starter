@@ -13,8 +13,8 @@ export const en: ShellCopy = {
       media: { label: "Media", description: "File grid with usage tracking and orphan flagging." },
       settings: {
         label: "Settings",
-        description: "Workspace settings: general, appearance & brand, team, emails, activity.",
-        children: { general: "General", appearance: "Appearance & brand", team: "Team & permissions", emails: "Emails", activity: "Activity" },
+        description: "Profile, workspace settings, team, emails, activity.",
+        children: { profile: "Profile", general: "General", team: "Team & permissions", emails: "Emails", activity: "Activity" },
       },
     },
     expandSidebar: "Expand the sidebar",
@@ -61,7 +61,6 @@ export const en: ShellCopy = {
 
   account: {
     profile: "Profile and account",
-    profileUnavailable: "Profile settings are not available yet",
     commandPalette: "Command palette",
     keyboardShortcuts: "Keyboard shortcuts",
     appearance: "Appearance",

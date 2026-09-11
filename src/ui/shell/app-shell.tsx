@@ -17,6 +17,9 @@ export interface ShellAccount {
   locale: Locale | null
   /** The workspace default, named in the "inherit" option. */
   workspaceLocale: Locale
+  /** Set via Settings → Profile; null falls back to the email-derived display. */
+  displayName: string | null
+  avatarUrl: string | null
 }
 
 export interface ShellWorkspace {

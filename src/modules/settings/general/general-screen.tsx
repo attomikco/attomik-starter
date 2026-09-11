@@ -7,19 +7,19 @@ import { useCopy, useFormat, useT } from "@/core/i18n/client"
 import { Listbox } from "@/ui/forms/select"
 import { useToast } from "@/ui/shell/toast-provider"
 import { settingsCopy } from "../copy"
+import { BrandCompactCard, BrandEditor, type BrandInitial } from "./brand-editor"
 import { saveGeneral } from "./actions"
 
 /**
- * General settings: the workspace's identity, its regional defaults, and
- * membership defaults — everything workspace-level that is not visual
- * brand. The name autosaves 700ms after the last keystroke (one
- * serialized save, the same model Appearance uses); pickers save on
- * change. Every save refreshes the server render so the shell reflects it.
+ * General: workspace identity, regional defaults, brand, and membership
+ * defaults — everything workspace-level in one page. Brand renders as a
+ * compact summary card here; its full editor is a right-side sheet
+ * (brand-editor.tsx), not inline — the same pattern Settings → Activity's
+ * detail drawer uses.
  */
 
 const section: CSSProperties = { background: "var(--shell)", borderRadius: "var(--r2)", padding: 22, maxWidth: 900 }
 const sectionTitle: CSSProperties = { fontSize: 16, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.02em", marginBottom: 4 }
-const sectionSub: CSSProperties = { fontSize: 13.5, color: "var(--txt-2)", marginBottom: 18, lineHeight: 1.5 }
 const eyebrow: CSSProperties = { fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)" }
 const fieldLabel: CSSProperties = { ...eyebrow, display: "block", marginBottom: 8 }
 const grid: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: 16 }
@@ -39,6 +39,7 @@ export interface GeneralInitial {
     owner: string | null
     memberCount: number
   }
+  brand: BrandInitial
 }
 
 export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
@@ -54,6 +55,7 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
   const [defaultMemberRole, setDefaultMemberRole] = useState<MemberDefaultRole>(initial.defaultMemberRole)
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle")
   const [statusMsg, setStatusMsg] = useState("")
+  const [brandOpen, setBrandOpen] = useState(false)
 
   // Name autosave: debounced, serialized, latest draft wins.
   const savedName = useRef(initial.displayName)
@@ -141,7 +143,6 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
             </span>
           )}
         </div>
-        <p style={{ fontSize: 14, color: "var(--txt-2)", margin: 0, maxWidth: 720 }}>{t("settings.general.intro")}</p>
       </div>
 
       {!canEdit && (
@@ -154,8 +155,7 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
         {/* Workspace: name + identity facts */}
         <div style={section}>
           <div style={sectionTitle}>{t("settings.general.workspace.title")}</div>
-          <div style={sectionSub}>{t("settings.general.workspace.body")}</div>
-          <label style={{ display: "block", maxWidth: 420 }}>
+          <label style={{ display: "block", maxWidth: 420, marginTop: 14 }}>
             <span style={fieldLabel}>{t("settings.general.workspace.name")}</span>
             <span className="ui-field" style={{ display: "flex", alignItems: "center", background: "var(--card)", border: "1.5px solid var(--line-2)", borderRadius: "var(--r3)", padding: "11px 14px" }}>
               <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} disabled={!canEdit} maxLength={80} style={{ fontSize: 14.5, width: "100%" }} />
@@ -182,8 +182,7 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
         {/* Regional: language + time zone, with a live sample */}
         <div style={section}>
           <div style={sectionTitle}>{t("settings.general.regional.title")}</div>
-          <div style={sectionSub}>{t("settings.general.regional.body")}</div>
-          <div style={grid}>
+          <div style={{ ...grid, marginTop: 14 }}>
             <div style={{ minWidth: 0 }}>
               <span style={fieldLabel}>{t("settings.general.regional.language")}</span>
               <Listbox
@@ -215,11 +214,13 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
           </div>
         </div>
 
+        {/* Brand: compact summary — the full editor is a right-side sheet */}
+        <BrandCompactCard initial={initial.brand} onExpand={() => setBrandOpen(true)} />
+
         {/* Members: what an invitation starts on */}
         <div style={section}>
           <div style={sectionTitle}>{t("settings.general.members.title")}</div>
-          <div style={sectionSub}>{t("settings.general.members.body")}</div>
-          <div style={{ maxWidth: 420 }}>
+          <div style={{ maxWidth: 420, marginTop: 14 }}>
             <span style={fieldLabel}>{t("settings.general.members.defaultRole")}</span>
             <Listbox
               ariaLabel={t("settings.general.members.defaultRole")}
@@ -233,6 +234,10 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
           </div>
         </div>
       </div>
+
+      {brandOpen && (
+        <BrandEditor initial={initial.brand} canEdit={canEdit} onClose={() => setBrandOpen(false)} />
+      )}
     </div>
   )
 }

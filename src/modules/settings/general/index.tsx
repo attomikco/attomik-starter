@@ -1,11 +1,15 @@
+import { rowToGeometry, rowToSkinInput } from "@/core/branding"
 import { isTimeZone, pickLocale, defaultTimeZone } from "@/core/i18n"
 import { isAdminLike, type Role } from "@/core/permissions"
 import { createClient } from "@/core/supabase/server"
 import { listMembers } from "@/core/team"
-import { requireWorkspace } from "@/core/workspace"
+import { brandingPublicUrl, requireWorkspace } from "@/core/workspace"
 import { GeneralScreen } from "./general-screen"
 
-/** Server entry: workspace identity, regional and membership defaults. */
+/**
+ * Server entry: workspace identity, regional and membership defaults, and
+ * brand (theme, logo/favicon, colour, type, shape) — one page, one fetch.
+ */
 export default async function GeneralModule() {
   const { workspace, settings } = await requireWorkspace()
   const supabase = await createClient()
@@ -14,6 +18,7 @@ export default async function GeneralModule() {
     listMembers(workspace.id),
   ])
   const owner = members.find((m) => m.role === "owner")
+  const canEdit = isAdminLike(workspace.role as Role)
 
   return (
     <GeneralScreen
@@ -22,13 +27,21 @@ export default async function GeneralModule() {
         defaultLocale: pickLocale(settings.default_locale),
         timeZone: isTimeZone(settings.time_zone) ? settings.time_zone : defaultTimeZone,
         defaultMemberRole: (["admin", "member", "viewer"].includes(settings.default_member_role) ? settings.default_member_role : "member") as "admin" | "member" | "viewer",
-        canEdit: isAdminLike(workspace.role as Role),
+        canEdit,
         facts: {
           id: workspace.id,
           slug: workspace.slug,
           createdAt: (created.data?.created_at as string | undefined) ?? null,
           owner: owner?.displayName ?? owner?.email ?? null,
           memberCount: members.length,
+        },
+        brand: {
+          defaultAppearance: settings.default_appearance,
+          skin: rowToSkinInput(settings),
+          geometry: rowToGeometry(settings),
+          logoLightUrl: brandingPublicUrl(settings.logo_light_path),
+          logoDarkUrl: brandingPublicUrl(settings.logo_dark_path),
+          faviconUrl: brandingPublicUrl(settings.favicon_path),
         },
       }}
     />

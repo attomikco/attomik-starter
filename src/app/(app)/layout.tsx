@@ -4,6 +4,7 @@ import { rowToGeometry, rowToSkinInput, skinStylesheetWithDefault, themedDeclara
 import { isLocale, pickLocale } from "@/core/i18n"
 import type { Role } from "@/core/permissions"
 import { getLocaleSources } from "@/core/i18n/server"
+import { getOwnProfile } from "@/core/profile"
 import { brandingPublicUrl, requireWorkspace } from "@/core/workspace"
 import { AppShell } from "@/ui/shell/app-shell"
 
@@ -25,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const [{ user, workspace, settings }, localeSources] = await Promise.all([requireWorkspace(), getLocaleSources()])
+  const [{ user, workspace, settings }, localeSources, profile] = await Promise.all([requireWorkspace(), getLocaleSources(), getOwnProfile()])
 
   const skin = rowToSkinInput(settings)
   const geometry = rowToGeometry(settings)
@@ -58,6 +59,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           email: user.email,
           locale: isLocale(localeSources.profile) ? localeSources.profile : null,
           workspaceLocale: pickLocale(settings.default_locale),
+          displayName: profile.displayName,
+          avatarUrl: profile.avatarUrl,
         }}
         workspace={{
           name: settings.display_name || workspace.name,

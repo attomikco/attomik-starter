@@ -65,7 +65,6 @@ export interface ShellCopy {
 
   account: {
     profile: string
-    profileUnavailable: string
     commandPalette: string
     keyboardShortcuts: string
     appearance: string

@@ -95,8 +95,8 @@ export const moduleRegistry = {
       href: "/settings/general",
       order: 0,
       children: [
+        { key: "profile", href: "/settings/profile" },
         { key: "general", href: "/settings/general" },
-        { key: "appearance", href: "/settings/appearance" },
         { key: "team", href: "/settings/team" },
         { key: "emails", href: "/settings/emails", minRole: "admin" },
         { key: "activity", href: "/settings/activity" },

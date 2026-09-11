@@ -13,8 +13,8 @@ export const esMX: ShellCopy = {
       media: { label: "Medios", description: "Biblioteca de archivos con seguimiento de uso y detección de huérfanos." },
       settings: {
         label: "Configuración",
-        description: "Configuración del espacio: general, apariencia y marca, equipo, correos, actividad.",
-        children: { general: "General", appearance: "Apariencia y marca", team: "Equipo y permisos", emails: "Correos", activity: "Actividad" },
+        description: "Perfil, configuración del espacio, equipo, correos, actividad.",
+        children: { profile: "Perfil", general: "General", team: "Equipo y permisos", emails: "Correos", activity: "Actividad" },
       },
     },
     expandSidebar: "Expandir la barra lateral",
@@ -61,7 +61,6 @@ export const esMX: ShellCopy = {
 
   account: {
     profile: "Perfil y cuenta",
-    profileUnavailable: "La configuración del perfil aún no está disponible",
     commandPalette: "Paleta de comandos",
     keyboardShortcuts: "Atajos de teclado",
     appearance: "Apariencia",
