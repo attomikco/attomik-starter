@@ -26,6 +26,29 @@ export function TableLoading({ rowCount = 7 }: { rowCount?: number }) {
   )
 }
 
+/**
+ * A compact skeleton for a small list that isn't a full DataTable — a
+ * record's activity feed, a detail drawer's timeline, any section that
+ * fetches client-side after mount. Three rows by default: enough to read
+ * as "loading," never so many it looks like real content pretending to be
+ * finished. Each row is a short label line over a longer content line,
+ * shimmering (shell.css's .sh-shimmer) — the same generic shape a
+ * timeline entry, an activity row, or a list item all share.
+ */
+export function RowsLoading({ rowCount = 3 }: { rowCount?: number }) {
+  const copy = useCopy()
+  return (
+    <div aria-busy="true" aria-label={copy.data.loading} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {Array.from({ length: rowCount }, (_, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <span className="sh-shimmer" style={{ width: 80 + (i % 2) * 24, height: 9, borderRadius: 4, background: "var(--shell)", display: "block" }} />
+          <span className="sh-shimmer" style={{ width: `${74 - i * 9}%`, height: 12, borderRadius: 4, background: "var(--shell)", display: "block" }} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const stateWrap = { padding: "64px 40px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 10 } as const
 
 export function TableEmpty({
