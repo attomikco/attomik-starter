@@ -12,7 +12,6 @@ export function AuthCardHeader({ stepLabel }: { stepLabel: string }) {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, flex: "none" }}>
       {logoUrl ? (
         <span style={{ height: 34, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoUrl} alt={copy.nav.logoAlt(name)} style={{ height: 30, width: "auto", maxWidth: 176, objectFit: "contain", display: "block" }} />
         </span>
       ) : (

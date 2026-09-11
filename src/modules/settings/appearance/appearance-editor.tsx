@@ -420,7 +420,6 @@ function PreviewPanel({ scheme, label, tokens, logoUrl }: { scheme: "light" | "d
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
         <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>{t("settings.appearance.preview.live")} · {label}</span>
         {logoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={logoUrl} alt={t("settings.appearance.preview.logoAlt", { ground: label })} style={{ height: 20, maxWidth: 120, objectFit: "contain", flex: "none", display: "block" }} />
         )}
       </div>
@@ -577,7 +576,6 @@ function AssetRow({ label, hint, url, kind, tall, dark, canEdit, onUpload, onRem
     <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", padding: "14px 0", borderBottom: "1px solid var(--line)" }}>
       <span style={{ minWidth: tall ? 152 : 46, height: tall ? 56 : 46, borderRadius: tall ? "var(--r3)" : 10, background: dark ? "oklch(0.2 0 0)" : "var(--card)", border: `1px ${url ? "solid var(--line)" : "dashed var(--line-2)"}`, display: "grid", placeItems: "center", padding: tall ? "0 14px" : 0, boxSizing: "border-box" }}>
         {url ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={url} alt={`${label} preview`} style={tall ? { maxHeight: 34, maxWidth: 148, display: "block", objectFit: "contain" } : { width: 22, height: 22, display: "block", objectFit: "contain" }} />
         ) : (
           <span style={{ fontFamily: "var(--mono)", fontSize: 9.5, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--txt-4)" }}>{kind === "favicon" ? "ico" : "none"}</span>

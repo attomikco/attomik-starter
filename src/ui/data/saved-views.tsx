@@ -67,7 +67,7 @@ export function SavedViewsBar({
             {v.label}
           </button>
           {onRemove && activeId === v.id && (
-            <button className="ui-btn" aria-label={`Delete view ${v.label}`} onClick={() => onRemove(v.id)}
+            <button className="ui-btn" aria-label={copy.data.deleteView(v.label)} onClick={() => onRemove(v.id)}
               style={{ color: "var(--txt-4)", fontSize: 11, padding: "0 6px" }}>✕</button>
           )}
         </span>
@@ -75,7 +75,7 @@ export function SavedViewsBar({
       {onSaveCurrent && (
         <button className="ui-btn" onClick={onSaveCurrent}
           style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent-text)", background: "var(--accent-tint)", borderRadius: 999, padding: "6px 12px", marginLeft: 4 }}>
-          Save current view
+          {copy.data.saveCurrentView}
         </button>
       )}
     </div>

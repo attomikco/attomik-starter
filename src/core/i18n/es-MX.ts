@@ -106,6 +106,8 @@ export const esMX: ShellCopy = {
     },
     savedViews: "Vistas guardadas",
     allRecords: "Todos los registros",
+    saveCurrentView: "Guardar vista actual",
+    deleteView: (label) => `Eliminar vista ${label}`,
     bulkActions: "Acciones en lote",
     clearSelection: "Limpiar la selección",
     // Spanish plurals are irregular; callers pass the singular noun and

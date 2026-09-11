@@ -105,6 +105,9 @@ export interface ShellCopy {
     operators: Record<"equals" | "not_equals" | "contains" | "is_empty" | "is_not_empty" | "gte" | "lte", string>
     savedViews: string
     allRecords: string
+    saveCurrentView: string
+    /** aria-label on a saved view's delete button — the view's own label. */
+    deleteView: (label: string) => string
     bulkActions: string
     clearSelection: string
     /** "3 records selected" — count, singular noun. */

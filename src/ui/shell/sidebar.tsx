@@ -139,7 +139,6 @@ function WorkspaceMark({ workspace }: { workspace: ShellWorkspace }) {
   const copy = useCopy()
   const { logoLightUrl, logoDarkUrl, name } = workspace
   const img = (src: string, cls?: string) => (
-    // eslint-disable-next-line @next/next/no-img-element
     <img key={cls ?? src} src={src} alt={copy.nav.logoAlt(name)} className={cls} style={{ height: 30, width: "auto", maxWidth: 176, objectFit: "contain" }} />
   )
 

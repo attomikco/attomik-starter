@@ -106,6 +106,8 @@ export const en: ShellCopy = {
     },
     savedViews: "Saved views",
     allRecords: "All records",
+    saveCurrentView: "Save current view",
+    deleteView: (label) => `Delete view ${label}`,
     bulkActions: "Bulk actions",
     clearSelection: "Clear selection",
     selected: (count, noun) => `${count} ${noun}${count === 1 ? "" : "s"} selected`,
