@@ -1,6 +1,18 @@
 /* Shell chrome — hover states, motion, and base rules ported from the
    design-reference host <style> block. All colors are theme tokens. */
 
+/* Pin the document itself: every layout (auth, the app shell) already routes
+   its own content through a single sh-scroll region (below) rather than
+   relying on body-level scroll, so this is safe everywhere. Without it, iOS
+   Safari lets the whole page rubber-band/drag on any surface — overflow:
+   hidden here is also the hard guarantee that nothing can exceed 100vw
+   horizontally, regardless of which element would otherwise cause it. */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 a { color: var(--accent-text); }
 a:hover { color: var(--txt); }
 ::selection { background: var(--accent); color: var(--accent-ink); }
