@@ -58,6 +58,10 @@ textarea { resize: none; }
 .sh-credit:hover { color: var(--txt-3); }
 .sh-close-hover:hover { background: var(--shell); }
 
+/* Chip's own remove × (src/ui/forms/fields.tsx) — hidden until the chip or the button itself has hover/focus. */
+.sh-chip-x { opacity: 0; transition: opacity .12s ease; }
+.sh-chip:hover .sh-chip-x, .sh-chip-x:focus-visible { opacity: 1; }
+
 @keyframes sh-spin { to { transform: rotate(360deg); } }
 
 /* Workspace logo per ground: the app layout emits --logo-*-display on the

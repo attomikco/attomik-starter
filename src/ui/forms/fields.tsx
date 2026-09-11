@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, type CSSProperties, type ReactNode } from "react"
+import { useId, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react"
 import { Listbox } from "./select"
 
 /**
@@ -116,6 +116,66 @@ export function TextArea({
     </>
   )
   return label ? <Field label={label} required={required} error={error} hint={hint} htmlFor={id}>{area}</Field> : <span style={{ display: "block" }}>{area}</span>
+}
+
+/** One pill — read-only when `onRemove` is omitted. The × only shows on hover/focus (`.sh-chip`/`.sh-chip-x`, shell.css). */
+export function Chip({ label, onRemove, removeLabel }: { label: string; onRemove?: () => void; removeLabel?: string }) {
+  return (
+    <span className="sh-chip" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12.5, background: "var(--shell)", borderRadius: 999, padding: onRemove ? "4px 4px 4px 10px" : "4px 10px" }}>
+      {label}
+      {onRemove && (
+        <button type="button" className="ui-btn sh-chip-x" onClick={onRemove} aria-label={removeLabel}
+          style={{ display: "grid", placeItems: "center", width: 12, height: 12, color: "var(--txt-3)" }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+      )}
+    </span>
+  )
+}
+
+/**
+ * Free-form tag entry — Enter or comma adds the draft as a chip, Backspace
+ * on an empty draft removes the last one. `removeLabel` is built by the
+ * caller from its own `t()` call per chip (e.g. "Remove {chip}") — a
+ * shared primitive never carries its own copy.
+ */
+export function ChipInput({
+  label, required, value, onChange, placeholder, disabled, error, hint, removeLabel,
+}: {
+  label?: string
+  required?: boolean
+  value: string[]
+  onChange: (v: string[]) => void
+  placeholder: string
+  disabled?: boolean
+  error?: string
+  hint?: string
+  removeLabel: (chip: string) => string
+}) {
+  const id = useId()
+  const [draft, setDraft] = useState("")
+  const add = () => {
+    const v = draft.trim()
+    if (!v) return
+    if (!value.includes(v)) onChange([...value, v])
+    setDraft("")
+  }
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add() }
+    else if (e.key === "Backspace" && !draft && value.length > 0) onChange(value.slice(0, -1))
+  }
+  const field = (
+    <span className="ui-field" style={{ ...fieldFrame(error ? "invalid" : "idle"), flexWrap: "wrap", gap: 8 }}>
+      {value.map((chip) => (
+        <Chip key={chip} label={chip} removeLabel={removeLabel(chip)} onRemove={disabled ? undefined : () => onChange(value.filter((x) => x !== chip))} />
+      ))}
+      {!disabled && (
+        <input id={id} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={onKeyDown} onBlur={add}
+          placeholder={placeholder} style={{ flex: 1, minWidth: 80, fontSize: 13.5 }} />
+      )}
+    </span>
+  )
+  return label ? <Field label={label} required={required} error={error} hint={hint} htmlFor={id}>{field}</Field> : field
 }
 
 export function SelectInput({
