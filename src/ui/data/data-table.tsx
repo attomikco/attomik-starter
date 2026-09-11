@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode, type UIEvent } from "react"
 import { useCopy } from "@/core/i18n/client"
 import type { ColumnDef, DataState, SortState } from "@/core/data/types"
 import { TableEmpty, TableError, TableLoading } from "./data-states"
 import { Pagination, type PaginationProps } from "./pagination"
+import { nameInitials } from "@/ui/initials"
 
 /**
  * The canonical DataTable, ported from part-data.dc.html. Generic and
@@ -19,6 +20,11 @@ import { Pagination, type PaginationProps } from "./pagination"
  */
 
 const NARROW = 720
+/** A flex column with no explicit minWidth used to have none at all (`minWidth: 0`) — the actual cause of a header-label/cell collision bug: it could shrink to zero and let its own content overflow into the next column instead of the table scrolling. */
+const DEFAULT_FLEX_MIN_WIDTH = 200
+/** The row's own horizontal padding ("13px 18px" / "11px 18px") — the sticky first column sticks at this offset, not 0, so it stays flush with the row's normal left inset instead of jumping to the scroll container's bare edge. */
+const ROW_PADDING_X = 18
+const GAP = 14
 
 export interface DataTableProps<T> {
   columns: ColumnDef<T>[]
@@ -64,16 +70,44 @@ export function DataTable<T>(props: DataTableProps<T>) {
     return () => ro.disconnect()
   }, [])
 
+  // The header can't horizontally scroll on its own (that would let it drift
+  // out of sync with the body) — it only ever receives a programmatic
+  // scrollLeft, driven by the body's own real scrollbar.
+  const headerScrollRef = useRef<HTMLDivElement>(null)
+  const onBodyScroll = (e: UIEvent<HTMLDivElement>) => {
+    if (headerScrollRef.current) headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft
+  }
+
   const visible = columns.filter((c) => c.pinned || !hiddenColumns.includes(c.key))
   const selectable = !!onToggleRow
   const allOn = rows.length > 0 && rows.every((r) => selected[rowKey(r)])
+
+  const colMinWidth = (c: ColumnDef<T>): number => c.flex ? (c.minWidth ?? DEFAULT_FLEX_MIN_WIDTH) : (c.minWidth ?? c.width ?? 120)
 
   const colStyle = (c: ColumnDef<T>) =>
     narrow
       ? ({ flex: c.flex ? "1 1 100%" : "0 0 auto", minWidth: 0 } as const)
       : c.flex
-        ? ({ flex: 1, minWidth: 0 } as const)
-        : ({ width: c.width ?? 120, flex: "none" } as const)
+        ? ({ flex: "1 1 auto", minWidth: colMinWidth(c) } as const)
+        : ({ width: c.width ?? 120, minWidth: colMinWidth(c), flex: "0 0 auto" } as const)
+
+  // Not narrow: the row/header's intrinsic width never shrinks below the sum
+  // of every visible column's own floor — once that no longer fits the
+  // container, the table scrolls horizontally instead of squeezing columns
+  // past their floor.
+  const extraSlots = (selectable ? 1 : 0) + (onRowClick ? 1 : 0)
+  const rowMinWidth = narrow ? undefined : visible.reduce((sum, c) => sum + colMinWidth(c), 0)
+    + (selectable ? 18 : 0) + (onRowClick ? 34 : 0)
+    + GAP * (visible.length - 1 + extraSlots)
+    + ROW_PADDING_X * 2
+
+  // The first visible column stays put horizontally while the rest scroll
+  // under it — `left` matches the row's own padding (not 0) so it stays
+  // flush with the row's normal left inset instead of jumping to the bare
+  // scroll-container edge. Needs its own opaque background (set per call
+  // site below, header vs. selected/unselected row) to occlude whatever
+  // scrolls underneath it.
+  const stickyFirstColStyle = narrow ? {} : { position: "sticky" as const, left: selectable ? ROW_PADDING_X + 18 + GAP : ROW_PADDING_X, zIndex: 1 }
 
   const checkbox = (on: boolean, label: string, onClick?: () => void) => (
     <button
@@ -91,74 +125,85 @@ export function DataTable<T>(props: DataTableProps<T>) {
 
   return (
     <div ref={wrapRef} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : { flex: "none" }), display: "flex", flexDirection: "column", border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden", position: "relative" }}>
-      {/* Sticky header — hidden in the narrow card representation */}
-      <div style={{ display: narrow ? "none" : "flex", alignItems: "center", gap: 14, padding: "11px 18px", background: "var(--shell)", borderBottom: "1px solid var(--line)", flex: "none", position: "sticky", top: 0, zIndex: 5 }}>
-        {selectable && checkbox(allOn, copy.data.selectAllRows, onToggleAll)}
-        {visible.map((c) => {
-          const sorted = sort?.key === c.key
-          const header = (
-            <>
-              {c.label}
-              {sorted && <span aria-hidden style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent-text)" }}>{sort?.dir === "asc" ? "▲" : "▼"}</span>}
-            </>
-          )
-          const style = {
-            ...colStyle(c),
-            display: "flex", alignItems: "center", gap: 6,
-            ...(c.align === "right" ? { justifyContent: "flex-end" } : {}),
-            fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".11em", textTransform: "uppercase" as const,
-            color: sorted ? "var(--txt)" : "var(--txt-3)",
-          }
-          return c.sortable && onSort ? (
-            <button key={c.key} className="ui-btn" style={style} onClick={() => onSort(c.key)}
-              aria-sort={sorted ? (sort?.dir === "asc" ? "ascending" : "descending") : "none"}>
-              {header}
-            </button>
-          ) : (
-            <span key={c.key} style={style}>{header}</span>
-          )
-        })}
-        <span style={{ width: 34, flex: "none" }} />
+      {/* Sticky header — hidden in the narrow card representation. Never
+          scrolls on its own (overflow-x hidden): its scrollLeft is only ever
+          set programmatically, from the body's real scrollbar (onBodyScroll
+          above), so the two can never drift out of sync. */}
+      <div ref={headerScrollRef} style={{ display: narrow ? "none" : "block", overflowX: "hidden", background: "var(--shell)", borderBottom: "1px solid var(--line)", flex: "none", position: "sticky", top: 0, zIndex: 5 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: GAP, padding: "11px 18px", minWidth: rowMinWidth }}>
+          {selectable && checkbox(allOn, copy.data.selectAllRows, onToggleAll)}
+          {visible.map((c, i) => {
+            const sorted = sort?.key === c.key
+            const header = (
+              <>
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>{c.label}</span>
+                {sorted && <span aria-hidden style={{ flex: "none", fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent-text)" }}>{sort?.dir === "asc" ? "▲" : "▼"}</span>}
+              </>
+            )
+            const style = {
+              ...colStyle(c),
+              display: "flex", alignItems: "center", gap: 6,
+              ...(c.align === "right" ? { justifyContent: "flex-end" } : {}),
+              fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".11em", textTransform: "uppercase" as const,
+              color: sorted ? "var(--txt)" : "var(--txt-3)",
+              ...(i === 0 ? { ...stickyFirstColStyle, background: "var(--shell)" } : {}),
+            }
+            return c.sortable && onSort ? (
+              <button key={c.key} className="ui-btn" style={style} onClick={() => onSort(c.key)}
+                aria-sort={sorted ? (sort?.dir === "asc" ? "ascending" : "descending") : "none"}>
+                {header}
+              </button>
+            ) : (
+              <span key={c.key} style={style}>{header}</span>
+            )
+          })}
+          <span style={{ width: 34, flex: "none" }} />
+        </div>
       </div>
 
-      <div className="sh-scroll" style={layout === "fill" ? { flex: 1, minHeight: 0 } : undefined}>
+      <div className="sh-scroll" onScroll={onBodyScroll} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : undefined), overflowX: narrow ? undefined : "auto" }}>
         {state === "loading" && <TableLoading rowCount={loadingRows} />}
         {state === "error" && error && <TableError {...error} />}
         {(state === "empty" || (state === "ready" && rows.length === 0)) && empty && <TableEmpty {...empty} />}
-        {state === "ready" &&
-          rows.map((row) => {
-            const key = rowKey(row)
-            const isSel = !!selected[key]
-            return (
-              <div
-                key={key}
-                className="sh-row-hover"
-                style={{
-                  ...(narrow
-                    ? { display: "flex", flexWrap: "wrap" as const, alignItems: "center", gap: "8px 12px" }
-                    : { display: "flex", alignItems: "center", gap: 14 }),
-                  padding: "13px 18px", borderBottom: "1px solid var(--line)",
-                  background: isSel ? "var(--accent-tint)" : "var(--card)",
-                  cursor: onRowClick ? "pointer" : undefined,
-                }}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-              >
-                {selectable && checkbox(isSel, copy.data.selectRow, () => onToggleRow(key))}
-                {visible.map((c) => (
-                  <span key={c.key} style={{
-                    ...colStyle(c),
-                    ...(c.align === "right" && !narrow ? { textAlign: "right" as const } : {}),
-                    ...(c.mono ? { fontFamily: "var(--mono)", fontSize: 13, color: "var(--txt-2)" } : { fontSize: 13.5, color: "var(--txt-2)" }),
-                  }}>
-                    {c.render ? c.render(row) : String(c.text?.(row) ?? "")}
-                  </span>
-                ))}
-                {onRowClick && (
-                  <span aria-hidden style={{ width: 34, flex: "none", display: narrow ? "none" : "grid", placeItems: "center", color: "var(--txt-4)" }}>⋮</span>
-                )}
-              </div>
-            )
-          })}
+        {state === "ready" && (
+          <div style={{ display: "flex", flexDirection: "column", minWidth: narrow ? undefined : rowMinWidth }}>
+            {rows.map((row) => {
+              const key = rowKey(row)
+              const isSel = !!selected[key]
+              const rowBg = isSel ? "var(--accent-tint)" : "var(--card)"
+              return (
+                <div
+                  key={key}
+                  className="sh-row-hover"
+                  style={{
+                    ...(narrow
+                      ? { display: "flex", flexWrap: "wrap" as const, alignItems: "center", gap: "8px 12px" }
+                      : { display: "flex", alignItems: "center", gap: 14 }),
+                    padding: "13px 18px", borderBottom: "1px solid var(--line)",
+                    background: rowBg,
+                    cursor: onRowClick ? "pointer" : undefined,
+                  }}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                >
+                  {selectable && checkbox(isSel, copy.data.selectRow, () => onToggleRow(key))}
+                  {visible.map((c, i) => (
+                    <span key={c.key} style={{
+                      ...colStyle(c),
+                      ...(c.align === "right" && !narrow ? { textAlign: "right" as const } : {}),
+                      ...(c.mono ? { fontFamily: "var(--mono)", fontSize: 13, color: "var(--txt-2)" } : { fontSize: 13.5, color: "var(--txt-2)" }),
+                      ...(i === 0 ? { ...stickyFirstColStyle, background: rowBg } : {}),
+                    }}>
+                      {c.render ? c.render(row) : String(c.text?.(row) ?? "")}
+                    </span>
+                  ))}
+                  {onRowClick && (
+                    <span aria-hidden style={{ width: 34, flex: "none", display: narrow ? "none" : "grid", placeItems: "center", color: "var(--txt-4)" }}>⋮</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {(footerText || pagination) && (
@@ -172,15 +217,22 @@ export function DataTable<T>(props: DataTableProps<T>) {
   )
 }
 
-/** Reference person cell: name + mono sub-line with an initials disc. */
+/**
+ * Reference person cell: name + mono sub-line with an initials disc. Name
+ * and sub each stay on their own single line — two lines total, never more
+ * — truncated with an ellipsis rather than wrapping (wrapping a long
+ * sub-line risks a mid-word break once the column has a real floor width
+ * instead of shrinking to fit).
+ */
 export function PersonCell({ name, sub }: { name: string; sub?: string }) {
-  const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
+  const initials = nameInitials(name)
+  const lineStyle = { display: "block" as const, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
       <span style={{ width: 30, height: 30, borderRadius: 999, background: "var(--shell)", display: "grid", placeItems: "center", flex: "none", fontSize: 11.5, fontWeight: "var(--w-bold)" as never, color: "var(--txt-2)" }}>{initials}</span>
       <span style={{ minWidth: 0 }}>
-        <span style={{ display: "block", fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em", color: "var(--txt)" }}>{name}</span>
-        {sub && <span style={{ display: "block", fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }}>{sub}</span>}
+        <span style={{ ...lineStyle, fontSize: 14, fontWeight: "var(--w-semi)" as never, letterSpacing: "-0.01em", color: "var(--txt)" }}>{name}</span>
+        {sub && <span style={{ ...lineStyle, fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-3)" }}>{sub}</span>}
       </span>
     </span>
   )
