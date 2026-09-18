@@ -62,6 +62,29 @@ proxy, copy the cookies from `supabaseResponse` onto it.
   protecting pages/data, `getUser()` when you need the fresh user record.
   Never trust `getSession()` or browser state for authorization.
 
+## The 1,000-row cap
+
+PostgREST returns at most 1,000 rows for a request without a limit, and says
+nothing about the rest — no error, no flag. A read that treats such a result as
+"all the rows" is silently wrong. Page every read that can outgrow the cap with
+`fetchAllRows` (`src/core/supabase/paginate.ts`, always ordered so pages never
+skip or repeat a row), or bound it with `.limit(n)`.
+
+`src/core/supabase/row-cap-guard.ts` enforces it at runtime on both shared
+clients (`server.ts`, `client.ts`): a read (select or rpc) that returns
+**exactly 1,000 rows without a `limit`** — what `.range()`, `.limit()` and
+`fetchAllRows` all send — is a truncated result nobody asked for, so it
+
+- **throws in development and test** (`NODE_ENV !== "production"`), and
+- **logs a warning with the query in production** and returns the rows, so a
+  page never breaks over it.
+
+Limits worth knowing: it fires only once the data reaches the cap (a read of a
+table with 900 rows today is not seen), so review new reads of tables that only
+grow when they are written; and a table that holds exactly 1,000 rows is a false
+positive — paging or `.limit()`-ing the read is the right change anyway. Writes,
+head/count reads, single-row reads and errors are never flagged.
+
 ## Schema and migrations
 
 Migrations live in `supabase/migrations` (created with
