@@ -192,6 +192,10 @@ delete module code because a project doesn't use it.
 - All user/workspace data requires RLS. Do not bypass RLS for convenience.
 - Authorization decisions use verified server-side identity
   (`getClaims()` / `getUser()`), never browser state or `getSession()`.
+- PostgREST silently truncates a read at 1,000 rows. Page any read that can
+  outgrow that with `fetchAllRows` (`src/core/supabase/paginate.ts`, ordered)
+  or bound it with `.limit()`; the shared clients throw in development and
+  warn in production when a read comes back at exactly 1,000 rows without one.
 - Conventions: `docs/SUPABASE.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->

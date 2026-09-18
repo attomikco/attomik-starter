@@ -12,6 +12,12 @@ type Pageable<T> = { range: (from: number, to: number) => PromiseLike<Page<T>> }
  * with `.range()` until a page comes back short of PAGE_SIZE, so the
  * caller always gets every row.
  *
+ * ALWAYS order the query (by a unique column, or a tie-break that ends in one):
+ * pages are separate requests, and without a stable order Postgres may skip or
+ * repeat a row across a page boundary. Its `.range()` also sends the explicit
+ * `limit` that the runtime row-cap guard (row-cap-guard.ts, on the shared
+ * Supabase clients) treats as "these rows were asked for".
+ *
  * `buildQuery` must return a FRESH query each call (e.g. a closure over
  * `supabase.from(...).select(...).eq(...)`), not a query already awaited —
  * `.range()` is applied to each page's query independently.
