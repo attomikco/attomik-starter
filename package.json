@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "test": "node --test 'src/**/*.test.ts' 'scripts/**/*.test.ts'",
     "hooks:install": "scripts/install-git-hooks.sh",
+    "test:db": "scripts/run-db-tests.sh",
     "enable-module": "scripts/enable-module.sh",
     "build:auth-emails": "node scripts/build-auth-emails.ts",
     "preview-emails": "node scripts/preview-emails.ts"
