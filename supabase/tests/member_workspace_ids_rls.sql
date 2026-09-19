@@ -55,6 +55,10 @@ select pg_temp.check((select count(*) from public.activity_events where action =
   and (select count(*) from public.activity_events where action = 'test.two') = 0, 'activity_events: a member sees only their own workspace''s events');
 
 -- The set form and the single-id form agree, for a member and a non-member.
+-- `private` is not exposed to `authenticated` (no schema USAGE on a fresh stack;
+-- policies still evaluate the function), so call it as the owner with the
+-- member's claim set: auth.uid() reads the claim, which is all it looks at.
+reset role;
 select pg_temp.check(
   (select array_agg(w order by w) from private.member_workspace_ids() w) = array['00000000-0000-0000-0000-00000000d001'::uuid]
   and private.is_workspace_member('00000000-0000-0000-0000-00000000d001')
@@ -68,6 +72,7 @@ select pg_temp.check((select count(*) from public.workspace_members) = 0
   and (select count(*) from public.activity_events) = 0
   and (select count(*) from public.workspaces where id in ('00000000-0000-0000-0000-00000000d001','00000000-0000-0000-0000-00000000d002')) = 0,
   'a non-member reads zero rows on every rewritten table');
+reset role;   -- the non-member's claim stays set
 select pg_temp.check(not exists (select 1 from private.member_workspace_ids()) and not private.is_workspace_member('00000000-0000-0000-0000-00000000d001'),
   'member_workspace_ids() is empty for a non-member, like is_workspace_member()');
 
