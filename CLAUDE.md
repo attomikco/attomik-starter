@@ -203,6 +203,10 @@ delete module code because a project doesn't use it.
 - All user/workspace data requires RLS. Do not bypass RLS for convenience.
 - Authorization decisions use verified server-side identity
   (`getClaims()` / `getUser()`), never browser state or `getSession()`.
+- Write SELECT policies as `workspace_id IN (SELECT
+  private.member_workspace_ids())`, never a per-row
+  `is_workspace_member(workspace_id)` call; time read models as an
+  authenticated member, not the table owner.
 - Conventions: `docs/SUPABASE.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->

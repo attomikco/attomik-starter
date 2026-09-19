@@ -61,6 +61,15 @@ proxy, copy the cookies from `supabaseResponse` onto it.
 - Authorization uses verified server-side identity — `getClaims()` for
   protecting pages/data, `getUser()` when you need the fresh user record.
   Never trust `getSession()` or browser state for authorization.
+- **Write SELECT policies in the set form:**
+  `workspace_id IN (SELECT private.member_workspace_ids())`, never
+  `private.is_workspace_member(workspace_id)`. A function taking the row's
+  column is called once per row scanned; the set form is one uncorrelated
+  subquery the planner hashes once (300k `activity_events`: ~800 ms → ~25 ms
+  as an authenticated member). `is_workspace_member()` stays for single-id
+  checks (server code, INSERT/UPDATE checks). Time any new read model as an
+  `authenticated` member, never as the table owner, which bypasses RLS and
+  hides the cost.
 
 ## Schema and migrations
 
@@ -73,6 +82,37 @@ Accepted advisor findings: leaked-password protection and MFA options
 RPC-callable SECURITY DEFINER functions (their documented purpose), and
 INFO-level unindexed actor/creator FK columns (low-value at these sizes —
 add per project if audit queries by actor become hot).
+
+## Tests
+
+`supabase/tests/*.sql` are plain-SQL RLS assertions (no pgTAP), each one
+transaction that rolls back. They act as the real `authenticated` role via
+`request.jwt.claim.sub` and raise on the first failed assertion:
+
+```sh
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/member_workspace_ids_rls.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/feedback_rls.sql
+```
+
+Run them against a local stack or a branch with every migration applied,
+never production.
+
+## Pre-push migration guard (opt-in)
+
+`.githooks/pre-push` runs `scripts/check-migrations-pushed.ts`, which asks
+`supabase migration list --linked` and refuses the push while any local
+migration file has no matching version on the linked project — a migration
+landing after the code that needs it breaks the deploy in between. It only
+warns (never blocks) when the CLI is missing, the project is unlinked or
+unreachable. Turn it on once per clone, after linking your own project and
+pushing (so local and remote versions match):
+
+```sh
+pnpm hooks:install
+```
+
+It is not wired into `prepare` on purpose: it compares versions, so it is
+only meaningful once the project's history is in sync.
 
 ## Diagnostics
 

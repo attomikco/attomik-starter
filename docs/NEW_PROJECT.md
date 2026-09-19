@@ -79,6 +79,10 @@ Follow in order; each step ends with a check.
    (or the Supabase MCP `apply_migration` per file, in filename order).
    ✓ Tables exist; advisors show no RLS-disabled errors.
 
+   Once local and remote migration versions match, optionally run
+   `pnpm hooks:install` to turn on the pre-push guard that refuses a push
+   while a migration is unapplied (docs/SUPABASE.md).
+
 6. **Resend credentials**: verify the project's sending domain in Resend,
    then create **two sending-only API keys** restricted to it:
    - one for Supabase auth email (used in the next step, never stored)

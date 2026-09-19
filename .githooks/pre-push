@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Pre-push guard: refuses a push while a local migration is not applied to
+# the linked Supabase project (docs/SUPABASE.md — apply migrations before,
+# or in the same step as, the push that depends on them). The logic lives in
+# scripts/check-migrations-pushed.ts so its parsing is unit-tested.
+#
+# OPT-IN: run `pnpm hooks:install` once after linking your own project
+# (`git config core.hooksPath .githooks`). It is deliberately not wired into
+# `prepare`: the guard compares local migration versions to the linked
+# project's, so it only makes sense once a project's history is in sync.
+node scripts/check-migrations-pushed.ts
