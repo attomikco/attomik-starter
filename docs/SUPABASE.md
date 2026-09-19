@@ -125,6 +125,47 @@ refuses anything that is not loopback, and uses `psql` or the local Postgres
 container. Run the tests against a local stack with every migration applied,
 never production.
 
+## End-to-end tests (Playwright)
+
+The e2e suite creates and deletes real auth users, workspaces and rows, so it runs
+against a **local** Supabase stack and never a hosted project.
+
+```bash
+supabase start                 # applies supabase/migrations to a fresh local database
+supabase status -o env         # API_URL, ANON_KEY (or PUBLISHABLE_KEY), SERVICE_ROLE_KEY (or SECRET_KEY)
+
+E2E_SUPABASE_URL=<API_URL> \
+E2E_SUPABASE_PUBLISHABLE_KEY=<anon or publishable key> \
+E2E_SUPABASE_SERVICE_ROLE_KEY=<service role or secret key> \
+pnpm e2e
+```
+
+`E2E_SUPABASE_URL` defaults to `http://127.0.0.1:54321`; nothing is read from
+`.env.local`. `e2e/support/target.ts` (unit-tested by `pnpm test`) allowlists
+loopback URLs and refuses hosted URLs and hosted-project keys. Another project's
+stack on the default ports makes `supabase start` fail with "port is already
+allocated": run this repo's stack from a scratch copy of `supabase/` whose
+`config.toml` sets other ports and another `project_id` (`supabase start --workdir <dir>`).
+The stack needs the table grants from migration `20260919130000` (see Table grants).
+
+### Mobile layout guard
+
+`e2e/mobile-overflow.spec.ts` visits every page route (read from
+`src/app/**/page.tsx`, plus a 404) at 390x844 with a seeded workspace
+(`e2e/support/seed.ts`) and fails if the document is wider than the viewport or any
+visible element's right edge is past it (`e2e/support/overflow.ts` explains why the
+element check is the one that matters: the shell clips overflow inside `.sh-scroll`,
+so the document never widens). Navigation and measurement only, no clicks. A new
+`[param]` route needs a value in `e2e/support/routes.ts`, and a project should add its
+module tables to `seed.ts` so its list and record routes render real content.
+`E2E_SCREENSHOTS=1` also writes a viewport and a full-length screenshot per route to
+`e2e/screenshots/` (gitignored); `E2E_ROUTES=/settings,/login` limits the pass.
+
+Layout primitives that keep this green: grids use `minmax(min(Npx, 100%), 1fr)`, never a
+bare pixel minimum; text in a flex row uses `.sh-ellipsis`; page-header buttons live in
+`.sh-actions` and wrap instead of shrinking (a button never ellipsizes its label); the
+DataTable's phone layout lets a value shrink and wrap.
+
 ## Pre-push migration guard (opt-in)
 
 `.githooks/pre-push` runs `scripts/check-migrations-pushed.ts`, which asks

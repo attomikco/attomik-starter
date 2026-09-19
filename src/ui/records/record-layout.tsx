@@ -55,7 +55,7 @@ export function RecordLayout({
           </div>
           {subtitle && <p style={{ fontSize: 14.5, color: "var(--txt-2)", lineHeight: 1.5, margin: 0 }}>{subtitle}</p>}
         </div>
-        {actions && <div style={{ display: "flex", alignItems: "center", gap: 9, flex: "none" }}>{actions}</div>}
+        {actions && <div className="sh-actions" style={{ flex: "0 1 auto" }}>{actions}</div>}
       </div>
 
       {tabs && onTab && (
@@ -96,9 +96,10 @@ export function ActionButton({ label, tone = "secondary", onClick }: { label: st
         ? { border: "1px solid var(--bad)", color: "var(--bad)", padding: "0 18px" }
         : { border: "1px solid var(--line-2)", color: "var(--txt-2)", padding: "0 18px" }
   return (
-    <button className={`ui-btn${tone === "secondary" ? " sh-pick" : ""}`} onClick={onClick}
-      style={{ height: 42, borderRadius: 999, display: "flex", alignItems: "center", gap: 9, fontSize: 14.5, fontWeight: "var(--w-semi)" as never, whiteSpace: "nowrap", boxSizing: "border-box", ...styles }}>
-      {label}
+    <button className={`ui-btn${tone === "secondary" ? " sh-pick" : ""}${tone === "primary" ? " sh-primary" : ""}`} onClick={onClick}
+      // A button never shrinks below its label: its row wraps instead (.sh-actions).
+      style={{ height: 42, borderRadius: 999, display: "flex", alignItems: "center", gap: 9, fontSize: 14.5, fontWeight: "var(--w-semi)" as never, whiteSpace: "nowrap", boxSizing: "border-box", flexShrink: 0, maxWidth: "100%", ...styles }}>
+      <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
     </button>
   )
 }

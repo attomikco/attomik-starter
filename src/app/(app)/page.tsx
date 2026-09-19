@@ -26,7 +26,7 @@ export default async function OverviewPage() {
       <p style={{ fontSize: 14.5, color: "var(--txt-2)", lineHeight: 1.55, margin: "0 0 24px", maxWidth: 560 }}>
         {copy.overview.intro}
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12, maxWidth: 900 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 12, maxWidth: 900 }}>
         {links.map(({ title, href, body }) => (
           <Link key={href} href={href} className="sh-row-hover"
             style={{ display: "block", background: "var(--shell)", borderRadius: "var(--r2)", padding: 20, textDecoration: "none", color: "inherit" }}>

@@ -132,7 +132,7 @@ export function RecordDemo() {
       >
         {tab === "Overview" && (
           <RecordSection title="Details" meta="demo data">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 14 }}>
               {[["Name", savedState.name], ["Status", savedState.status], ["Owner", savedState.owner], ["Handling", savedState.handling]].map(([k, v]) => (
                 <div key={k}>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 6 }}>{k}</div>
@@ -149,7 +149,7 @@ export function RecordDemo() {
               <FormErrorBanner title="This cannot be saved yet" body="Fix the fields marked below — each one says exactly what is wrong." />
             )}
             <RecordSection title="Details">
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 14 }}>
                 <TextInput label="Name" required value={draft.name} onChange={(v) => patch({ name: v })}
                   error={attempted ? errors.name : undefined} valid={!errors.name && draft.name !== SAVED.name} />
                 <TextInput label="Owner email" required value={draft.email} onChange={(v) => patch({ email: v })}

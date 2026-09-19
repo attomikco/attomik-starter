@@ -128,3 +128,23 @@ select:focus, select:focus-visible,
   .sh-shimmer { animation: none; opacity: .7; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---- Phone-width primitives (390px overflow pass) ------------------------- */
+
+/* Shrink-and-ellipsis for TEXT in a flex row (list rows, chart legends): the text
+   may shrink to whatever the row leaves and ends in an ellipsis, so a long label
+   can never push the amount beside it past the edge. Not for buttons: a button
+   keeps its whole label and its row wraps instead (see .sh-actions). */
+.sh-ellipsis { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Page-header actions slot (RecordLayout, and any screen header). It wraps and is
+   never wider than its container, so several buttons can never push past the
+   viewport (a button keeps its whole label; the row wraps). On a phone the slot
+   takes its own full row and the primary action (.sh-primary) comes first. */
+.sh-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; min-width: 0; max-width: 100%; }
+.sh-actions > * { max-width: 100%; }
+.sh-actions > button, .sh-actions > a { flex: none; }
+@media (max-width: 520px) {
+  .sh-actions { width: 100%; }
+  .sh-actions > .sh-primary { order: -1; }
+}

@@ -86,7 +86,8 @@ export function DataTable<T>(props: DataTableProps<T>) {
 
   const colStyle = (c: ColumnDef<T>) =>
     narrow
-      ? ({ flex: c.flex ? "1 1 100%" : "0 0 auto", minWidth: 0 } as const)
+      // Phone card layout: a value shrinks to the row and wraps (long names, emails), never pushes past it.
+      ? ({ flex: c.flex ? "1 1 100%" : "0 1 auto", minWidth: 0, maxWidth: "100%", overflowWrap: "anywhere" } as const)
       : c.flex
         ? ({ flex: "1 1 auto", minWidth: colMinWidth(c) } as const)
         : ({ width: c.width ?? 120, minWidth: colMinWidth(c), flex: "0 0 auto" } as const)

@@ -18,7 +18,7 @@ export default function DevAuthPage() {
     <main style={{ minHeight: "100vh", background: "var(--bg)", padding: 20, boxSizing: "border-box", fontFamily: "var(--font)", color: "var(--txt)" }}>
       <h1 style={{ margin: "0 0 4px", fontSize: 18, fontWeight: "var(--w-bold)" as never }}>Auth states review</h1>
       <p style={{ margin: "0 0 16px", fontSize: 13, color: "var(--txt-2)" }}>Entry · Sent · Verifying · Expired, rendered live from their routes.</p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(420px, 100%), 1fr))", gap: 16 }}>
         {STATES.map(([label, src]) => (
           <div key={label} style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 6 }}>{label}</div>
