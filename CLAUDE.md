@@ -207,6 +207,11 @@ delete module code because a project doesn't use it.
   private.member_workspace_ids())`, never a per-row
   `is_workspace_member(workspace_id)` call; time read models as an
   authenticated member, not the table owner.
+- Every migration that creates a table or view ends it with
+  `select private.expose_table('public.<name>');`: a fresh Supabase project
+  grants nothing on new tables, so a missing call means "permission denied" on
+  every query. `pnpm test:db` (table_grants.sql) fails on a fresh stack if one
+  is missing.
 - Conventions: `docs/SUPABASE.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->

@@ -78,6 +78,8 @@ Follow in order; each step ends with a check.
    ```
    (or the Supabase MCP `apply_migration` per file, in filename order).
    ✓ Tables exist; advisors show no RLS-disabled errors.
+   ✓ On a fresh local stack (`supabase start`), `pnpm test:db` passes: every
+   table has explicit Data API grants (docs/SUPABASE.md, Table grants).
 
    Once local and remote migration versions match, optionally run
    `pnpm hooks:install` to turn on the pre-push guard that refuses a push

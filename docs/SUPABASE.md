@@ -83,6 +83,32 @@ RPC-callable SECURITY DEFINER functions (their documented purpose), and
 INFO-level unindexed actor/creator FK columns (low-value at these sizes —
 add per project if audit queries by actor become hot).
 
+## Table grants: expose every table explicitly
+
+A Supabase project or local stack from a recent CLI grants nothing on new
+`public` tables to the Data API roles (older hosted projects still carry the
+implicit defaults). A migration that only creates a table and enables RLS
+therefore ships a database where every query fails with `permission denied for
+table ...`. So every migration that creates a table or view calls, right after
+it:
+
+```sql
+create table public.things (...);
+alter table public.things enable row level security;
+-- policies ...
+select private.expose_table('public.things');   -- select/insert/update/delete (views: select) to authenticated, service_role
+```
+
+`private.expose_table()` (migration `20260919130000`) never grants to `anon`:
+something intentionally public gets its own `grant ... to anon` next to its
+policy, with a comment saying why (today only `get_auth_branding()`, an RPC). It
+refuses a table with RLS disabled. It is additive and safe to repeat, so
+projects with the old implicit grants are unaffected.
+
+`supabase/tests/table_grants.sql` fails on any public table or view the roles
+cannot use, and checks its own detection with a probe table. Run it on a FRESH
+local stack (an old hosted project's implicit grants would hide a missing call).
+
 ## Tests
 
 `supabase/tests/*.sql` are plain-SQL RLS assertions (no pgTAP), each one
@@ -90,11 +116,13 @@ transaction that rolls back. They act as the real `authenticated` role via
 `request.jwt.claim.sub` and raise on the first failed assertion:
 
 ```sh
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/member_workspace_ids_rls.sql
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/feedback_rls.sql
+supabase start && pnpm test:db      # every supabase/tests/*.sql, stops at the first failure
+psql "$LOCAL_DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/feedback_rls.sql   # or one file
 ```
 
-Run them against a local stack or a branch with every migration applied,
+`pnpm test:db` (scripts/run-db-tests.sh) reads the local stack's `DB_URL`,
+refuses anything that is not loopback, and uses `psql` or the local Postgres
+container. Run the tests against a local stack with every migration applied,
 never production.
 
 ## Pre-push migration guard (opt-in)
