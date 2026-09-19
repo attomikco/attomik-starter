@@ -40,6 +40,8 @@ export function summarizeEvent(e: EventShape, actor: string, t: AuditCopy): stri
       return t.invitationRevoked(actor, label)
     case "workspace.invitation.accepted":
       return t.invitationAccepted(label)
+    case "feedback.resolved":
+      return t.feedbackResolved(actor, label)
     default:
       // future module events: the locale decides how a raw action reads
       return t.fallback(actor, e.action, e.resourceLabel)
@@ -51,7 +53,7 @@ export type EventTone = "ok" | "warn" | "bad" | "neutral"
 /** Chip tone by verb: additive → ok, destructive → bad, else neutral. */
 export function eventTone(action: string): EventTone {
   const verb = action.split(".").pop() ?? ""
-  if (["created", "added", "accepted", "uploaded"].includes(verb)) return "ok"
+  if (["created", "added", "accepted", "uploaded", "resolved"].includes(verb)) return "ok"
   if (["removed", "revoked", "deleted", "failed"].includes(verb)) return "bad"
   if (["resent"].includes(verb)) return "warn"
   return "neutral"

@@ -51,6 +51,10 @@ export const projectConfig = {
     commandPalette: true,
     darkMode: true,
     notifications: true,
+    // Floating in-app feedback capture (src/core/feedback) plus the admin
+    // screen at Settings → Feedback. Off by default: turning it on needs the
+    // two feedback migrations applied. Also gates that screen's route and nav row.
+    feedbackWidget: false,
   },
 } as const satisfies ProjectConfig
 

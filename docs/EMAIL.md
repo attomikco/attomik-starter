@@ -19,10 +19,24 @@ src/core/email/
                 dark as a prefers-color-scheme override
   text.ts       the text/plain part, derived from the same block list
   templates.ts  the catalog: one entry per email the product sends
+  send.ts       the minimal Resend sender (pure; caller supplies key + From)
 ```
 
 `src/core/team/invitation-email.ts` is a thin adapter over the catalog, not
 a template. A test asserts the two produce byte-identical output.
+
+`src/core/feedback/resolution-email.ts` is the same kind of adapter for the
+`feedback_resolved` template (sent when an admin marks a feedback row
+resolved, Settings → Feedback). Its subject is
+`copy.email.feedbackResolved.subject(snippet)` — the first 60 characters of
+the feedback text, whitespace collapsed — so the words follow the workspace
+locale like every other app-sent email.
+
+`send.ts` is the ONE minimal Resend sender for app-sent mail
+(`sendResendEmail(key, message)`): pure, never throws, returns
+`{ ok } | { ok: false, status, detail }`. The caller reads the key and From
+identity from `src/core/env`. New app-sent emails should use it; team
+invitations predate it and have not been migrated.
 
 ## Rules
 

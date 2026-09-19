@@ -138,6 +138,17 @@ delete module code because a project doesn't use it.
 - Custom React Email auth templates are a later concern.
 - Details: docs/AUTH.md.
 
+## Feedback rules
+
+- Feedback is core infrastructure behind `features.feedbackWidget` — read the
+  flag through `src/core/config/features.ts` (`isFeatureEnabled` /
+  `requireFeature`), never `projectConfig.features` directly, and never
+  build a second capture widget or feedback table.
+- `feedback` and `feedback_resolutions` are append-only; "resolved" is the
+  existence of a resolution row. Owner/admin read and resolve only.
+- Table cells never render long text: clamp (2 lines) and open the full
+  text in `DetailDrawer` on row click. Details: docs/FEEDBACK.md.
+
 ## Shell rules
 
 - AppShell (`src/ui/shell`) is canonical.

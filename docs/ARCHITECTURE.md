@@ -7,7 +7,7 @@ rewriting core.
 ## Layers
 
 ```
-src/config/project.ts   per-project switches: name, module flags, features
+src/config/project.ts   per-project switches: name, module flags, features (e.g. feedbackWidget, docs/FEEDBACK.md)
 src/core/               infrastructure shared by every project
   modules/              registry + enablement (ONE source of truth)
   navigation/           nav derived from the registry

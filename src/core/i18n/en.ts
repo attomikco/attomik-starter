@@ -14,7 +14,7 @@ export const en: ShellCopy = {
       settings: {
         label: "Settings",
         description: "Profile, workspace settings, team, emails, activity.",
-        children: { profile: "Profile", general: "General", team: "Team & permissions", emails: "Emails", activity: "Activity" },
+        children: { profile: "Profile", general: "General", team: "Team & permissions", emails: "Emails", activity: "Activity", feedback: "Feedback" },
       },
     },
     expandSidebar: "Expand the sidebar",
@@ -156,6 +156,7 @@ export const en: ShellCopy = {
     invitationResent: (actor, label) => `${actor} resent the invitation for ${label}`,
     invitationRevoked: (actor, label) => `${actor} revoked the invitation for ${label}`,
     invitationAccepted: (label) => `${label} accepted their invitation`,
+    feedbackResolved: (actor, label) => `${actor} resolved feedback: ${label}`,
     // English identifiers read as prose once the dots and underscores go:
     // "media.file.uploaded" → "actor — media file uploaded — label"
     fallback: (actor, action, label) => {
@@ -172,6 +173,26 @@ export const en: ShellCopy = {
       member: "Normal product access",
       viewer: "Read-only access",
     },
+  },
+
+  feedback: {
+    openLabel: "Send feedback",
+    closeLabel: "Close",
+    title: "Send feedback",
+    typeLabel: "Type",
+    types: {
+      broken: "Doesn't work",
+      unclear: "I don't understand it",
+      should_change: "Should change",
+      idea: "Idea",
+    },
+    messageLabel: "Comment",
+    submit: "Send",
+    submitting: "Sending…",
+    success: "Thanks, we got it",
+    error: "Couldn't send your feedback. Try again.",
+    resolveError: "Couldn't mark it as resolved. Try again.",
+    resolveAlready: "This feedback was already resolved.",
   },
 
   overview: {
@@ -277,6 +298,18 @@ export const en: ShellCopy = {
       fallback: "If the button does not work, open this link:",
       rows: { workspace: "Workspace", role: "Role", invitedBy: "Invited by" },
       footer: (days, inviter, workspace) => `The link expires in ${days} days and works once. You received this because ${inviter} invited this address to ${workspace}.`,
+    },
+    feedbackResolved: {
+      subject: (snippet) => `Feedback resolved: ${snippet}`,
+      preheader: (resolver) => `Resolved by ${resolver}`,
+      title: "Feedback resolved",
+      body: (resolver) => `${resolver} marked this feedback as resolved.`,
+      messageCaption: "Original feedback",
+      noteCaption: "Resolution note",
+      rows: { submittedBy: "Submitted by", submittedAt: "Submitted on", resolvedBy: "Resolved by" },
+      viewInApp: "View feedback",
+      fallback: "If the button does not work, open this link:",
+      footer: (workspace) => `You received this because you were chosen to be notified when feedback is resolved in ${workspace}.`,
     },
   },
 }

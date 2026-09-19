@@ -1,6 +1,6 @@
 import { resolveCopy, type Locale } from "../i18n/index.ts"
 import type { EmailBlock } from "./blocks.ts"
-import { blockNames, esc, strong } from "./blocks.ts"
+import { blockNames, esc, multiline, strong } from "./blocks.ts"
 import type { EmailPalette } from "./palette.ts"
 import { renderEmail, type EmailFooter } from "./render.ts"
 import { renderText } from "./text.ts"
@@ -25,8 +25,8 @@ import { renderText } from "./text.ts"
  * preview and the real send the same bytes.
  */
 
-export type EmailTemplateId = "magic_link" | "invitation"
-export type EmailGroup = "authentication" | "membership"
+export type EmailTemplateId = "magic_link" | "invitation" | "feedback_resolved"
+export type EmailGroup = "authentication" | "membership" | "feedback"
 
 export interface EmailContext {
   locale: Locale
@@ -134,7 +134,53 @@ const invitation: EmailTemplateDefinition = {
   },
 }
 
-export const emailTemplates: readonly EmailTemplateDefinition[] = [magicLink, invitation]
+const feedbackResolved: EmailTemplateDefinition = {
+  id: "feedback_resolved",
+  group: "feedback",
+  delivery: "resend",
+  branding: "workspace",
+  meta: [
+    ["trigger", "feedbackResolved"],
+    ["delay", "immediate"],
+    ["delivery", "resend"],
+  ],
+  previewVars: {
+    snippet: "The save button does nothing on this screen",
+    message: "The save button does nothing on this screen.\nI have to press it twice for it to work.",
+    submittedBy: "Ana García (ana@example.com)",
+    submittedAt: "2 Sep 2026, 14:05",
+    resolvedBy: "Luis Ortega (luis@example.com)",
+    note: "Fixed in today's release.",
+    feedbackUrl: "https://app.example.com/settings/feedback",
+  },
+  build(vars, ctx) {
+    const c = resolveCopy(ctx.locale).email.feedbackResolved
+    return {
+      subject: c.subject(vars.snippet),
+      preheader: c.preheader(vars.resolvedBy),
+      blocks: [
+        { type: "heading", text: c.title },
+        { type: "paragraph", html: c.body(strong(vars.resolvedBy)) },
+        { type: "secondary", text: c.messageCaption },
+        { type: "paragraph", html: multiline(vars.message) },
+        ...(vars.note ? [{ type: "secondary", text: c.noteCaption } as const, { type: "paragraph", html: multiline(vars.note) } as const] : []),
+        {
+          type: "rows",
+          rows: [
+            [c.rows.submittedBy, vars.submittedBy],
+            [c.rows.submittedAt, vars.submittedAt],
+            [c.rows.resolvedBy, vars.resolvedBy],
+          ],
+        },
+        { type: "button", label: c.viewInApp, href: vars.feedbackUrl },
+        { type: "fallback", text: c.fallback, href: vars.feedbackUrl },
+      ],
+      footer: { why: c.footer(ctx.brandName) },
+    }
+  },
+}
+
+export const emailTemplates: readonly EmailTemplateDefinition[] = [magicLink, invitation, feedbackResolved]
 
 export function emailTemplate(id: EmailTemplateId): EmailTemplateDefinition {
   const found = emailTemplates.find((t) => t.id === id)

@@ -1,5 +1,5 @@
 export type { EmailBlock } from "./blocks.ts"
-export { esc, strong, blockNames } from "./blocks.ts"
+export { esc, multiline, strong, blockNames } from "./blocks.ts"
 export type { EmailPalette, EmailBrandPair } from "./palette.ts"
 export { LIGHT_EMAIL_PALETTE, DARK_EMAIL_PALETTE, emailPalettes } from "./palette.ts"
 export type { EmailFooter, RenderEmailInput } from "./render.ts"

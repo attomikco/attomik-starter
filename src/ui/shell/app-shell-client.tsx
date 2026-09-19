@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
+import { FeedbackWidget } from "@/core/feedback"
 import type { NavigationGroup } from "@/core/navigation"
 import { useCopy } from "@/core/i18n/client"
 import { CommandBar, type ShellPanel } from "./command-bar"
@@ -29,22 +30,24 @@ export function AppShellClient({
   chrome = "full",
   account,
   workspace,
+  feedbackEnabled = false,
   children,
 }: {
   navigation: NavigationGroup[]
   chrome?: "inset" | "full"
   account: ShellAccount
   workspace: ShellWorkspace
+  feedbackEnabled?: boolean
   children: ReactNode
 }) {
   return (
     <ThemeProvider workspaceDefault={workspace.defaultAppearance}>
-      <ShellInner navigation={navigation} chrome={chrome} account={account} workspace={workspace}>{children}</ShellInner>
+      <ShellInner navigation={navigation} chrome={chrome} account={account} workspace={workspace} feedbackEnabled={feedbackEnabled}>{children}</ShellInner>
     </ThemeProvider>
   )
 }
 
-function ShellInner({ navigation, chrome, account, workspace, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; account: ShellAccount; workspace: ShellWorkspace; children: ReactNode }) {
+function ShellInner({ navigation, chrome, account, workspace, feedbackEnabled, children }: { navigation: NavigationGroup[]; chrome: "inset" | "full"; account: ShellAccount; workspace: ShellWorkspace; feedbackEnabled: boolean; children: ReactNode }) {
   const copy = useCopy()
   const router = useRouter()
   const pathname = usePathname()
@@ -216,6 +219,7 @@ function ShellInner({ navigation, chrome, account, workspace, children }: { navi
 
         {keysOpen && <ShortcutsDialog goRows={goRows} onClose={() => setKeysOpen(false)} />}
         {paletteOpen && <CommandPalette groups={paletteGroups} mobile={mobile} onClose={() => setPaletteOpen(false)} />}
+        {feedbackEnabled && <FeedbackWidget />}
       </ToastProvider>
     </div>
   )

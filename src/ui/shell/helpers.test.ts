@@ -88,3 +88,23 @@ test("G-jump map contains only enabled reference destinations", () => {
   ])
   assert.deepEqual(Object.keys(fuller).sort(), ["m", "o"])
 })
+
+test("a child gated by a feature flag is dropped while the flag is off, kept once it is on", () => {
+  const settings = {
+    id: "settings",
+    navigation: {
+      group: "settings", icon: "settings", href: "/settings/general", order: 0,
+      children: [
+        { key: "general", href: "/settings/general" },
+        { key: "feedback", href: "/settings/feedback", minRole: "admin", feature: "feedbackWidget" },
+      ],
+    },
+  } as unknown as ModuleDefinition
+  const keys = (on: boolean, role?: "owner" | "member") =>
+    buildNavigation([settings], NAMES, role, (id) => on && id === "feedbackWidget")[0].items[0].children!.map((c) => c.key)
+
+  assert.deepEqual(keys(false, "owner"), ["general"])
+  assert.deepEqual(keys(true, "owner"), ["general", "feedback"])
+  assert.deepEqual(keys(true, "member"), ["general"], "the flag never widens who may see the row")
+  assert.deepEqual(buildNavigation([settings], NAMES)[0].items[0].children!.map((c) => c.key), ["general", "feedback"], "no predicate: every feature counts as on")
+})

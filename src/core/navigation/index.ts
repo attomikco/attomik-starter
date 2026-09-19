@@ -1,3 +1,4 @@
+import { isFeatureEnabled } from "@/core/config/features"
 import { resolveCopy, type Locale } from "@/core/i18n"
 import { getEnabledModules } from "@/core/modules"
 import type { Role } from "@/core/permissions"
@@ -13,5 +14,5 @@ export type { NavigationCopy, NavigationGroup, NavigationItem }
 export { GROUP_ORDER } from "./build"
 
 export function getEnabledNavigation(locale: Locale, actorRole?: Role): NavigationGroup[] {
-  return buildNavigation(getEnabledModules(), resolveCopy(locale).nav.modules, actorRole)
+  return buildNavigation(getEnabledModules(), resolveCopy(locale).nav.modules, actorRole, isFeatureEnabled)
 }

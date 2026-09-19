@@ -9,6 +9,7 @@ import { pageCount, pageSummary } from "@/core/data/query"
 import { DataTable, ToneChip } from "@/ui/data/data-table"
 import { SearchInput } from "@/ui/data/table-controls"
 import { Listbox } from "@/ui/forms/select"
+import { DetailDrawer } from "@/ui/records/detail-drawer"
 import { settingsCopy } from "../copy"
 
 /**
@@ -154,12 +155,6 @@ function EventDrawer({ event, actor, onClose }: { event: ActivityEvent; actor: s
   const copy = useCopy()
   const t = useT(settingsCopy)
   const format = useFormat()
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { e.stopPropagation(); onClose() } }
-    window.addEventListener("keydown", onKey, true)
-    return () => window.removeEventListener("keydown", onKey, true)
-  }, [onClose])
-
   const keys = [...new Set([...Object.keys(event.before ?? {}), ...Object.keys(event.after ?? {})])]
   const fmt = (v: unknown) => (v === null || v === undefined ? "—" : typeof v === "object" ? JSON.stringify(v) : String(v))
   const context: [string, string][] = [
@@ -173,72 +168,57 @@ function EventDrawer({ event, actor, onClose }: { event: ActivityEvent; actor: s
   ]
 
   return (
-    <>
-      <div style={{ position: "fixed", inset: 0, zIndex: 70, background: "rgba(8,10,14,.32)" }} onClick={onClose} />
-      <div role="dialog" aria-modal="true" aria-label={t("settings.activity.detail.title")}
-        style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: 480, maxWidth: "calc(100% - 40px)", zIndex: 71, background: "var(--card)", borderLeft: "1px solid var(--line)", boxShadow: "-20px 0 60px rgba(0,0,0,.2)", display: "flex", flexDirection: "column", overflow: "hidden", animation: "sh-rise .18s ease-out" }}>
-        <div style={{ padding: "22px 24px 18px", borderBottom: "1px solid var(--line)", flex: "none" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 8 }}>
-                {event.createdAt.slice(0, 10)} · {event.createdAt.slice(11, 19)}
+    <DetailDrawer
+      ariaLabel={t("settings.activity.detail.title")}
+      closeLabel={t("settings.activity.detail.close")}
+      eyebrow={<>{event.createdAt.slice(0, 10)} · {event.createdAt.slice(11, 19)}</>}
+      title={summarizeEvent({ action: event.action, resourceLabel: event.resourceLabel, before: event.before, after: event.after }, actor, copy.audit)}
+      chips={
+        <>
+          <ToneChip tone={eventTone(event.action)} label={eventVerb(event.action)} />
+          <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)" }}>{event.resourceType}</span>
+        </>
+      }
+      onClose={onClose}
+    >
+      {keys.length > 0 && (
+        <div>
+          <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 10 }}>{t("settings.activity.detail.changed")}</div>
+          <div style={{ border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden" }}>
+            {keys.map((k, i) => (
+              <div key={k} style={{ padding: "12px 16px", borderBottom: i < keys.length - 1 ? "1px solid var(--line)" : undefined }}>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".09em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 8 }}>{k}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--bad)", background: "var(--bad-tint)", borderRadius: 6, padding: "3px 8px", overflowWrap: "anywhere" }}>{fmt(event.before?.[k])}</span>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>→</span>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 6, padding: "3px 8px", overflowWrap: "anywhere" }}>{fmt(event.after?.[k])}</span>
+                </div>
               </div>
-              <div style={{ fontSize: 20, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.03em", lineHeight: 1.15 }}>
-                {summarizeEvent({ action: event.action, resourceLabel: event.resourceLabel, before: event.before, after: event.after }, actor, copy.audit)}
-              </div>
-            </div>
-            <button className="ui-btn" aria-label={t("settings.activity.detail.close")} onClick={onClose}
-              style={{ width: 32, height: 32, borderRadius: 999, background: "var(--shell)", display: "grid", placeItems: "center", color: "var(--txt-2)", flex: "none" }}>
-              ✕
-            </button>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
-            <ToneChip tone={eventTone(event.action)} label={eventVerb(event.action)} />
-            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)" }}>{event.resourceType}</span>
+            ))}
           </div>
         </div>
+      )}
 
-        <div className="sh-scroll" style={{ flex: 1, minHeight: 0, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 18 }}>
-          {keys.length > 0 && (
-            <div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 10 }}>{t("settings.activity.detail.changed")}</div>
-              <div style={{ border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden" }}>
-                {keys.map((k, i) => (
-                  <div key={k} style={{ padding: "12px 16px", borderBottom: i < keys.length - 1 ? "1px solid var(--line)" : undefined }}>
-                    <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".09em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 8 }}>{k}</div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--bad)", background: "var(--bad-tint)", borderRadius: 6, padding: "3px 8px", overflowWrap: "anywhere" }}>{fmt(event.before?.[k])}</span>
-                      <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>→</span>
-                      <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 6, padding: "3px 8px", overflowWrap: "anywhere" }}>{fmt(event.after?.[k])}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      {Object.keys(event.metadata).length > 0 && (
+        <div>
+          <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 10 }}>{t("settings.activity.detail.metadata")}</div>
+          <pre style={{ margin: 0, fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-2)", background: "var(--shell)", borderRadius: "var(--r3)", padding: "12px 14px", overflowX: "auto" }}>
+            {JSON.stringify(event.metadata, null, 2)}
+          </pre>
+        </div>
+      )}
 
-          {Object.keys(event.metadata).length > 0 && (
-            <div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 10 }}>{t("settings.activity.detail.metadata")}</div>
-              <pre style={{ margin: 0, fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt-2)", background: "var(--shell)", borderRadius: "var(--r3)", padding: "12px 14px", overflowX: "auto" }}>
-                {JSON.stringify(event.metadata, null, 2)}
-              </pre>
+      <div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 10 }}>{t("settings.activity.detail.context")}</div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {context.map(([label, value], i) => (
+            <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 12, padding: "8px 0", borderBottom: i < context.length - 1 ? "1px solid var(--line)" : undefined }}>
+              <span style={{ fontSize: 13, color: "var(--txt-2)", flex: "none", width: 96 }}>{label}</span>
+              <span style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt)", flex: 1, minWidth: 0, textAlign: "right", overflowWrap: "anywhere" }}>{value}</span>
             </div>
-          )}
-
-          <div>
-            <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--txt-4)", marginBottom: 10 }}>{t("settings.activity.detail.context")}</div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {context.map(([label, value], i) => (
-                <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 12, padding: "8px 0", borderBottom: i < context.length - 1 ? "1px solid var(--line)" : undefined }}>
-                  <span style={{ fontSize: 13, color: "var(--txt-2)", flex: "none", width: 96 }}>{label}</span>
-                  <span style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt)", flex: 1, minWidth: 0, textAlign: "right", overflowWrap: "anywhere" }}>{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-    </>
+    </DetailDrawer>
   )
 }

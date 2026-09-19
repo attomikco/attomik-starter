@@ -25,6 +25,11 @@ export function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
 }
 
+/** User-authored multi-line text as paragraph markup: escaped first, then line breaks. */
+export function multiline(s: string): string {
+  return esc(s).replace(/\r?\n/g, "<br>")
+}
+
 /** Emphasis inside a paragraph. Escapes its input; returns safe markup. */
 export function strong(s: string, color = "#0e1013"): string {
   return `<span class="e-ink" style="color:${color};font-weight:600;">${esc(s)}</span>`

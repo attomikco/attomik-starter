@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { projectConfig } from "@/config/project"
-import { moduleRegistry } from "@/core/modules/registry"
+import { moduleRegistry, type ModuleDefinition } from "@/core/modules/registry"
 import { getSupabaseEnv, hasSupabaseEnv } from "@/core/env"
 
 // Route prefixes owned by modules that are DISABLED in this project's
@@ -11,6 +11,13 @@ import { getSupabaseEnv, hasSupabaseEnv } from "@/core/env"
 const disabledModulePrefixes = Object.values(moduleRegistry)
   .filter((m) => m.navigation && m.navigation.href !== "/" && !projectConfig.modules[m.id])
   .map((m) => m.navigation!.href)
+
+// Same idea for child routes gated by a feature flag that is off.
+const disabledFeaturePrefixes = Object.values<ModuleDefinition>(moduleRegistry).flatMap((m) =>
+  (m.navigation?.children ?? [])
+    .filter((c) => c.feature && !projectConfig.features[c.feature])
+    .map((c) => c.href),
+)
 
 let warnedMissingEnv = false
 
@@ -29,7 +36,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   }
 
   const path = request.nextUrl.pathname
-  if (disabledModulePrefixes.some((p) => path === p || path.startsWith(p + "/"))) {
+  if ([...disabledModulePrefixes, ...disabledFeaturePrefixes].some((p) => path === p || path.startsWith(p + "/"))) {
     return NextResponse.rewrite(new URL("/__module-disabled", request.url))
   }
 

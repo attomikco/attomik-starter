@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { isFeatureEnabled } from "@/core/config/features"
 import type { Locale } from "@/core/i18n"
 import { getLocale } from "@/core/i18n/server"
 import { getEnabledNavigation } from "@/core/navigation"
@@ -43,9 +44,10 @@ export async function AppShell({
   workspace: ShellWorkspace
 }) {
   const navigation = getEnabledNavigation(await getLocale(), workspace.role)
+  const feedbackEnabled = isFeatureEnabled("feedbackWidget")
 
   return (
-    <AppShellClient navigation={navigation} chrome={chrome} account={account} workspace={workspace}>
+    <AppShellClient navigation={navigation} chrome={chrome} account={account} workspace={workspace} feedbackEnabled={feedbackEnabled}>
       {children}
     </AppShellClient>
   )

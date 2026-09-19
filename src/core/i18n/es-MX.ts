@@ -14,7 +14,7 @@ export const esMX: ShellCopy = {
       settings: {
         label: "Configuración",
         description: "Perfil, configuración del espacio, equipo, correos, actividad.",
-        children: { profile: "Perfil", general: "General", team: "Equipo y permisos", emails: "Correos", activity: "Actividad" },
+        children: { profile: "Perfil", general: "General", team: "Equipo y permisos", emails: "Correos", activity: "Actividad", feedback: "Comentarios" },
       },
     },
     expandSidebar: "Expandir la barra lateral",
@@ -161,6 +161,7 @@ export const esMX: ShellCopy = {
     invitationResent: (actor, label) => `${actor} reenvió la invitación de ${label}`,
     invitationRevoked: (actor, label) => `${actor} revocó la invitación de ${label}`,
     invitationAccepted: (label) => `${label} aceptó su invitación`,
+    feedbackResolved: (actor, label) => `${actor} marcó como resuelto el feedback: ${label}`,
     // The action is an English code identifier; splitting it into words
     // would produce fake Spanish prose, so it is shown as the identifier.
     fallback: (actor, action, label) => `${actor} · ${action}${label ? ` · ${label}` : ""}`,
@@ -174,6 +175,26 @@ export const esMX: ShellCopy = {
       member: "Acceso normal al producto",
       viewer: "Acceso de solo lectura",
     },
+  },
+
+  feedback: {
+    openLabel: "Enviar comentario",
+    closeLabel: "Cerrar",
+    title: "Enviar comentario",
+    typeLabel: "Tipo",
+    types: {
+      broken: "No funciona",
+      unclear: "No lo entiendo",
+      should_change: "Debería cambiar",
+      idea: "Idea",
+    },
+    messageLabel: "Comentario",
+    submit: "Enviar",
+    submitting: "Enviando…",
+    success: "Gracias, lo recibimos",
+    error: "No se pudo enviar tu comentario. Intenta de nuevo.",
+    resolveError: "No se pudo marcar como resuelto. Intenta de nuevo.",
+    resolveAlready: "Este comentario ya estaba resuelto.",
   },
 
   overview: {
@@ -279,6 +300,18 @@ export const esMX: ShellCopy = {
       fallback: "Si el botón no funciona, abre este enlace:",
       rows: { workspace: "Espacio de trabajo", role: "Rol", invitedBy: "Invitado por" },
       footer: (days, inviter, workspace) => `El enlace caduca en ${days} días y funciona una sola vez. Recibiste este correo porque ${inviter} invitó esta dirección a ${workspace}.`,
+    },
+    feedbackResolved: {
+      subject: (snippet) => `Feedback resuelto: ${snippet}`,
+      preheader: (resolver) => `Resuelto por ${resolver}`,
+      title: "Feedback resuelto",
+      body: (resolver) => `${resolver} marcó este feedback como resuelto.`,
+      messageCaption: "Feedback original",
+      noteCaption: "Nota de resolución",
+      rows: { submittedBy: "Enviado por", submittedAt: "Enviado el", resolvedBy: "Resuelto por" },
+      viewInApp: "Ver comentarios",
+      fallback: "Si el botón no funciona, abre este enlace:",
+      footer: (workspace) => `Recibiste este correo porque te eligieron para recibir avisos cuando se resuelve un feedback en ${workspace}.`,
     },
   },
 }

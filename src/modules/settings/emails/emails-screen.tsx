@@ -22,7 +22,7 @@ import { settingsCopy } from "../copy"
 
 export interface EmailPreview {
   id: string
-  group: "authentication" | "membership"
+  group: "authentication" | "membership" | "feedback"
   delivery: "supabase" | "resend"
   branding: "project" | "workspace"
   meta: [string, string][]

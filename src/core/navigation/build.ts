@@ -1,4 +1,4 @@
-import type { ModuleId } from "@/config/project"
+import type { FeatureId, ModuleId } from "@/config/project"
 import type { ModuleDefinition, NavGroup } from "@/core/modules/registry"
 // Relative .ts import keeps this module runnable under `node --test`.
 import { hasRank, type Role } from "../permissions/index.ts"
@@ -40,9 +40,15 @@ function namesFor(id: string, copy: NavigationCopy) {
 /**
  * `actorRole` drops child rows the actor's rank cannot reach. Omit it and
  * every child is built — callers that have no role context (scripts,
- * tests) still get the full structure.
+ * tests) still get the full structure. `featureOn` drops children gated by
+ * a feature flag that is off (default: every feature counts as on).
  */
-export function buildNavigation(modules: ModuleDefinition[], copy: NavigationCopy, actorRole?: Role): NavigationGroup[] {
+export function buildNavigation(
+  modules: ModuleDefinition[],
+  copy: NavigationCopy,
+  actorRole?: Role,
+  featureOn: (id: FeatureId) => boolean = () => true,
+): NavigationGroup[] {
   const reachable = (minRole?: Role) => !minRole || !actorRole || hasRank(actorRole, minRole)
 
   const items: NavigationItem[] = modules
@@ -53,8 +59,8 @@ export function buildNavigation(modules: ModuleDefinition[], copy: NavigationCop
       const item: NavigationItem = { moduleId: mod.id, ...nav, label: names.label, description: names.description }
       if (children) {
         item.children = children
-          .filter((c) => reachable(c.minRole))
-          .map(({ minRole: _minRole, ...c }) => ({ ...c, label: names.children?.[c.key] ?? c.key }))
+          .filter((c) => reachable(c.minRole) && (!c.feature || featureOn(c.feature)))
+          .map(({ minRole: _minRole, feature: _feature, ...c }) => ({ ...c, label: names.children?.[c.key] ?? c.key }))
       }
       return [item]
     })

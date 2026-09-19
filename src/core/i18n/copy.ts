@@ -1,3 +1,4 @@
+import type { FeedbackType } from "@/core/feedback/types"
 import type { NavGroup } from "@/core/modules/registry"
 
 /**
@@ -154,6 +155,24 @@ export interface ShellCopy {
     meanings: Record<"owner" | "admin" | "member" | "viewer", string>
   }
 
+  /** Floating in-app feedback widget (src/core/feedback), one-way capture. */
+  feedback: {
+    openLabel: string
+    closeLabel: string
+    title: string
+    typeLabel: string
+    types: Record<FeedbackType, string>
+    messageLabel: string
+    submit: string
+    submitting: string
+    success: string
+    error: string
+    /** Shown when marking a feedback row resolved fails (Settings → Feedback). */
+    resolveError: string
+    /** Shown when the row already has a resolution (another admin got there first). */
+    resolveAlready: string
+  }
+
   /** Landing page for a fresh workspace. */
   overview: {
     eyebrow: string
@@ -242,6 +261,21 @@ export interface ShellCopy {
       /** `inviter` and `workspace` arrive pre-escaped. */
       footer: (days: number, inviter: string, workspace: string) => string
     }
+    /** Sent to the members chosen when an admin marks a feedback row resolved. */
+    feedbackResolved: {
+      /** `snippet` is the first 60 characters of the feedback text, plain. */
+      subject: (snippet: string) => string
+      preheader: (resolver: string) => string
+      title: string
+      /** `resolver` arrives pre-formatted (markup). */
+      body: (resolver: string) => string
+      messageCaption: string
+      noteCaption: string
+      rows: { submittedBy: string; submittedAt: string; resolvedBy: string }
+      viewInApp: string
+      fallback: string
+      footer: (workspace: string) => string
+    }
   }
 }
 
@@ -260,6 +294,7 @@ export interface AuditCopy {
   invitationResent: (actor: string, label: string) => string
   invitationRevoked: (actor: string, label: string) => string
   invitationAccepted: (label: string) => string
+  feedbackResolved: (actor: string, label: string) => string
   /**
    * Unknown (module) actions. The action is a code identifier
    * (`media.file.uploaded`) — English words — so each locale decides

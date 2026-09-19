@@ -37,6 +37,8 @@ enforces `^[a-z0-9_]+(\.[a-z0-9_]+)+$` for custom events;
    (failure logged, mutation proceeds); pass `required: true` when a module
    decides its mutation must not proceed unaudited. This is the documented
    failure-semantics rule.
+   Current callers: `feedback.resolved` (resolving feedback; metadata is
+   counts only, never the note text).
 
 Never write secrets, tokens, credentials, or raw auth material into any
 event field — the invitation triggers deliberately never touch

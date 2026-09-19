@@ -1,4 +1,4 @@
-import type { ModuleId } from "@/config/project"
+import type { FeatureId, ModuleId } from "@/config/project"
 import type { Role } from "@/core/permissions"
 
 /**
@@ -29,9 +29,11 @@ export interface ModuleNavigation {
    * Submenu items (the reference rail's child rows): a copy key under this
    * module, and the route. `minRole` hides a child from ranks that cannot
    * reach it — convenience only, never the authorization boundary: the
-   * route guards itself and RLS enforces the same matrix.
+   * route guards itself and RLS enforces the same matrix. `feature` hides
+   * the child while that `projectConfig.features` flag is off (the proxy
+   * and the page guard 404 the route too).
    */
-  children?: readonly { key: string; href: string; minRole?: Role }[]
+  children?: readonly { key: string; href: string; minRole?: Role; feature?: FeatureId }[]
 }
 
 export interface ModuleDefinition {
@@ -100,6 +102,7 @@ export const moduleRegistry = {
         { key: "team", href: "/settings/team" },
         { key: "emails", href: "/settings/emails", minRole: "admin" },
         { key: "activity", href: "/settings/activity" },
+        { key: "feedback", href: "/settings/feedback", minRole: "admin", feature: "feedbackWidget" },
       ],
     },
     permissions: ["settings.view", "settings.manage"],
