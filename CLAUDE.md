@@ -212,6 +212,9 @@ delete module code because a project doesn't use it.
   grants nothing on new tables, so a missing call means "permission denied" on
   every query. `pnpm test:db` (table_grants.sql) fails on a fresh stack if one
   is missing.
+- E2E runs only against a local stack (`pnpm e2e`); `e2e/mobile-overflow.spec.ts`
+  fails if any route overflows 390px. Grids never use a bare pixel `minmax`
+  (`minmax(min(Npx, 100%), 1fr)`), and a button wraps its row instead of shrinking.
 - Conventions: `docs/SUPABASE.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->

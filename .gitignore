@@ -9,3 +9,9 @@ next-env.d.ts
 !.env.example
 supabase/.temp/
 email-previews.html
+
+# Playwright output and the mobile layout screenshots (E2E_SCREENSHOTS=1), never committed
+/test-results/
+/playwright-report/
+/blob-report/
+/e2e/screenshots/

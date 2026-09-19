@@ -24,7 +24,9 @@ export function TabStrip({
   onPick: (label: string) => void
 }) {
   return (
-    <div role="tablist" className="sh-hscroll" style={{ display: "flex", alignItems: "center", gap: 3, background: "var(--shell)", borderRadius: 999, padding: 4, overflowX: "auto", maxWidth: "100%", minWidth: 0 }}>
+    <div role="tablist" className="sh-hscroll" style={{ display: "flex", alignItems: "center", gap: 3, background: "var(--shell)", borderRadius: 999, padding: 4, overflowX: "auto", maxWidth: "100%", minWidth: 0 ,
+      // A scroll container has min-height 0, so in a column flex screen it would be squashed to nothing.
+      flexShrink: 0 }}>
       {tabs.map((t) => {
         const on = t.label === active
         return (
