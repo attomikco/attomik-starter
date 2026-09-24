@@ -165,12 +165,12 @@ export function GeneralScreen({ initial }: { initial: GeneralInitial }) {
             {facts.map(([label, value]) => (
               <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 14, padding: "10px 0", borderBottom: "1px solid var(--line)" }}>
                 <span style={{ ...eyebrow, width: 150, flex: "none" }}>{label}</span>
-                <span style={{ fontSize: 13.5, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value}</span>
+                <span title={value} style={{ fontSize: 13.5, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value}</span>
               </div>
             ))}
             <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 0" }}>
               <span style={{ ...eyebrow, width: 150, flex: "none" }}>{t("settings.general.facts.id")}</span>
-              <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--txt-2)", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{initial.facts.id}</span>
+              <span title={initial.facts.id} style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--txt-2)", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{initial.facts.id}</span>
               <button type="button" className="ui-btn sh-pick" onClick={copyId}
                 style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".06em", textTransform: "uppercase", color: copied ? "var(--ok)" : "var(--accent-text)", background: copied ? "var(--ok-tint)" : "var(--accent-tint)", borderRadius: 999, padding: "5px 10px", flex: "none" }}>
                 {copied ? t("settings.general.facts.copied") : t("settings.general.facts.copy")}

@@ -142,7 +142,7 @@ export function ProfileScreen({ initial }: { initial: ProfileInitial }) {
           <div style={{ display: "flex", flexDirection: "column", marginTop: 18, borderTop: "1px solid var(--line)" }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 14, padding: "10px 0" }}>
               <span style={{ ...eyebrow, width: 100, flex: "none" }}>{t("settings.profile.email")}</span>
-              <span style={{ fontSize: 13.5, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{initial.email}</span>
+              <span title={initial.email} style={{ fontSize: 13.5, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{initial.email}</span>
             </div>
           </div>
         </div>

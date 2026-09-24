@@ -139,7 +139,7 @@ export function EmailsScreen({ previews }: { previews: EmailPreview[] }) {
               <span style={{ ...eyebrow, fontSize: 10, letterSpacing: ".08em", flex: "none" }}>{t("settings.emails.chrome.from")}</span>
               <span style={{ fontSize: 12.5, color: "var(--txt-2)", flex: "none" }}>{current.sender}</span>
               <span aria-hidden style={{ width: 1, height: 14, background: "var(--line-2)", display: "block", flex: "none" }} />
-              <span style={{ fontSize: 12.5, color: "var(--txt)", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{current.subject}</span>
+              <span title={current.subject} style={{ fontSize: 12.5, color: "var(--txt)", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{current.subject}</span>
             </div>
 
             {view === "preview" ? (
@@ -250,8 +250,9 @@ function DetailRows({ rows }: { rows: [string, string][] }) {
     <div style={{ display: "flex", flexDirection: "column" }}>
       {rows.map(([label, value], i) => (
         <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 12, padding: "9px 0", ...(i < rows.length - 1 ? { borderBottom: "1px solid var(--line)" } : {}) }}>
-          <span style={{ fontSize: 13, color: "var(--txt-2)", flex: 1, minWidth: 0 }}>{label}</span>
-          <span style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt)", textAlign: "right", minWidth: 0, overflowWrap: "anywhere" }}>{value}</span>
+          {/* Both sides share the row and wrap; neither may grow under the other (the preheader is a sentence). */}
+          <span style={{ fontSize: 13, color: "var(--txt-2)", flex: "0 1 40%", minWidth: 0, overflowWrap: "anywhere" }}>{label}</span>
+          <span style={{ fontFamily: "var(--mono)", fontSize: 11.5, color: "var(--txt)", textAlign: "right", flex: "1 1 60%", minWidth: 0, overflowWrap: "anywhere" }}>{value}</span>
         </div>
       ))}
     </div>
