@@ -28,6 +28,27 @@ delete module code because a project doesn't use it.
 - docs/: ARCHITECTURE (map), MODULES (extension contract), NEW_PROJECT
   (setup checklist), DEPLOYMENT (Vercel/production).
 
+## UI standards
+
+- docs/UI_STANDARDS.md is mandatory reading before any UI change: page
+  container, header, CTA hierarchy, colour semantics (brand vs status),
+  tables, forms, pluralization, data states. A project records its own
+  exceptions there, never in a component.
+- Every change that touches UI runs `pnpm ui:audit` (docs/UI_AUDIT.md,
+  local Supabase stack) before commit, and the audit must pass. The report
+  for that change names the contact sheet path
+  (`e2e/screenshots/contact-sheet.html`). A UI change without a passing
+  audit is not done. The static half (`src/ui/layout/static-rules.test.ts`)
+  runs in `pnpm test` and therefore in the pre-push hook.
+
+## Verification rules
+
+- Never pipe typecheck, test or build output through grep, head or tail
+  in a command that also commits or pushes. Run checks as standalone
+  commands and confirm exit status 0 before committing. Any shell pipeline
+  uses `set -o pipefail`. The versioned `.githooks/pre-push` (installed by
+  `prepare`) refuses a push unless `pnpm typecheck` and `pnpm test` pass.
+
 ## Data / CRUD rules
 
 - Reuse the canonical DataTable (src/ui/data) before creating
