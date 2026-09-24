@@ -203,7 +203,7 @@ function ShellInner({ navigation, chrome, account, workspace, feedbackEnabled, c
               />
             )}
 
-            <div style={{ flex: 1, minHeight: 0, position: "relative", background: "var(--card)", borderRadius: full ? 0 : "var(--r)", overflow: "hidden" }}>
+            <div className="sh-screen-host" style={{ flex: 1, minHeight: 0, position: "relative", background: "var(--card)", borderRadius: full ? 0 : "var(--r)", overflow: "hidden" }}>
               {children}
             </div>
           </div>
