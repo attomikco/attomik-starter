@@ -1,5 +1,6 @@
 "use client"
 
+import { countOf } from "@/core/i18n"
 import { useCopy, useFormat } from "@/core/i18n/client"
 import Link from "next/link"
 import { useMemo, useState } from "react"
@@ -57,6 +58,9 @@ const STATUS_TONE: Record<Item["status"], "ok" | "warn" | "bad" | "neutral"> = {
 }
 
 const PAGE_SIZE = 8
+
+/** Dev demo copy is English-only; the count still goes through pluralize. */
+const ITEMS = { one: "item", other: "items" }
 
 export function ItemsDemo() {
   const copy = useCopy()
@@ -207,11 +211,11 @@ export function ItemsDemo() {
         onClear={() => setSelected({})}
         actions={[
           { label: "Activate", onRun: () => { setSelected({}); say(`${selectedIds.length} activated`) } },
-          { label: "Export", onRun: () => { setSelected({}); say(`Exporting ${selectedIds.length} items`) } },
+          { label: "Export", onRun: () => { setSelected({}); say(`Exporting ${countOf(selectedIds.length, ITEMS, (v) => String(v), "en")}`) } },
           {
             label: "Archive",
             onRun: () => setConfirm({
-              tone: "accent", title: `Archive ${selectedIds.length} items?`,
+              tone: "accent", title: `Archive ${countOf(selectedIds.length, ITEMS, (v) => String(v), "en")}?`,
               body: "Archived items leave the default views but stay in reporting and can be restored at any time.",
               confirmLabel: "Archive them",
               onConfirm: () => { setSelected({}); say(`${selectedIds.length} archived`) },
@@ -220,10 +224,10 @@ export function ItemsDemo() {
           {
             label: "Delete", tone: "bad",
             onRun: () => setConfirm({
-              tone: "bad", typedWord: "DELETE", title: `Delete ${selectedIds.length} items?`,
+              tone: "bad", typedWord: "DELETE", title: `Delete ${countOf(selectedIds.length, ITEMS, (v) => String(v), "en")}?`,
               body: "Deleting removes the items and their history from reporting. There is no undo.",
               confirmLabel: "Delete permanently", cancelLabel: "Keep them",
-              onConfirm: () => { setSelected({}); say(`${selectedIds.length} items deleted`) },
+              onConfirm: () => { setSelected({}); say(`${countOf(selectedIds.length, ITEMS, (v) => String(v), "en")} deleted`) },
             }),
           },
         ]}

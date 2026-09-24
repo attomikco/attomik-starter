@@ -1,5 +1,6 @@
 "use client"
 
+import { useCopy } from "@/core/i18n/client"
 import { useId, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react"
 import { Listbox } from "./select"
 
@@ -97,6 +98,7 @@ export function TextArea({
   error?: string
   hint?: string
 }) {
+  const copy = useCopy()
   const id = useId()
   const area = (
     <>
@@ -108,7 +110,7 @@ export function TextArea({
       {(maxLength || counterNote) && (
         <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 10 }}>
           <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>
-            {maxLength ? `${value.length} / ${maxLength}` : `${value.length} characters`}
+            {maxLength ? `${value.length} / ${maxLength}` : copy.forms.characters(value.length)}
           </span>
           {counterNote && <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>{counterNote}</span>}
         </span>

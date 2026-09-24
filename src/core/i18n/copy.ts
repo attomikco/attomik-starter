@@ -130,6 +130,8 @@ export interface ShellCopy {
     noChanges: string
     cancel: string
     typeToConfirm: (word: string) => string
+    /** "12 characters" — the textarea counter without a limit; every count goes through pluralize. */
+    characters: (n: number) => string
   }
 
   /** App-level recoverable error, in-app 404, root 404, fatal boundary. */

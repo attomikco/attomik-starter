@@ -1,3 +1,4 @@
+import { countOf } from "./pluralize.ts"
 import type { ShellCopy } from "./copy"
 
 /** English — the reference copy, verbatim from design-reference. */
@@ -126,6 +127,7 @@ export const en: ShellCopy = {
     noChanges: "No changes yet",
     cancel: "Cancel",
     typeToConfirm: (word) => `Type ${word} to confirm`,
+    characters: (n) => countOf(n, { one: "character", other: "characters" }, (v) => String(v), "en"),
   },
 
   errors: {

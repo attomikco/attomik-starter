@@ -26,6 +26,7 @@ export type { AuditCopy, ShellCopy } from "./copy.ts"
 export { LOCALES, LOCALE_NAMES, isLocale, type Locale } from "./locales.ts"
 export { createTranslator, defineCopy, interpolate, type CopyParams, type Dictionaries, type Dictionary, type ModuleCopy, type Translator } from "./t.ts"
 export { createFormatters, isTimeZone, listTimeZones, utcOffsetLabel, TIME_ZONE_CHOICES, type Formatters } from "./format.ts"
+export { pluralize, countOf, type PluralForms } from "./pluralize.ts"
 
 const DICTIONARIES: Record<Locale, ShellCopy> = {
   en,

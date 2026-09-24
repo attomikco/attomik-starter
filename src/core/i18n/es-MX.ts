@@ -1,3 +1,4 @@
+import { countOf } from "./pluralize.ts"
 import type { ShellCopy } from "./copy"
 
 /** Spanish (Mexico) — sentence case throughout, as the reference copy is. */
@@ -131,6 +132,7 @@ export const esMX: ShellCopy = {
     noChanges: "Sin cambios todavía",
     cancel: "Cancelar",
     typeToConfirm: (word) => `Escribe ${word} para confirmar`,
+    characters: (n) => countOf(n, { one: "carácter", other: "caracteres" }),
   },
 
   errors: {
