@@ -20,15 +20,14 @@ export interface ColumnDef<T> {
   /** Fixed width in px; omit for the flexible column. */
   width?: number
   /**
-   * Floor width in px — the column never shrinks below this; the table
-   * scrolls horizontally instead once the sum of every visible column's
-   * floor no longer fits. Defaults to `width` for a fixed column (so an
-   * existing column that never set this keeps behaving exactly as
-   * before — it already never shrank) and to a sane floor for the one
-   * flex column (it previously had no floor at all, which let it shrink
-   * to zero and let its content overflow into the next column).
+   * The width below which the column never shrinks — the table scrolls
+   * sideways inside its own container instead. Defaults by `kind`
+   * (src/ui/data/table-layout.ts): text 160, date 120, status 130,
+   * number 100, code 90; a `width` is its own minimum.
    */
   minWidth?: number
+  /** What the column holds, for the default minimum width. */
+  kind?: "text" | "date" | "status" | "number" | "code"
   /** One column may flex; the reference gives it to the person column. */
   flex?: boolean
   align?: "left" | "right"

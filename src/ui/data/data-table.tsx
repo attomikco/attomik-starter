@@ -6,6 +6,7 @@ import type { ColumnDef, DataState, SortState } from "@/core/data/types"
 import { TableEmpty, TableError, TableLoading } from "./data-states"
 import { Pagination, type PaginationProps } from "./pagination"
 import { nameInitials } from "@/ui/initials"
+import { ROW_ACTION_WIDTH, columnMinWidth, tableMinWidth, visibleColumns } from "./table-layout"
 
 /**
  * The canonical DataTable, ported from part-data.dc.html. Generic and
@@ -14,14 +15,23 @@ import { nameInitials } from "@/ui/initials"
  * given, so a module can process client-side (core/data helpers) today and
  * server-side later without replacing the component.
  *
+ * Sizing (docs/UI_STANDARDS.md, Tables): every column has a minimum width
+ * it never shrinks below — explicit, else its fixed width, else a default
+ * by `kind` (table-layout.ts, node-tested). The row's intrinsic width is
+ * the sum of the visible minimums plus the chrome, recomputed as the column
+ * picker toggles; once that no longer fits, the body scrolls sideways and
+ * drives the header's scrollLeft so the two never drift, and the page never
+ * scrolls sideways. Extra space goes to the flexible columns. The first
+ * column is sticky on the left, the header on top; a right-edge shadow
+ * shows while columns sit off-screen. Plain text cells truncate with a
+ * title; header labels too; PersonCell truncates each of its lines.
+ *
  * Responsive: measured against the table's own container (the rail changes
  * available width). Under 720px the header hides and rows wrap into the
- * reference's card representation.
+ * reference's card representation, which needs no sideways scroll.
  */
 
 const NARROW = 720
-/** A flex column with no explicit minWidth used to have none at all (`minWidth: 0`) — the actual cause of a header-label/cell collision bug: it could shrink to zero and let its own content overflow into the next column instead of the table scrolling. */
-const DEFAULT_FLEX_MIN_WIDTH = 200
 /** The row's own horizontal padding ("13px 18px" / "11px 18px") — the sticky first column sticks at this offset, not 0, so it stays flush with the row's normal left inset instead of jumping to the scroll container's bare edge. */
 const ROW_PADDING_X = 18
 const GAP = 14
@@ -74,15 +84,29 @@ export function DataTable<T>(props: DataTableProps<T>) {
   // out of sync with the body) — it only ever receives a programmatic
   // scrollLeft, driven by the body's own real scrollbar.
   const headerScrollRef = useRef<HTMLDivElement>(null)
+  const bodyScrollRef = useRef<HTMLDivElement>(null)
+  // Right-edge shadow while columns sit off-screen to the right.
+  const [moreRight, setMoreRight] = useState(false)
+  const updateMoreRight = (el: HTMLDivElement) => setMoreRight(el.scrollWidth - el.clientWidth - el.scrollLeft > 2)
   const onBodyScroll = (e: UIEvent<HTMLDivElement>) => {
     if (headerScrollRef.current) headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft
+    updateMoreRight(e.currentTarget)
   }
 
-  const visible = columns.filter((c) => c.pinned || !hiddenColumns.includes(c.key))
+  const visible = visibleColumns(columns, hiddenColumns)
   const selectable = !!onToggleRow
   const allOn = rows.length > 0 && rows.every((r) => selected[rowKey(r)])
+  useEffect(() => {
+    const el = bodyScrollRef.current
+    if (!el) return
+    updateMoreRight(el)
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => updateMoreRight(el)) : null
+    ro?.observe(el)
+    return () => ro?.disconnect()
+  }, [visible.length, props.rows.length, narrow])
 
-  const colMinWidth = (c: ColumnDef<T>): number => c.flex ? (c.minWidth ?? DEFAULT_FLEX_MIN_WIDTH) : (c.minWidth ?? c.width ?? 120)
+  const colMinWidth = (c: ColumnDef<T>): number => columnMinWidth(c)
+  const truncate = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }
 
   const colStyle = (c: ColumnDef<T>) =>
     narrow
@@ -96,11 +120,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
   // of every visible column's own floor — once that no longer fits the
   // container, the table scrolls horizontally instead of squeezing columns
   // past their floor.
-  const extraSlots = (selectable ? 1 : 0) + (onRowClick ? 1 : 0)
-  const rowMinWidth = narrow ? undefined : visible.reduce((sum, c) => sum + colMinWidth(c), 0)
-    + (selectable ? 18 : 0) + (onRowClick ? 34 : 0)
-    + GAP * (visible.length - 1 + extraSlots)
-    + ROW_PADDING_X * 2
+  const rowMinWidth = narrow ? undefined : tableMinWidth(visible, [], { selectable, rowAction: !!onRowClick })
 
   // The first visible column stays put horizontally while the rest scroll
   // under it — `left` matches the row's own padding (not 0) so it stays
@@ -125,7 +145,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
   )
 
   return (
-    <div ref={wrapRef} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : { flex: "none" }), display: "flex", flexDirection: "column", border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden", position: "relative" }}>
+    <div ref={wrapRef} data-data-table style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : { flex: "none" }), display: "flex", flexDirection: "column", border: "1px solid var(--line)", borderRadius: "var(--r2)", overflow: "hidden", position: "relative" }}>
       {/* Sticky header — hidden in the narrow card representation. Never
           scrolls on its own (overflow-x hidden): its scrollLeft is only ever
           set programmatically, from the body's real scrollbar (onBodyScroll
@@ -137,7 +157,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
             const sorted = sort?.key === c.key
             const header = (
               <>
-                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>{c.label}</span>
+                <span title={c.label} style={{ ...truncate, minWidth: 0 }}>{c.label}</span>
                 {sorted && <span aria-hidden style={{ flex: "none", fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent-text)" }}>{sort?.dir === "asc" ? "▲" : "▼"}</span>}
               </>
             )
@@ -158,11 +178,12 @@ export function DataTable<T>(props: DataTableProps<T>) {
               <span key={c.key} style={style}>{header}</span>
             )
           })}
-          <span style={{ width: 34, flex: "none" }} />
+          {/* The trailing spacer exists under the SAME condition as the rows' ⋮ cell, so header and body columns always line up. */}
+          {onRowClick && <span aria-hidden style={{ width: ROW_ACTION_WIDTH, flex: "none" }} />}
         </div>
       </div>
 
-      <div className="sh-scroll" onScroll={onBodyScroll} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : undefined), overflowX: narrow ? undefined : "auto" }}>
+      <div ref={bodyScrollRef} className="sh-scroll" data-allow-overflow onScroll={onBodyScroll} style={{ ...(layout === "fill" ? { flex: 1, minHeight: 0 } : undefined), overflowX: narrow ? undefined : "auto" }}>
         {state === "loading" && <TableLoading rowCount={loadingRows} />}
         {state === "error" && error && <TableError {...error} />}
         {(state === "empty" || (state === "ready" && rows.length === 0)) && empty && <TableEmpty {...empty} />}
@@ -187,18 +208,23 @@ export function DataTable<T>(props: DataTableProps<T>) {
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                 >
                   {selectable && checkbox(isSel, copy.data.selectRow, () => onToggleRow(key))}
-                  {visible.map((c, i) => (
-                    <span key={c.key} style={{
-                      ...colStyle(c),
-                      ...(c.align === "right" && !narrow ? { textAlign: "right" as const } : {}),
-                      ...(c.mono ? { fontFamily: "var(--mono)", fontSize: 13, color: "var(--txt-2)" } : { fontSize: 13.5, color: "var(--txt-2)" }),
-                      ...(i === 0 ? { ...stickyFirstColStyle, background: rowBg } : {}),
-                    }}>
-                      {c.render ? c.render(row) : String(c.text?.(row) ?? "")}
-                    </span>
-                  ))}
+                  {visible.map((c, i) => {
+                    const plain = !c.render
+                    const value = plain ? String(c.text?.(row) ?? "") : null
+                    return (
+                      <span key={c.key} title={plain && !narrow ? value ?? undefined : undefined} style={{
+                        ...colStyle(c),
+                        ...(plain && !narrow ? truncate : {}),
+                        ...(c.align === "right" && !narrow ? { textAlign: "right" as const } : {}),
+                        ...(c.mono ? { fontFamily: "var(--mono)", fontSize: 13, color: "var(--txt-2)" } : { fontSize: 13.5, color: "var(--txt-2)" }),
+                        ...(i === 0 ? { ...stickyFirstColStyle, background: rowBg } : {}),
+                      }}>
+                        {plain ? value : c.render!(row)}
+                      </span>
+                    )
+                  })}
                   {onRowClick && (
-                    <span aria-hidden style={{ width: 34, flex: "none", display: narrow ? "none" : "grid", placeItems: "center", color: "var(--txt-4)" }}>⋮</span>
+                    <span aria-hidden style={{ width: ROW_ACTION_WIDTH, flex: "none", display: narrow ? "none" : "grid", placeItems: "center", color: "var(--txt-4)" }}>⋮</span>
                   )}
                 </div>
               )
@@ -206,6 +232,10 @@ export function DataTable<T>(props: DataTableProps<T>) {
           </div>
         )}
       </div>
+
+      {moreRight && !narrow && (
+        <div aria-hidden style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 28, pointerEvents: "none", background: "linear-gradient(to left, rgba(8,10,14,.14), transparent)" }} />
+      )}
 
       {(footerText || pagination) && (
         <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 18px", background: "var(--shell)", borderTop: "1px solid var(--line)", flex: "none" }}>

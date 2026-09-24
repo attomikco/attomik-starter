@@ -42,8 +42,24 @@ const columns: ColumnDef<Item>[] = [
   pagination={{ page, pageCount: pageCount(pageState), onPage }} />
 ```
 
-Columns: `pinned` (can't be hidden), `flex` (the one flexible column),
-`width`, `align`, `mono` (numerals/ids/timestamps), `render` or `text`.
+Columns: `pinned` (can't be hidden), `flex` (a flexible column: takes the
+extra space), `width` (fixed, also its minimum), `minWidth`, `kind` (`text`
+160 / `date` 120 / `status` 130 / `number` 100 / `code` 90 — the default
+minimum when neither `width` nor `minWidth` is given), `align`, `mono`
+(numerals/ids/timestamps), `render` or `text`.
+
+Sizing (docs/UI_STANDARDS.md, Tables; `src/ui/data/table-layout.ts`, node-
+tested): a column never shrinks below its minimum. The row's intrinsic width
+is the sum of the VISIBLE columns' minimums plus gaps, padding, the select
+checkbox and the row-action spacer, recomputed as the column picker hides or
+shows columns. Once that no longer fits, the body scrolls sideways inside
+the table's own frame and drives the header's scrollLeft, so the two never
+drift and the page never scrolls sideways. The first column (the row
+identifier) is sticky on the left; the header is sticky on top; a right-edge
+shadow shows while columns sit off-screen. Plain `text` cells truncate with
+an ellipsis and carry the full value as `title`; a `render` cell must do the
+same itself (`PersonCell` does, per line). Header labels truncate with a
+title too. Under 720px the rows wrap into the card representation instead.
 
 ## Query helpers (`core/data/query`)
 
