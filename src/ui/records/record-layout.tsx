@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { TabStrip } from "@/ui/data/tab-strip"
+import { Section } from "@/ui/layout/section"
 
 /**
  * Canonical record/detail shell, ported from part-records.dc.html: header
@@ -73,18 +74,9 @@ export function RecordLayout({
 }
 
 /** Standard record section card on the shell ground. */
+/** Standard record section card on the shell ground — the shared Section (src/ui/layout/section.tsx). */
 export function RecordSection({ title, meta, children }: { title?: string; meta?: string; children: ReactNode }) {
-  return (
-    <div style={{ background: "var(--shell)", borderRadius: "var(--r2)", padding: 22, minWidth: 0 }}>
-      {title && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 16 }}>
-          <span style={{ fontSize: 16, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.02em" }}>{title}</span>
-          {meta && <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-3)" }}>{meta}</span>}
-        </div>
-      )}
-      {children}
-    </div>
-  )
+  return <Section title={title} meta={meta}>{children}</Section>
 }
 
 /** Reference header/footer action buttons. */
