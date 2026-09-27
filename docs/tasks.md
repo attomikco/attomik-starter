@@ -57,14 +57,25 @@ stored per workspace; es-MX would show `USD 248,310` for USD) and whether
 the preview should show money at all is a product call.
 
 ### `pnpm verify:db` is red: `supabase/tests/table_grants.sql` self-check
-_Found 2026-09-27 (Phase 1). Needs a human decision._ On Supabase CLI
-2.118.0 a fresh local stack auto-exposes new `public` tables, so the
-self-check "a table without grants is detected" fails. Adding
-`[api] auto_expose_new_tables = false` to `supabase/config.toml` makes
-`pnpm test:db` pass on a fresh stack (verified locally, not committed) —
-but `supabase config push` would carry that setting to production, so it
-is a production configuration decision. Also consider pinning the CLI
-version the repo expects in docs/SUPABASE.md.
+_Found 2026-09-27 (Phase 1). Recommendation ready; needs human approval._
+The Supabase CLI (2.118.0) leaves `api.auto_expose_new_tables` unset =
+`true` on a local stack, so new `public` tables are auto-granted and the
+self-check "a table without grants is detected" cannot fail. Recommended
+fix: add `[api] auto_expose_new_tables = false` to `supabase/config.toml`.
+Evidence (2026-09-27):
+- It only changes how the LOCAL database is bootstrapped (`db start`,
+  `db reset`, the `db diff` shadow). `supabase config push` does not send
+  it: at v2.118.0 the push encoder for `[api]` carries only `db_schema`,
+  `extra_search_path` and `max_rows`. Hosted projects are switched by
+  Supabase itself (default for new projects since 2026-05-30, all
+  projects on 2026-10-30; existing grants are kept). The CLI marks `true`
+  deprecated for removal on 2026-10-30.
+- On a fresh stack with `false`: `pnpm test:db`, the RLS guardrail, and
+  `pnpm e2e` (mobile overflow + ui:audit, real sign-in and RPCs) all pass.
+  Every table gets its grants from `private.expose_table()`, every public
+  RPC has explicit grants, and no code relies on auto-exposure.
+- It makes the local stack match what docs/SUPABASE.md and CLAUDE.md
+  already claim ("a fresh Supabase project grants nothing on new tables").
 
 ## IDEAS
 
@@ -73,3 +84,13 @@ version the repo expects in docs/SUPABASE.md.
 - `supabase/tests/table_grants.sql` check 2 fails on ANY public table
   without RLS; if `ai/guardrails/rls-allowlist.json` ever gains an entry,
   that test needs the same allowlist or the two will disagree.
+- `auto_expose_new_tables = false` revokes only DML on tables and
+  select/usage on sequences: new tables still default-grant TRUNCATE,
+  REFERENCES, TRIGGER and MAINTAIN (and sequences UPDATE) to anon and
+  authenticated. Not reachable through the Data API; consider a hardening
+  migration that revokes them.
+- `private.expose_table()` grants no sequence usage; a table with an
+  identity/serial column that clients insert into would need it.
+- docs/SUPABASE.md states the table-grant rule but not the function rule
+  (every public function revokes EXECUTE from PUBLIC and grants
+  explicitly), which all current migrations already follow.

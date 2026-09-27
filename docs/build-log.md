@@ -43,3 +43,15 @@ Meaningful work only — not every commit. Newest last. Entry format:
 - Outcome: 4 user-facing strings → dictionaries (en + es-MX), 19
   symbols/key legends → one reviewed list; 3 need product judgment.
 - Open questions: the Appearance preview's sample figures (docs/tasks.md).
+
+## 2026-09-27 — `auto_expose_new_tables` investigated (not changed)
+- Systems touched: docs/tasks.md only (the setting is NOT committed).
+- Validation: Supabase CLI v2.118.0 source read (config push encoder,
+  local bootstrap); on a fresh local stack with the setting `false`
+  (reverted afterwards): `pnpm test:db` pass, RLS guardrail pass,
+  `pnpm e2e` pass (mobile-overflow, ui-audit). Visual: covered by ui-audit.
+- Outcome: `false` is recommended as the starter default — local-only,
+  not sent by `config push`, nothing depends on auto-exposure. Awaiting
+  human approval.
+- Open questions: residual TRUNCATE/REFERENCES/TRIGGER/MAINTAIN default
+  grants (docs/tasks.md IDEAS).
