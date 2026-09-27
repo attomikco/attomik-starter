@@ -108,6 +108,10 @@ projects with the old implicit grants are unaffected.
 `supabase/tests/table_grants.sql` fails on any public table or view the roles
 cannot use, and checks its own detection with a probe table. Run it on a FRESH
 local stack (an old hosted project's implicit grants would hide a missing call).
+The local stack matches that behaviour because `supabase/config.toml` sets
+`[api] auto_expose_new_tables = false`; without it the CLI auto-grants new
+tables and the self-check cannot fail. The key only shapes the local database —
+`supabase config push` does not send it.
 
 ## Tests
 

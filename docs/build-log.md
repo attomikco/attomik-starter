@@ -55,3 +55,16 @@ Meaningful work only — not every commit. Newest last. Entry format:
   human approval.
 - Open questions: residual TRUNCATE/REFERENCES/TRIGGER/MAINTAIN default
   grants (docs/tasks.md IDEAS).
+
+## 2026-09-27 — Phase 1 blockers resolved
+- Systems touched: `supabase/config.toml` (`auto_expose_new_tables =
+  false`), Appearance preview figures (`brand-editor.tsx`, settings copy,
+  `src/ui/glyphs.ts` gains ↑), docs (SUPABASE, I18N, tasks, decisions).
+- Validation: `pnpm verify` pass (5/5); `pnpm verify:db` on a fresh stack
+  pass (4/4); `pnpm ui:audit` pass (contact sheet
+  `e2e/screenshots/contact-sheet.html`); the brand editor's preview
+  (not covered by the audit) screenshotted in English. Visual: es-MX
+  preview not verified (formatter output checked instead).
+- Outcome: the preview shows plain locale-formatted sample numbers, no
+  currency; the local stack matches hosted grant behaviour.
+- Open questions: none blocking.

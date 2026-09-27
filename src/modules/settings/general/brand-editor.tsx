@@ -7,7 +7,7 @@ import {
   themedDeclarations, brandContrastIssues,
   type DefaultAppearance, type ProductGeometry, type SkinInput,
 } from "@/core/branding"
-import { useT } from "@/core/i18n/client"
+import { useFormat, useT } from "@/core/i18n/client"
 import { SegmentedControl } from "@/ui/forms/fields"
 import { useSystemPrefersDark, useTheme } from "@/ui/shell/theme"
 import { resolveTheme } from "@/ui/shell/theme-resolve"
@@ -307,6 +307,7 @@ export function BrandEditor({ initial, canEdit, onClose }: { initial: BrandIniti
 /** One live-preview ground at a time — the app's current appearance by default, with a toggle to check the other one before committing to a change. */
 function PreviewPanel({ scheme, label, tokens, logoUrl, onToggle, toggleLabel }: { scheme: "light" | "dark"; label: string; tokens: CSSProperties; logoUrl: string | null; onToggle: () => void; toggleLabel: string }) {
   const t = useT(settingsCopy)
+  const format = useFormat()
   return (
     <div style={{ ...tokens, colorScheme: scheme, background: "var(--shell)", border: "1px solid var(--line-2)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
@@ -319,10 +320,10 @@ function PreviewPanel({ scheme, label, tokens, logoUrl, onToggle, toggleLabel }:
           {t("settings.appearance.preview.toggle", { ground: toggleLabel })}
         </button>
       </div>
-      <div style={{ fontSize: 30, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1 }}>$248,310</div>
+      <div style={{ fontSize: 30, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.04em", lineHeight: 1 }}>{format.number(248310)}</div>
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 12 }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 999, padding: "4px 9px" }}>↑ 18.4%</span>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-2)" }}>vs $209,720</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 999, padding: "4px 9px" }}>{glyph.up} {format.number(0.184, { style: "percent", minimumFractionDigits: 1 })}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-2)" }}>{t("settings.appearance.preview.versus", { value: format.number(209720) })}</span>
       </div>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 56, marginTop: 20 }}>
         {[46, 30, 52, 38, 56, 24].map((h, i) => (

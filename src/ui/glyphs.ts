@@ -10,6 +10,7 @@ export const glyph = {
   caret: "▾",
   separator: "·",
   arrow: "→",
+  up: "↑",
   more: "⋮",
   required: "*",
 } as const

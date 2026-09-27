@@ -6,6 +6,15 @@
 # (this value is the canonical starter's own development project).
 project_id = "mduqytyqfdhymtrrjtbj"
 
+[api]
+# New `public` tables, views, sequences and functions get NO Data API grants
+# by default, matching hosted Supabase (default for new projects since
+# 2026-05-30, all projects from 2026-10-30). Every migration grants explicitly
+# via private.expose_table() (docs/SUPABASE.md), and
+# supabase/tests/table_grants.sql can only catch a missing call when this is
+# false. Local stack only: `supabase config push` does not send this key.
+auto_expose_new_tables = false
+
 [auth]
 # Local development default — a fresh clone completes its first magic-link
 # login on http://localhost:3000 without editing this file. Production and

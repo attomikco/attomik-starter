@@ -36,3 +36,17 @@ review.
 **Why.** An agent that can edit its own checks can make any change pass.
 **Consequences.** Phase 1 defines the boundary only; enforcement for
 autonomous jobs arrives with those jobs.
+
+## 2026-09-27 — Local stack never auto-exposes new tables
+
+**Decision.** `supabase/config.toml` sets `[api] auto_expose_new_tables =
+false`: new `public` objects get no Data API grants unless a migration
+grants them (`private.expose_table()`, explicit function grants).
+**Why.** It matches hosted Supabase (default for new projects since
+2026-05-30, all projects from 2026-10-30), the model docs/SUPABASE.md
+already describes, and it is the only way `table_grants.sql` can detect a
+missing grant. The key is local-only; `supabase config push` does not send
+it, so deployed projects are unaffected.
+**Consequences.** A migration that forgets its grants fails locally and in
+CI instead of in production. New tables still default-grant TRUNCATE,
+REFERENCES, TRIGGER and MAINTAIN (docs/tasks.md IDEAS).
