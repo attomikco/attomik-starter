@@ -15,6 +15,7 @@ import { Sidebar } from "./sidebar"
 import { ThemeProvider, useTheme } from "./theme"
 import { ToastProvider } from "./toast-provider"
 import "./shell.css"
+import { keyLegend } from "@/ui/glyphs"
 
 /**
  * Client shell orchestration, ported from the reference host renderVals()
@@ -211,7 +212,7 @@ function ShellInner({ navigation, chrome, account, workspace, feedbackEnabled, c
 
         {goArmed && goHint && (
           <div style={{ position: "absolute", left: "50%", bottom: 32, transform: "translateX(-50%)", zIndex: 97, display: "flex", alignItems: "center", gap: 10, background: "var(--txt)", borderRadius: 999, padding: "10px 18px", boxShadow: "0 18px 40px rgba(0,0,0,.24)" }}>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--card)" }}>G</span>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--card)" }}>{keyLegend.go}</span>
             <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--line-2)" }}>{copy.shortcuts.then}</span>
             <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--card)" }}>{goHint}</span>
           </div>

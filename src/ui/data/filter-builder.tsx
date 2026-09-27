@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react"
 import { useCopy } from "@/core/i18n/client"
 import type { FilterCondition, FilterFieldDef, FilterOperator } from "@/core/data/types"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Filter builder panel from the reference ("Match all conditions").
@@ -85,7 +86,7 @@ export function FilterBuilder({
 
               <button className="ui-btn" aria-label={copy.data.removeCondition} onClick={() => onChange(conditions.filter((_, j) => j !== i))}
                 style={{ width: 30, height: 30, borderRadius: "var(--r3)", display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
-                ✕
+                {glyph.close}
               </button>
             </div>
           )

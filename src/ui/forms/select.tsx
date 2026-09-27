@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Canonical themed Listbox — the one dropdown primitive (select-only
@@ -141,7 +142,7 @@ export function Listbox({
         style={baseTrigger}
       >
         <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selected?.label ?? ""}</span>
-        <span aria-hidden style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", flex: "none", transform: open ? "rotate(180deg)" : "none", transition: "transform .12s" }}>▾</span>
+        <span aria-hidden style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", flex: "none", transform: open ? "rotate(180deg)" : "none", transition: "transform .12s" }}>{glyph.caret}</span>
       </button>
 
       {open && (

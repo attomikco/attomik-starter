@@ -15,6 +15,7 @@ import { useToast } from "@/ui/shell/toast-provider"
 import { settingsCopy } from "../copy"
 import { removeBrandingAsset, saveAppearance, uploadBrandingAsset, type BrandingAssetKind } from "../appearance/actions"
 import { FONT_OPTIONS, MONO_OPTIONS } from "../appearance/options"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Brand: accent colour, neutral tone, two fonts, three logo assets, the
@@ -239,7 +240,7 @@ export function BrandEditor({ initial, canEdit, onClose }: { initial: BrandIniti
             </div>
             <button className="ui-btn" aria-label={t("settings.general.brand.close")} onClick={onClose}
               style={{ width: 32, height: 32, borderRadius: 999, background: "var(--shell)", display: "grid", placeItems: "center", color: "var(--txt-2)", flex: "none" }}>
-              ✕
+              {glyph.close}
             </button>
           </div>
         </div>
@@ -309,7 +310,7 @@ function PreviewPanel({ scheme, label, tokens, logoUrl, onToggle, toggleLabel }:
   return (
     <div style={{ ...tokens, colorScheme: scheme, background: "var(--shell)", border: "1px solid var(--line-2)", boxSizing: "border-box", borderRadius: "var(--r2)", padding: 22, fontFamily: "var(--font)", color: "var(--txt)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>{t("settings.appearance.preview.live")} · {label}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".11em", textTransform: "uppercase", color: "var(--accent-text)", flex: 1, minWidth: 0 }}>{t("settings.appearance.preview.live")} {glyph.separator} {label}</span>
         {logoUrl && (
           <img src={logoUrl} alt={t("settings.appearance.preview.logoAlt", { ground: label })} style={{ height: 20, maxWidth: 120, objectFit: "contain", flex: "none", display: "block" }} />
         )}
@@ -356,7 +357,7 @@ function Picker({ label, value, options, face, mono, disabled, onPick }: {
       <span onClick={() => !disabled && setOpen((o) => !o)}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: "var(--card)", border: `1.5px solid ${open ? "var(--accent)" : "var(--line-2)"}`, borderRadius: "var(--r3)", padding: "11.5px 13.5px", fontSize: 14, cursor: disabled ? "default" : "pointer", boxSizing: "border-box" }}>
         <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...(face ? { fontFamily: mono ? `'${value}', ui-monospace, monospace` : `'${value}', system-ui, sans-serif`, fontSize: 15 } : { fontFamily: "var(--mono)", fontSize: 13.5 }) }}>{String(value)}</span>
-        <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", flex: "none", transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .12s" }}>▾</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--txt-4)", flex: "none", transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .12s" }}>{glyph.caret}</span>
       </span>
       {open && (
         <div className="sh-scroll" style={{ position: "absolute", top: 76, left: 0, right: 0, zIndex: 40, background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--r2)", boxShadow: "0 18px 40px rgba(0,0,0,.16)", padding: 6, maxHeight: 268, animation: "sh-rise .12s ease-out" }}>

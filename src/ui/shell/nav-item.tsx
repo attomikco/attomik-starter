@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react"
 import type { NavigationItem } from "@/core/navigation"
 import { isNavActive } from "./helpers"
 import { NavIcon } from "./icons"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * One rail entry, ported from the reference `navItem()`:
@@ -85,7 +86,7 @@ export function NavItem({
           )}
           {hasKids && (
             <span aria-hidden style={{ marginLeft: badge ? 0 : "auto", fontFamily: "var(--mono)", fontSize: 9, color: "var(--txt-4)", transform: open ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform .12s" }}>
-              ▾
+              {glyph.caret}
             </span>
           )}
         </>

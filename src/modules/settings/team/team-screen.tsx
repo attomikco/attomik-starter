@@ -14,6 +14,7 @@ import { useToast } from "@/ui/shell/toast-provider"
 import { useAction } from "@/ui/actions/use-action"
 import { settingsCopy } from "../copy"
 import { changeMemberRole, inviteMember, removeMember, resendInvitation, revokeInvitation } from "./actions"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Team & permissions screen, ported from part-settings.dc.html (team tab):
@@ -100,7 +101,7 @@ export function TeamScreen({
               onConfirm: () => run(m.userId, () => removeMember(m.userId, m.role), t("settings.team.toast.memberRemoved")),
             })}
             style={{ width: 30, height: 30, borderRadius: "var(--r3)", display: "grid", placeItems: "center", color: "var(--txt-4)" }}>
-            ✕
+            {glyph.close}
           </button>
         ) : null,
     },

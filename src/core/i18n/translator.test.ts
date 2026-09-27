@@ -2,6 +2,8 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import { createTranslator, defineCopy, interpolate, resetMissingKeyWarnings } from "./t.ts"
 import { createFormatters, isTimeZone, listTimeZones, utcOffsetLabel, TIME_ZONE_CHOICES } from "./format.ts"
+import { customersCopy } from "../../modules/customers/copy.ts"
+import { mediaCopy } from "../../modules/media/copy.ts"
 import { settingsCopy } from "../../modules/settings/copy.ts"
 
 const DICTS = {
@@ -76,6 +78,16 @@ test("settings module copy: every English key has an es-MX counterpart, and noth
     assert.ok(en.includes(other) && es.includes(other), `${k} needs ${other}`)
   }
 })
+
+for (const [id, copy] of [["customers", customersCopy], ["media", mediaCopy]] as const) {
+  test(`${id} module copy: English and es-MX have the same keys, all under ${id}.`, () => {
+    const en = Object.keys(copy.dictionaries.en)
+    const es = Object.keys(copy.dictionaries["es-MX"] ?? {})
+    assert.ok(en.length > 0, `${id} dictionary is empty`)
+    assert.deepEqual([...es].sort(), [...en].sort())
+    for (const k of en) assert.ok(k.startsWith(`${id}.`), `${k} is not under ${id}.`)
+  })
+}
 
 test("formatters follow the locale for dates and numbers", () => {
   const en = createFormatters("en", "UTC")

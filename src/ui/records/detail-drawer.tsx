@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, type ReactNode } from "react"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Right-side detail drawer, ported from the reference audit drawer: a dimmed
@@ -51,7 +52,7 @@ export function DetailDrawer({
             </div>
             <button className="ui-btn" aria-label={closeLabel} onClick={onClose}
               style={{ width: 32, height: 32, borderRadius: 999, background: "var(--shell)", display: "grid", placeItems: "center", color: "var(--txt-2)", flex: "none" }}>
-              ✕
+              {glyph.close}
             </button>
           </div>
           {chips && <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14, flexWrap: "wrap" }}>{chips}</div>}

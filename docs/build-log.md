@@ -29,3 +29,17 @@ Meaningful work only — not every commit. Newest last. Entry format:
   docs/tasks.md BLOCKED.
 - Open questions: the two BLOCKED items; whether ROADMAP items 1 and 3
   are already closed by `nav.modules` and `projectConfig.skin`.
+
+## 2026-09-27 — i18n lint: 26 existing violations classified
+- Systems touched: `src/ui/glyphs.ts` (new), 15 components under
+  `src/ui` and `src/modules/settings`, `src/modules/{customers,media}`
+  (copy.ts + index.tsx), `src/core/i18n/translator.test.ts`, docs/I18N.md.
+- Validation: `pnpm typecheck` pass; `pnpm lint` 3 errors (the preview
+  figures, left on purpose); `pnpm test` pass (149); `pnpm ui:audit`
+  pass — 14 routes × 390/1440/2560 × light/dark, contact sheet
+  `e2e/screenshots/contact-sheet.html`. Visual: glyphs checked in
+  screenshots; the Customers/Media placeholders are disabled modules
+  (404 in the audit), so their new copy is not visually verified.
+- Outcome: 4 user-facing strings → dictionaries (en + es-MX), 19
+  symbols/key legends → one reviewed list; 3 need product judgment.
+- Open questions: the Appearance preview's sample figures (docs/tasks.md).

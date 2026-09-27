@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useCopy } from "@/core/i18n/client"
 import { filterPaletteGroups, type PaletteGroup } from "./helpers"
+import { keyLegend } from "@/ui/glyphs"
 
 /**
  * ⌘K palette, ported from the reference host. Destinations come from the
@@ -45,7 +46,7 @@ export function CommandPalette({
             onChange={(e) => setQuery(e.target.value)}
             style={{ flex: 1, minWidth: 0, fontSize: 15.5 }}
           />
-          <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", border: "1px solid var(--line)", borderRadius: 6, padding: "3px 7px", flex: "none" }}>ESC</span>
+          <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", border: "1px solid var(--line)", borderRadius: 6, padding: "3px 7px", flex: "none" }}>{keyLegend.escape}</span>
         </div>
         <div className="sh-scroll" style={{ maxHeight: 380, padding: 10 }}>
           {visible.map((g) => (
