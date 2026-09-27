@@ -1,6 +1,7 @@
 "use client"
 
 import { useCopy } from "@/core/i18n/client"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Floating bulk action bar, ported from the reference: inverted pill
@@ -42,7 +43,7 @@ export function BulkBar({
       ))}
       <button className="ui-btn sh-bulk-action" aria-label={copy.data.clearSelection} onClick={onClear}
         style={{ width: 30, height: 30, borderRadius: 999, display: "grid", placeItems: "center", color: "var(--card)", flex: "none" }}>
-        ✕
+        {glyph.close}
       </button>
     </div>
   )

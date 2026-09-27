@@ -8,6 +8,7 @@ next-env.d.ts
 .env.local
 !.env.example
 supabase/.temp/
+supabase/.branches/
 email-previews.html
 
 # Playwright output and the mobile layout screenshots (E2E_SCREENSHOTS=1), never committed

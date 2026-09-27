@@ -1,6 +1,7 @@
 "use client"
 
 import { useCopy } from "@/core/i18n/client"
+import { keyLegend } from "@/ui/glyphs"
 
 /**
  * ⌘/ shortcuts sheet, ported from the reference host. Only shell-level
@@ -28,7 +29,7 @@ export function ShortcutsDialog({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid var(--line)", flex: "none" }}>
           <span style={{ fontSize: 18, fontWeight: "var(--w-bold)" as never, letterSpacing: "-0.025em", flex: 1 }}>{copy.shortcuts.title}</span>
-          <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", border: "1px solid var(--line)", borderRadius: 6, padding: "4px 8px" }}>ESC</span>
+          <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--txt-4)", border: "1px solid var(--line)", borderRadius: 6, padding: "4px 8px" }}>{keyLegend.escape}</span>
         </div>
         <div className="sh-scroll" style={{ flex: 1, minHeight: 0, padding: "18px 24px", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 24 }}>
           {groups.map(([label, rows]) => (

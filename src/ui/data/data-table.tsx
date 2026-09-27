@@ -7,6 +7,7 @@ import { TableEmpty, TableError, TableLoading } from "./data-states"
 import { Pagination, type PaginationProps } from "./pagination"
 import { nameInitials } from "@/ui/initials"
 import { ROW_ACTION_WIDTH, columnMinWidth, tableMinWidth, visibleColumns } from "./table-layout"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * The canonical DataTable, ported from part-data.dc.html. Generic and
@@ -224,7 +225,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
                     )
                   })}
                   {onRowClick && (
-                    <span aria-hidden style={{ width: ROW_ACTION_WIDTH, flex: "none", display: narrow ? "none" : "grid", placeItems: "center", color: "var(--txt-4)" }}>⋮</span>
+                    <span aria-hidden style={{ width: ROW_ACTION_WIDTH, flex: "none", display: narrow ? "none" : "grid", placeItems: "center", color: "var(--txt-4)" }}>{glyph.more}</span>
                   )}
                 </div>
               )

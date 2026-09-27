@@ -11,6 +11,7 @@ import { SearchInput } from "@/ui/data/table-controls"
 import { Listbox } from "@/ui/forms/select"
 import { DetailDrawer } from "@/ui/records/detail-drawer"
 import { settingsCopy } from "../copy"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Activity screen, ported from the reference activity/audit patterns:
@@ -171,7 +172,7 @@ function EventDrawer({ event, actor, onClose }: { event: ActivityEvent; actor: s
     <DetailDrawer
       ariaLabel={t("settings.activity.detail.title")}
       closeLabel={t("settings.activity.detail.close")}
-      eyebrow={<>{event.createdAt.slice(0, 10)} · {event.createdAt.slice(11, 19)}</>}
+      eyebrow={<>{event.createdAt.slice(0, 10)} {glyph.separator} {event.createdAt.slice(11, 19)}</>}
       title={summarizeEvent({ action: event.action, resourceLabel: event.resourceLabel, before: event.before, after: event.after }, actor, copy.audit)}
       chips={
         <>
@@ -190,7 +191,7 @@ function EventDrawer({ event, actor, onClose }: { event: ActivityEvent; actor: s
                 <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: ".09em", textTransform: "uppercase", color: "var(--txt-3)", marginBottom: 8 }}>{k}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--bad)", background: "var(--bad-tint)", borderRadius: 6, padding: "3px 8px", overflowWrap: "anywhere" }}>{fmt(event.before?.[k])}</span>
-                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>→</span>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--txt-4)" }}>{glyph.arrow}</span>
                   <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--ok)", background: "var(--ok-tint)", borderRadius: 6, padding: "3px 8px", overflowWrap: "anywhere" }}>{fmt(event.after?.[k])}</span>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useCopy } from "@/core/i18n/client"
 import { deserializeView, serializeView } from "@/core/data/query"
 import type { SavedView } from "@/core/data/types"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Saved views, ported from the reference rail pattern (rendered as a chip
@@ -68,7 +69,7 @@ export function SavedViewsBar({
           </button>
           {onRemove && activeId === v.id && (
             <button className="ui-btn" aria-label={copy.data.deleteView(v.label)} onClick={() => onRemove(v.id)}
-              style={{ color: "var(--txt-4)", fontSize: 11, padding: "0 6px" }}>✕</button>
+              style={{ color: "var(--txt-4)", fontSize: 11, padding: "0 6px" }}>{glyph.close}</button>
           )}
         </span>
       ))}

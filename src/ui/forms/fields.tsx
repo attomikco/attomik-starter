@@ -3,6 +3,7 @@
 import { useCopy } from "@/core/i18n/client"
 import { useId, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react"
 import { Listbox } from "./select"
+import { glyph } from "@/ui/glyphs"
 
 /**
  * Canonical form primitives, ported from part-records.dc.html. All colors
@@ -32,7 +33,7 @@ export function Field({
     <label htmlFor={htmlFor} style={{ display: "block", minWidth: 0 }}>
       <span style={labelStyle}>
         {label}
-        {required && <span aria-hidden style={{ color: "var(--bad)" }}>*</span>}
+        {required && <span aria-hidden style={{ color: "var(--bad)" }}>{glyph.required}</span>}
       </span>
       {children}
       {error && (
