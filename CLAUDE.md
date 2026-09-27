@@ -1,14 +1,24 @@
 # Attomik Starter
 
-A canonical Next.js starter reused across projects. Modules are optional
-product functionality enabled per project through configuration — never
-delete module code because a project doesn't use it.
+## Operating sequence
+
+- Before substantial work: read this file, docs/context.md, the relevant
+  docs/decisions.md entries and docs/tasks.md items; inspect existing
+  patterns before inventing new ones.
+- Before declaring done: run `pnpm verify` (and `pnpm verify:db` when
+  schema or data access changed); update docs/tasks.md and
+  docs/build-log.md; report unresolved risks; record only real decisions;
+  never change doctrine.
+- Never weaken, skip, remove, or modify a failing guardrail or
+  verification step merely to make verify pass, unless the task
+  explicitly requires changing the guardrail itself. Fix the underlying
+  violation.
+- Control-plane paths (human-owned): the list in ai/AGENT_CONTRACT.md.
 
 ## Architecture
 
-- `src/core/` — infrastructure shared by every project. No business logic.
-- `src/ui/` — canonical reusable visual components.
-- `src/modules/` — optional product functionality, toggled via config.
+- Layers and stack: docs/context.md. `src/core/` holds no business logic;
+  never delete module code because a project doesn't use it.
 - Module enablement has ONE source of truth: `src/config/project.ts`
   (flags) + `src/core/modules/registry.ts` (definitions), read through the
   helpers in `src/core/modules`. Never hardcode navigation entries or create
@@ -25,8 +35,6 @@ delete module code because a project doesn't use it.
 - Disabled module routes are proxy-blocked (true 404) AND page-guarded by
   requireModule(); nav/palette derive from the registry, so disabled
   modules appear nowhere.
-- docs/: ARCHITECTURE (map), MODULES (extension contract), NEW_PROJECT
-  (setup checklist), DEPLOYMENT (Vercel/production).
 
 ## UI standards
 
@@ -38,16 +46,14 @@ delete module code because a project doesn't use it.
   local Supabase stack) before commit, and the audit must pass. The report
   for that change names the contact sheet path
   (`e2e/screenshots/contact-sheet.html`). A UI change without a passing
-  audit is not done. The static half (`src/ui/layout/static-rules.test.ts`)
-  runs in `pnpm test` and therefore in the pre-push hook.
+  audit is not done.
 
 ## Verification rules
 
 - Never pipe typecheck, test or build output through grep, head or tail
   in a command that also commits or pushes. Run checks as standalone
   commands and confirm exit status 0 before committing. Any shell pipeline
-  uses `set -o pipefail`. The versioned `.githooks/pre-push` (installed by
-  `prepare`) refuses a push unless `pnpm typecheck` and `pnpm test` pass.
+  uses `set -o pipefail`.
 
 ## Data / CRUD rules
 
@@ -109,7 +115,6 @@ delete module code because a project doesn't use it.
 - Invitations are single-use, expiring, and email-bound; resend rotates
   the token.
 - Removing a member never deletes their auth account.
-- All app/auth email sends from the email.attomik.co domain via Resend.
 - Team UI uses the canonical Task 007 data/form/confirmation primitives.
 - Details: docs/TEAM.md.
 
@@ -118,7 +123,6 @@ delete module code because a project doesn't use it.
 - All product data belongs to a workspace unless explicitly global.
 - Never trust workspace_id from the browser without server/RLS validation.
 - RLS must enforce workspace membership on every table.
-- Authorization roles come from workspace_members, never user_metadata.
 - Modules use the canonical workspace access layer (src/core/workspace) —
   never their own queries against workspace tables.
 - Locale has three owners: project default in `src/config/project.ts`
@@ -148,15 +152,12 @@ delete module code because a project doesn't use it.
   local paths only.
 - Never reveal whether an email exists (the Sent state is identical either
   way).
-- Profiles/workspaces are separate from authentication (Task 006+).
-- /design-reference remains the auth visual source of truth.
 - Production auth email uses configured SMTP (Resend via
   supabase/config.toml), never Supabase's shared default sender.
 - Never commit SMTP credentials; the key is passed as env(SMTP_PASS) at
   `supabase config push` time only.
 - Rate-limit errors may be shown generically (they disclose nothing);
   account existence must remain undisclosed in every other case.
-- Custom React Email auth templates are a later concern.
 - Details: docs/AUTH.md.
 
 ## Feedback rules
@@ -208,7 +209,6 @@ delete module code because a project doesn't use it.
 - Red is reserved for errors/destructive/broken states — a metric that fell
   is neutral, not red.
 - Product geometry (radii, spacing, sizes) is not client branding.
-- /design-reference remains the source of truth for visual behavior.
 - Contract: docs/BRANDING.md.
 
 ## Supabase rules
